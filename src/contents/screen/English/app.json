@@ -1,0 +1,10 @@
+{
+    "welcome": "Hello world!",
+    "back": "Back",
+    "preview": "Preview",
+    "save": "Save",
+    "language": "select language",
+    "marquee": "select marquee",
+    "languageCollection": ["English", "Chinese"],
+    "marqueeCollection": ["rectangular", "ellipse", "brush"]
+}
