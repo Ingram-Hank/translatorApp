@@ -1,0 +1,10 @@
+{
+    "welcome": "嗨喽 世界!",
+    "back": "返回",
+    "preview": "预览",
+    "save": "保存",
+    "language": "选择语言",
+    "marquee": "选择选框",
+    "languageCollection": ["英语","汉语"],
+    "marqueeCollection": ["矩形", "椭圆", "画笔"]
+}
