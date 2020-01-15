@@ -1,14 +1,17 @@
 import React from 'react';
+import classNames from 'classnames';
+import './dropDown.css';
 
-function ButtonDropDown ({defaultText, id, selectedItem, data=[], handlerDropDownItem}){
+function ButtonDropDown ({defaultText, id, selectedItem, data = [], handlerDropDownItem, action = "switchMarquee"}){
+    const dropDownMenuClass = classNames("dropdown-menu", {"small": action === "switchLanguage"});
     return (
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                {selectedItem || defaultText} <span class="caret"></span>
+        <div className="btn-dropDown">
+            <button type="button" className="button dropdown-toggle" data-toggle="dropdown">
+                {selectedItem || defaultText} <span className="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
+            <ul className={dropDownMenuClass} role="menu">
                 {data.map((item, index)=>{
-                    return <li key={index} onClick={()=> {handlerDropDownItem(id, item)}}>{item}</li>
+                    return <li key={index} onClick={()=> {handlerDropDownItem(id, item.key)}}>{item.text}</li>
                 })}
             </ul>
         </div>

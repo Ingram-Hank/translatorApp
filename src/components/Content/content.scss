@@ -1,0 +1,9 @@
+.content {
+    border-top: 1px solid #0d1115;
+    background-color: #2b3238;
+    min-height: calc(100vh - 50px);
+    z-index: 10;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
