@@ -1,0 +1,7 @@
+.header {
+  background: repeating-linear-gradient(135deg, #333a45 1%, #2f363f 2%);
+  height: 50px;
+  padding: 8px 15px;
+  flex-wrap: nowrap;
+  position: relative;
+  z-index: 11; }

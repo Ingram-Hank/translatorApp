@@ -3,8 +3,60 @@
     "back": "Back",
     "preview": "Preview",
     "save": "Save",
-    "language": "select language",
-    "marquee": "select marquee",
-    "languageCollection": ["English", "Chinese"],
-    "marqueeCollection": ["rectangular", "ellipse", "brush"]
+    "language": "Select language",
+    "marquee": "Select marquee",
+    "close": "Close",
+    "languageCollection": [
+        {
+            "key": "English",
+            "text": "English"
+        
+        },
+        {
+            "key": "Chinese",
+            "text": "Chinese"
+        }
+    ],
+    "languageText": {
+        "English": "English",
+        "Chinese": "Chinese"
+    },
+    "marqueeCollection": [
+        {
+            "key": "rectangular",
+            "text": "Rectangular"
+        
+        },
+        {
+            "key": "ellipse",
+            "text": "Ellipse"
+        },
+        {
+            "key": "brush",
+            "text": "Brush"
+        }
+    ],
+    "marqueeText": {
+        "rectangular": "Rectangular",
+        "ellipse": "Ellipse",
+        "brush": "Brush"
+    },
+    "configurationCollection": [
+        {
+            "id": "autoClear",
+            "switchOn": true,
+            "text": "Auto-clear"
+        },
+        {
+            "id": "autoOCR",
+            "switchOn": true,
+            "text": "Auto-OCR"
+        },
+        {
+            "id": "autoTranslate",
+            "switchOn": true,
+            "text": "Auto-translation"
+        }
+    ],
+    "selectImage": "Select The Image"
 }

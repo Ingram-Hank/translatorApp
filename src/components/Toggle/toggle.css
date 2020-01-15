@@ -1,0 +1,65 @@
+.switch {
+  margin-left: 5px; }
+  .switch .toggle {
+    position: relative;
+    overflow: hidden;
+    height: 31px; }
+    .switch .toggle-large {
+      width: 127.875px; }
+    .switch .toggle-small {
+      width: 94.7344px; }
+    .switch .toggle-handle {
+      position: relative;
+      margin: 0 auto;
+      padding-top: 0;
+      padding-bottom: 0;
+      height: 100%;
+      width: 0;
+      border-width: 0 1px;
+      background-color: #fff;
+      border-radius: 20rem; }
+    .switch .toggle-group {
+      position: absolute;
+      width: 200%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transition: left .35s;
+      -webkit-transition: left .35s;
+      -moz-user-select: none;
+      -webkit-user-select: none; }
+      .switch .toggle-group .btn-sm {
+        padding-right: 1rem;
+        padding: .35rem .5rem;
+        font-size: .875rem;
+        line-height: 1.5; }
+      .switch .toggle-group .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border: none; }
+      .switch .toggle-group .btn-secondary {
+        color: #fff;
+        background-color: #6c757d; }
+      .switch .toggle-group .btn-light {
+        color: #212529;
+        border-color: #f8f9fa; }
+    .switch .toggle.off .toggle-group {
+      left: -100%; }
+    .switch .toggle-on, .switch .toggle-off {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0; }
+    .switch .toggle-on {
+      left: 0;
+      right: 50%; }
+      .switch .toggle-on.btn-sm {
+        padding-right: 1rem; }
+    .switch .toggle-off {
+      left: 50%;
+      right: 0;
+      box-shadow: none; }
+  .switch .ios {
+    border-radius: 20rem; }

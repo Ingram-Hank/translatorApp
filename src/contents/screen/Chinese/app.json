@@ -5,6 +5,58 @@
     "save": "保存",
     "language": "选择语言",
     "marquee": "选择选框",
-    "languageCollection": ["英语","汉语"],
-    "marqueeCollection": ["矩形", "椭圆", "画笔"]
+    "close": "关闭",
+    "languageCollection": [
+        {
+            "key": "English",
+            "text": "英语"
+        
+        },
+        {
+            "key": "Chinese",
+            "text": "汉语"
+        }
+    ],
+    "languageText": {
+        "English": "英语",
+        "Chinese": "汉语"
+    },
+    "marqueeCollection": [
+        {
+            "key": "rectangular",
+            "text": "矩形"
+        
+        },
+        {
+            "key": "ellipse",
+            "text": "椭圆"
+        },
+        {
+            "key": "brush",
+            "text": "画笔"
+        }
+    ],
+    "marqueeText": {
+        "rectangular": "矩形",
+        "ellipse": "椭圆",
+        "brush": "画笔"
+    },
+    "configurationCollection": [
+        {
+            "id": "autoClear",
+            "switchOn": true,
+            "text": "自动清除"
+        },
+        {
+            "id": "autoOCR",
+            "switchOn": true,
+            "text": "自动OCR"
+        },
+        {
+            "id": "autoTranslate",
+            "switchOn": true,
+            "text": "自动翻译"
+        }
+    ],
+    "selectImage": "选择图片"
 }

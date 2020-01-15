@@ -1,0 +1,8 @@
+.dropdown-menu.small {
+  left: 13px; }
+
+.dropdown-menu li {
+  padding: 0 5px;
+  cursor: pointer; }
+  .dropdown-menu li:not(:last-child) {
+    border-bottom: 1px solid #e9ecef; }

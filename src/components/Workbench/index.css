@@ -1,0 +1,56 @@
+.workbench {
+  min-width: 570px;
+  flex: 1;
+  border-left: 1px solid #050905;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  position: relative; }
+  .workbench-main {
+    height: calc(100vh - 50px);
+    overflow-y: auto; }
+  .workbench-container {
+    width: 100%;
+    height: calc(100vh - 51px);
+    overflow: hidden; }
+    .workbench-container .trans-result-right-menu {
+      padding: 0;
+      height: calc(100vh - 51px);
+      border-top: 1px solid #50575d;
+      background: #373e47;
+      border-left: 1px solid #050807;
+      position: relative;
+      padding-top: 59px;
+      transition: all .3s; }
+    .workbench-container .canvas-zoom {
+      position: absolute;
+      left: 50px;
+      bottom: 20px;
+      width: 40px;
+      z-index: 1;
+      border-radius: 3px;
+      background: #fff; }
+      .workbench-container .canvas-zoom .zoom-num {
+        color: #333 !important;
+        display: block;
+        text-align: center;
+        box-shadow: 0 0 18px -3px rgba(0, 0, 0, 0.3);
+        padding: 5px 0;
+        font-weight: 800; }
+      .workbench-container .canvas-zoom .zoom-btn {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        font-size: 36px;
+        color: #333 !important;
+        display: block;
+        text-align: center; }
+        .workbench-container .canvas-zoom .zoom-btn:hover {
+          text-decoration: none; }
+      .workbench-container .canvas-zoom .canvas-zoom-scroll {
+        transform: rotate(270deg);
+        width: 100px;
+        height: 110px;
+        margin: 0 -30px; }

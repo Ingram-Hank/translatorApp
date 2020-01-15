@@ -1,0 +1,21 @@
+
+.button {
+    min-width: 80px;
+    height: 34px;
+    line-height: 31px;
+    padding: 0 5px;
+    font-size: 12px!important;
+    text-align: center;
+    margin-right: 5px;
+    color: #fff;
+    display: inline-block;
+    background: rgba(0,0,0,.4);
+    background: linear-gradient(180deg,transparent,rgba(0,0,0,.8));
+    border: 1px solid #eee;
+    border-radius: 3px;
+    vertical-align: top;
+    box-sizing: border-box;
+    .glyphicon {
+        font-size: 10px;
+    }
+}

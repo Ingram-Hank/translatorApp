@@ -1,41 +1,76 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import {Button, Header} from '../components';
+import {connect} from 'react-redux';
+import {
+  Header,
+  Content,
+  Navigation,
+  Workbench
+} from '../components';
 import {handlerLanguage} from '../modules/language';
-import {hanlerMarquee} from '../modules/ui';
+import {
+  hanlerMarquee,
+  handlerToggleAutoClear, 
+  handlerToggleAutoOCR,
+  handlerToggleAutoTranslate
+} from '../modules/ui';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
+import '../scss/global.css';
 
 function App(props) {
-  const {contentText, marquee, language, handlerDropDownItem} = props;
-  const testButtonData = {
-    type: 'button',
-    onClick: () => {
-      alert ("heelllll");
-    }
-  };
+  const {
+    contentText,
+    marquee,
+    switchAutoClear,
+    switchAutoOCR,
+    switchAutoTranslate,
+    language,
+    handlerDropDownItem,
+    onToggle
+  } = props;
   const headerProps = {
     contentText,
-    marquee, 
+    marquee,
+    switchAutoClear,
+    switchAutoOCR,
+    switchAutoTranslate, 
     language,
-    handlerDropDownItem
+    handlerDropDownItem,
+    onToggle
+  };
+  const contentProps = {
+
+  };
+  const navigationProps= {
+    contentText
   };
   return (
-    <div className="container-fluid no-padding">
+    <div className="main">
       <Header {...headerProps}/>
-      <Button data={testButtonData}>{contentText.welcome}</Button>
+      <Content {...contentProps} >
+        <Navigation {...navigationProps}/>
+        <Workbench />
+      </Content>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  const language = state.languageReducer.language || "English";
-  const marquee = state.uiReducer.marquee;
+  const language = state.languageReducer.language || "Chinese";
+  const {
+    marquee, 
+    switchAutoClear = true, 
+    switchAutoOCR = true, 
+    switchAutoTranslate= true
+  } = state.uiReducer;
   const contentText = strings.screen[language];
   return {
     language,
     marquee,
+    switchAutoClear,
+    switchAutoOCR,
+    switchAutoTranslate,
     contentText
   }
 };
@@ -43,11 +78,29 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     handlerDropDownItem: (id, item)=> {
-      if(id === 'language'){
-        dispatch(handlerLanguage(item));
+      switch (id) {
+        case "language":
+          dispatch(handlerLanguage(item));
+          break;
+        case "marquee":
+          dispatch(hanlerMarquee(item));
+          break;
+        default:
       }
-      if(id === 'marquee'){
-        dispatch(hanlerMarquee(item))
+    },
+    onToggle: (id, payload)=> {
+      switch (id) {
+        case 'autoClear':
+          dispatch(handlerToggleAutoClear(payload));
+          break;
+        case 'autoOCR':
+          dispatch(handlerToggleAutoOCR(payload));
+          break;
+        case 'autoTranslate':
+          dispatch(handlerToggleAutoTranslate(payload));
+          break;
+        default:
+          break;
       }
     }
   }

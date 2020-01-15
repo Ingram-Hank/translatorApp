@@ -1,0 +1,12 @@
+.dropdown-menu {
+    &.small {
+        left: 13px;
+    }
+    li {
+        padding: 0 5px;
+        cursor: pointer;
+        &:not(:last-child){
+            border-bottom: 1px solid #e9ecef;
+        }
+    }
+}
