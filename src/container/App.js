@@ -7,11 +7,16 @@ import {
   Workbench
 } from '../components';
 import {handlerLanguage} from '../modules/language';
+import {getTranslImages, selecteCanvas} from '../modules/images';
 import {
   hanlerMarquee,
   handlerToggleAutoClear, 
   handlerToggleAutoOCR,
-  handlerToggleAutoTranslate
+  handlerToggleAutoTranslate,
+  handlerSelectImage,
+  handlerZoomCanvasBech,
+  handlerZoomCanvasPlus,
+  handlerZoomCanvasMinus
 } from '../modules/ui';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -26,9 +31,18 @@ function App(props) {
     switchAutoOCR,
     switchAutoTranslate,
     language,
+    images,
     handlerDropDownItem,
-    onToggle
+    onToggle,
+    selectedImg,
+    selectItem,
+    selectedImage,
+    zoomCanvasValue,
+    zoomCanvasBech,
+    zoomCanvasPlus,
+    zoomCanvasMinus
   } = props;
+  
   const headerProps = {
     contentText,
     marquee,
@@ -39,43 +53,61 @@ function App(props) {
     handlerDropDownItem,
     onToggle
   };
-  const contentProps = {
-
-  };
   const navigationProps= {
-    contentText
+    contentText,
+    selectedImg,
+    selectItem,
+    images
   };
+  const workbenchProps = {
+    selectedImage,
+    zoomCanvasValue,
+    zoomCanvasBech,
+    zoomCanvasPlus,
+    zoomCanvasMinus
+  }
+  
   return (
     <div className="main">
       <Header {...headerProps}/>
-      <Content {...contentProps} >
+      <Content>
         <Navigation {...navigationProps}/>
-        <Workbench />
+        <Workbench {...workbenchProps}/>
       </Content>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  const language = state.languageReducer.language || "Chinese";
+  const language = state.languageMoudels.language || "English";
+  const images = state.images.imagesCollection;
+  const selectedImage = state.images.selectedImage;
   const {
     marquee, 
     switchAutoClear = true, 
     switchAutoOCR = true, 
-    switchAutoTranslate= true
-  } = state.uiReducer;
+    switchAutoTranslate= true,
+    selectedImg,
+    zoomCanvasValue
+  } = state.ui;
   const contentText = strings.screen[language];
   return {
     language,
+    images,
     marquee,
     switchAutoClear,
     switchAutoOCR,
     switchAutoTranslate,
+    selectedImg,
+    zoomCanvasValue,
+    selectedImage,
     contentText
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
+  dispatch(getTranslImages());
+  dispatch(selecteCanvas());
   return {
     handlerDropDownItem: (id, item)=> {
       switch (id) {
@@ -102,8 +134,21 @@ const mapDispatchToProps = (dispatch) => {
         default:
           break;
       }
+    },
+    selectItem: (selectedImg)=> {
+      dispatch(handlerSelectImage(selectedImg));
+      dispatch(selecteCanvas());
+    },
+    zoomCanvasBech: (e)=> {
+      dispatch(handlerZoomCanvasBech(e.target.value));
+    },
+    zoomCanvasPlus: (value)=> {
+        dispatch(handlerZoomCanvasPlus(value));
+    },
+    zoomCanvasMinus: (value)=> {
+        dispatch(handlerZoomCanvasMinus(value));
     }
-  }
+    }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,8 +1,10 @@
-import { combineReducers } from 'redux'
-import languageReducer from './language';
-import uiReducer from './ui';
+import { combineReducers } from 'redux';
+import images from './images';
+import languageMoudels from './language';
+import ui from './ui';
 
 export default combineReducers({
-    languageReducer,
-    uiReducer
+    images,
+    languageMoudels,
+    ui
 })

@@ -11,6 +11,39 @@
   .workbench-main {
     height: calc(100vh - 50px);
     overflow-y: auto; }
+    .workbench-main .workbench-work-wrap {
+      padding: 40px 30px;
+      position: relative; }
+      .workbench-main .workbench-work-wrap .trans-guide-prompt {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        color: #777;
+        text-align: center; }
+      .workbench-main .workbench-work-wrap .canvas-container {
+        width: 565px;
+        height: 800px;
+        position: relative;
+        user-select: none;
+        margin: 0 auto; }
+        .workbench-main .workbench-work-wrap .canvas-container .lower-canvas {
+          position: absolute;
+          width: 565px;
+          height: 800px;
+          left: 0px;
+          top: 0px;
+          touch-action: none;
+          user-select: none; }
+        .workbench-main .workbench-work-wrap .canvas-container .upper-canvas {
+          position: absolute;
+          width: 565px;
+          height: 800px;
+          left: 0px;
+          top: 0px;
+          touch-action: none;
+          user-select: none;
+          cursor: crosshair; }
   .workbench-container {
     width: 100%;
     height: calc(100vh - 51px);

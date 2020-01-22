@@ -8,5 +8,6 @@ const logger = store => next => action => {
     console.groupEnd('state');
     return result;
 }
+
 const middlewares = [logger, thunk];
 export default middlewares;
