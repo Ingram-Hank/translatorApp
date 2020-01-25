@@ -1,19 +1,30 @@
 import React from 'react';
+import zxxDragData from './zxxDragData.json';
 
 class WorkbenchMain extends React.Component {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
         this.state = {
-            selectedImage: props.selectedImage
+            selectedImage: props.selectedImage,
+            elementWidth: 565,
+            elementHeight: 800,
+            navigateWidth: 215,
+            headerHeight: 50,
+            cropH: 0, 
+            cropW: 0, 
+            posX: 0, 
+            posY: 0,
+            display: false
         };
     }
 
     componentDidUpdate() {
-        const elementWidth = 565, elementHeight = 800, navigateWidth = 215, headerHeight = 50;
+        const that = this;
+        const {elementWidth = 565, elementHeight = 800, navigateWidth = 215, headerHeight = 50} = this.state;
         let startx,
             starty,
-            flag,
+            flag = false,
             x,
             y,
             leftDistance,
@@ -25,7 +36,6 @@ class WorkbenchMain extends React.Component {
             currentR;
         // draw image according the selected image
         const canvas = this.canvas.current;
-        const workbenchMain = document.getElementsByClassName("workbench-main")[0];
         const ctx = canvas.getContext('2d');
         const img = new Image();
         img.src = this.props.selectedImage;
@@ -198,46 +208,62 @@ class WorkbenchMain extends React.Component {
             reshow();
         }
 
-        let mousedown = function (e) {
+        function mousedown (e) {
             startx = (e.pageX - navigateWidth - canvas.parentElement.offsetLeft) / scale;
-            starty = (e.pageY - headerHeight - canvas.parentElement.offsetTop + workbenchMain.scrollTop) / scale;
+            starty = (e.pageY - headerHeight - canvas.parentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
             currentR = isPointInRetc(startx, starty);
             if (currentR) {
                 leftDistance = startx - currentR.x1;
                 topDistance = starty - currentR.y1;
             }
             ctx.strokeRect(x, y, 0, 0);
-            ctx.strokeStyle = 'red';
-            flag = 1;
+            flag = true;
         }
-        let mousemove = function (e) {
+        function mousemove (e) {
             x = (e.pageX - navigateWidth - canvas.parentElement.offsetLeft) / scale;
-            y = (e.pageY - headerHeight - canvas.parentElement.offsetTop + workbenchMain.scrollTop) / scale;
+            y = (e.pageY - headerHeight - canvas.parentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
             ctx.save();
             canvas.style.cursor = "crosshair";
-            ctx.clearRect(0, 0, elementWidth, elementHeight)
+            ctx.clearRect(0, 0, elementWidth, elementHeight);
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
             }
             ctx.restore();
             reshow(x, y);
-            ctx.setLineDash([10, 10]);
         }
-        let mouseup = function (e) {
+        function mouseup (e) {
             if (op === 1) {
                 layers.push(fixPosition({
                     x1: startx,
                     y1: starty,
                     x2: x,
                     y2: y,
-                    strokeStyle: 'red',
                     type: type
                 }))
+                let posX = startx;
+                let posY = starty;
+                let cropW = x - startx;
+                let cropH = y - starty;
+                if(x - startx < 0) {
+                    posX = x;
+                    cropW = startx - x;
+                }
+                if(y - starty < 0) {
+                    posY = y;
+                    cropH = starty - y;
+                }
+                that.setState({
+                    display: true,
+                    posX,
+                    posY,
+                    cropW,
+                    cropH
+                });
             } else if (op >= 3) {
                 fixPosition(currentR)
             }
             currentR = null;
-            flag = 0;
+            flag = false;
             reshow(x, y);
             op = 0;
         }
@@ -255,14 +281,29 @@ class WorkbenchMain extends React.Component {
     }
 
     render() {
+        const {cropH, cropW, posX, posY, display} = this.state;
+        const zxxCropBoxStyle = {
+            display: display? "block":"none",
+            height: `${cropH}px`,
+            width: `${cropW}px`,
+            left: `${posX}px`,
+            top: `${posY}px`
+        };
         return (
-            <div className="col-sm-10 col-xs-12 workbench-main">
+            <div className="col-sm-10 col-xs-12 workbench-main" id= "workbenchMain">
                 <div className="workbench-work-wrap">
                     <div className="inner">
                         <div className="trans-guide-prompt">
                             Select the text or the red box to translate
                         </div>
                         <div className="canvas-container">
+                            <div id="zxxCropBox" className="zxxCropBox" style = {zxxCropBoxStyle}>
+                                {zxxDragData.map((item, index)=> {
+                                    return (
+                                        <div key={index} {...item}></div>
+                                    )
+                                })}
+                            </div>
                             <canvas ref={this.canvas} className="lower-canvas" width="565" height="800" ></canvas>
                         </div>
                     </div>
@@ -272,6 +313,8 @@ class WorkbenchMain extends React.Component {
     }
 }
 
-
+const $ = function (id) {
+    return document.getElementById(id);
+};
 
 export default WorkbenchMain;

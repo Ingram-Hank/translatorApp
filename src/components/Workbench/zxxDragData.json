@@ -1,0 +1,38 @@
+[
+    {
+        "id": "zxxDragBg", 
+        "className": "move"
+    },
+    {
+        "id": "dragLeftTop", 
+        "className": "drag nw-resize"
+    },
+    {
+        "id": "dragLeftBot", 
+        "className": "drag sw-resize"
+    },
+    {
+        "id": "dragRightTop", 
+        "className": "drag ne-resize"
+    },
+    {
+        "id": "dragRightBot", 
+        "className": "drag se-resize"
+    },
+    {
+        "id": "dragTopCenter", 
+        "className": "drag n-resize"
+    },
+    {
+        "id": "dragBotCenter", 
+        "className": "drag s-resize"
+    },
+    {
+        "id": "dragRightCenter", 
+        "className": "drag e-resize"
+    },
+    {
+        "id": "dragLeftCenter", 
+        "className": "drag w-resize"
+    }
+]

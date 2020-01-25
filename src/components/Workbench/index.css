@@ -87,3 +87,69 @@
         width: 100px;
         height: 110px;
         margin: 0 -30px; }
+
+.zxxCropBox {
+  position: absolute;
+  display: none;
+  border: 1px solid #050905;
+  z-index: 2; }
+
+.move {
+  height: 100%;
+  background: white;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  cursor: move; }
+
+.drag {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border: 1px solid #000;
+  border-radius: 50%;
+  background: white;
+  overflow: hidden; }
+
+.nw-resize {
+  left: -3px;
+  top: -3px;
+  cursor: nw-resize; }
+
+.sw-resize {
+  left: -3px;
+  bottom: -3px;
+  cursor: sw-resize; }
+
+.ne-resize {
+  right: -3px;
+  top: -3px;
+  cursor: ne-resize; }
+
+.se-resize {
+  right: -3px;
+  bottom: -3px;
+  cursor: se-resize; }
+
+.n-resize {
+  top: -3px;
+  left: 50%;
+  margin-left: -3px;
+  cursor: n-resize; }
+
+.s-resize {
+  bottom: -3px;
+  left: 50%;
+  margin-left: -3px;
+  cursor: s-resize; }
+
+.e-resize {
+  right: -3px;
+  top: 50%;
+  margin-top: -3px;
+  cursor: e-resize; }
+
+.w-resize {
+  left: -3px;
+  top: 50%;
+  margin-top: -3px;
+  cursor: w-resize; }
