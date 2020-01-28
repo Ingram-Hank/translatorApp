@@ -34,14 +34,6 @@
           left: 0px;
           top: 0px;
           touch-action: none;
-          user-select: none; }
-        .workbench-main .workbench-work-wrap .canvas-container .upper-canvas {
-          position: absolute;
-          width: 565px;
-          height: 800px;
-          left: 0px;
-          top: 0px;
-          touch-action: none;
           user-select: none;
           cursor: crosshair; }
   .workbench-container {
@@ -89,67 +81,154 @@
         margin: 0 -30px; }
 
 .zxxCropBox {
+  position: absolute; }
+
+.cancel {
   position: absolute;
-  display: none;
-  border: 1px solid #050905;
-  z-index: 2; }
+  top: -20px;
+  right: -20px;
+  border-radius: 50%;
+  background-color: #ef9e9f;
+  background-image: linear-gradient(45deg, #ff4f81 30%, #fe6c5f);
+  width: 30px;
+  height: 30px;
+  line-height: 28px;
+  border: 2px solid #fff;
+  transition: all .3s;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 3; }
+
+.source-area-tip {
+  position: absolute;
+  bottom: -50px;
+  right: -2px;
+  width: 160px; }
+  .source-area-tip .content-tip {
+    color: white;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 15px;
+    border: 2px solid #fff;
+    text-align: center;
+    white-space: nowrap; }
+
+.ok {
+  position: absolute;
+  bottom: -10px;
+  right: -20px;
+  width: 30px;
+  height: 30px;
+  line-height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transition: all .3s;
+  background-color: #a5d296;
+  background-image: linear-gradient(45deg, #1cc7d0, #2dde98);
+  box-shadow: 0 2px 6px 0 rgba(45, 222, 152, 0.4);
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer; }
+
+.border-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(to right, #ff4f81 0%, #ff4f81 50%, transparent 50%);
+  background-size: 20px 2px;
+  background-repeat: repeat-x; }
+
+.border-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background-image: linear-gradient(to bottom, #ff4f81 0%, #ff4f81 50%, transparent 50%);
+  background-size: 2px 20px;
+  background-repeat: repeat-y; }
+
+.border-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(to right, #ff4f81 0%, #ff4f81 50%, transparent 50%);
+  background-size: 20px 2px;
+  background-repeat: repeat-x; }
+
+.border-right {
+  width: 2px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-image: linear-gradient(to bottom, #ff4f81 0%, #ff4f81 50%, transparent 50%);
+  background-size: 2px 20px;
+  background-repeat: repeat-y; }
 
 .move {
   height: 100%;
-  background: white;
   opacity: 0.3;
   filter: alpha(opacity=30);
   cursor: move; }
 
 .drag {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  border: 1px solid #000;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #ff4f81;
   border-radius: 50%;
   background: white;
-  overflow: hidden; }
+  overflow: hidden;
+  z-index: 2; }
 
 .nw-resize {
-  left: -3px;
-  top: -3px;
+  left: -4px;
+  top: -4px;
   cursor: nw-resize; }
 
 .sw-resize {
-  left: -3px;
-  bottom: -3px;
+  left: -4px;
+  bottom: -4px;
   cursor: sw-resize; }
 
 .ne-resize {
-  right: -3px;
-  top: -3px;
+  right: -4px;
+  top: -4px;
   cursor: ne-resize; }
 
 .se-resize {
-  right: -3px;
-  bottom: -3px;
+  right: -4px;
+  bottom: -4px;
   cursor: se-resize; }
 
 .n-resize {
-  top: -3px;
+  top: -4px;
   left: 50%;
-  margin-left: -3px;
+  margin-left: -4px;
   cursor: n-resize; }
 
 .s-resize {
-  bottom: -3px;
+  bottom: -4px;
   left: 50%;
-  margin-left: -3px;
+  margin-left: -4px;
   cursor: s-resize; }
 
 .e-resize {
-  right: -3px;
+  right: -4px;
   top: 50%;
-  margin-top: -3px;
+  margin-top: -4px;
   cursor: e-resize; }
 
 .w-resize {
-  left: -3px;
+  left: -4px;
   top: 50%;
-  margin-top: -3px;
+  margin-top: -4px;
   cursor: w-resize; }

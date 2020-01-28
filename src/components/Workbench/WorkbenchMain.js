@@ -1,5 +1,4 @@
 import React from 'react';
-import zxxDragData from './zxxDragData.json';
 
 class WorkbenchMain extends React.Component {
     constructor(props) {
@@ -10,32 +9,43 @@ class WorkbenchMain extends React.Component {
             elementWidth: 565,
             elementHeight: 800,
             navigateWidth: 215,
-            headerHeight: 50,
-            cropH: 0, 
-            cropW: 0, 
-            posX: 0, 
-            posY: 0,
-            display: false
+            headerHeight: 50
         };
     }
 
     componentDidUpdate() {
-        const that = this;
         const {elementWidth = 565, elementHeight = 800, navigateWidth = 215, headerHeight = 50} = this.state;
         let startx,
             starty,
-            flag = false,
+            flag = 0,
             x,
             y,
+            posX,
+            posY,
+            cropW,
+            cropH,
             leftDistance,
             topDistance,
             op = 0,
             scale = 1,
             type = 0,
             layers = [],
+            odiv,
             currentR;
+
+        let params = {
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0,
+            currentX: 0,
+            currentY: 0,
+            flag: false,
+            kind: "drag"
+        };
         // draw image according the selected image
         const canvas = this.canvas.current;
+        const canvasParentElement = canvas.parentElement;
         const ctx = canvas.getContext('2d');
         const img = new Image();
         img.src = this.props.selectedImage;
@@ -52,8 +62,8 @@ class WorkbenchMain extends React.Component {
             if (flag && op === 0) { op = 3; }
             if (flag && op === 3) {
                 if (!currentR) { currentR = rect }
-                currentR.x1 = x
-                currentR.width = currentR.x2 - currentR.x1
+                currentR.x1 = x;
+                currentR.width = currentR.x2 - currentR.x1;
             }
         }
         function resizeTop(rect) {
@@ -154,7 +164,6 @@ class WorkbenchMain extends React.Component {
                     render(item);
                     allNotIn = 0;
                 }
-                ctx.stroke();
             })
             if (flag && allNotIn && op < 3) {
                 op = 1
@@ -193,77 +202,116 @@ class WorkbenchMain extends React.Component {
             }
             position.width = position.x2 - position.x1;
             position.height = position.y2 - position.y1;
-            if (position.width < 50 || position.height < 50) {
-                position.width = 60;
-                position.height = 60;
-                position.x2 += position.x1 + 60;
-                position.y2 += position.y1 + 60;
+            if(position.width<50||position.height<50){
+                position.width=60;
+                position.height=60;
+                position.x2+=position.x1+60;
+                position.y2+=position.y1+60;
             }
             return position
         }
-
-        function clearLayer() {
+        function clearLayers () {
             layers.pop();
-            ctx.clearRect(0, 0, elementWidth, elementHeight);
+            ctx.clearRect(0,0,elementWidth,elementHeight);
             reshow();
+            if(odiv)  odiv.remove();
         }
 
         function mousedown (e) {
-            startx = (e.pageX - navigateWidth - canvas.parentElement.offsetLeft) / scale;
-            starty = (e.pageY - headerHeight - canvas.parentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
+            startx = (e.pageX - navigateWidth - canvasParentElement.offsetLeft) / scale;
+            starty = (e.pageY - headerHeight - canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
+            
             currentR = isPointInRetc(startx, starty);
             if (currentR) {
                 leftDistance = startx - currentR.x1;
                 topDistance = starty - currentR.y1;
             }
+            if(op < 3)  clearLayers ();
             ctx.strokeRect(x, y, 0, 0);
-            flag = true;
+            ctx.strokeStyle = 'red';
+            flag = 1;
         }
         function mousemove (e) {
-            x = (e.pageX - navigateWidth - canvas.parentElement.offsetLeft) / scale;
-            y = (e.pageY - headerHeight - canvas.parentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
-            ctx.save();
+            x = (e.pageX - navigateWidth - canvasParentElement.offsetLeft) / scale;
+            y = (e.pageY - headerHeight - canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / scale;
+            ctx.setLineDash([10]);
             canvas.style.cursor = "crosshair";
             ctx.clearRect(0, 0, elementWidth, elementHeight);
             if (flag && op === 1) {
                 ctx.strokeRect(startx, starty, x - startx, y - starty);
             }
-            ctx.restore();
             reshow(x, y);
         }
         function mouseup (e) {
+            posX = startx;
+            posY = starty;
+            cropW = x - startx;
+            cropH = y - starty;
+            if(x - startx < 0) {
+                posX = x;
+                cropW = startx - x;
+            }
+            if(y - starty < 0) {
+                posY = y;
+                cropH = starty - y;
+            }
             if (op === 1) {
-                layers.push(fixPosition({
-                    x1: startx,
-                    y1: starty,
-                    x2: x,
-                    y2: y,
-                    type: type
-                }))
-                let posX = startx;
-                let posY = starty;
-                let cropW = x - startx;
-                let cropH = y - starty;
-                if(x - startx < 0) {
-                    posX = x;
-                    cropW = startx - x;
-                }
-                if(y - starty < 0) {
-                    posY = y;
-                    cropH = starty - y;
-                }
-                that.setState({
-                    display: true,
-                    posX,
-                    posY,
-                    cropW,
-                    cropH
-                });
-            } else if (op >= 3) {
+                odiv = document.createElement("div");
+                canvasParentElement.appendChild(odiv);
+                odiv.setAttribute("id", "zxxCropBox");
+                odiv.setAttribute("class", "zxxCropBox");
+                odiv.style.height = `${cropH}px`;
+                odiv.style.width = `${cropW}px`;
+                odiv.style.left = `${posX}px`;
+                odiv.style.top = `${posY}px`;
+                odiv.innerHTML = `
+                    <div id="zxxCropBoxCancel" class="cancel" title="delete">
+                        <span class="glyphicon glyphicon-trash">
+                    </div>
+                    <div class="source-area-tip" >
+                        <div class="content-tip">
+                            Create the text frame
+                        </div>
+                        <div class="ok" title="confirm" id="zxxCropBoxConfirm"> 
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </div>
+                    </div>
+                    <div class="border-top"></div>
+                    <div class="border-left"></div>
+                    <div class="border-bottom"></div>
+                    <div class="border-right"></div>
+                    <div id="zxxDragBg" class="move"></div>
+                    <div id="dragLeftTop" class="drag nw-resize"></div>
+                    <div id="dragLeftBot" class="drag sw-resize"></div>
+                    <div id="dragRightTop" class="drag ne-resize"></div>
+                    <div id="dragRightBot" class="drag se-resize"></div>
+                    <div id="dragTopCenter" class="drag n-resize"></div>
+                    <div id="dragBotCenter" class="drag s-resize"></div>
+                    <div id="dragRightCenter" class="drag e-resize"></div>
+                    <div id="dragLeftCenter" class="drag w-resize"></div>`;
+                     
+                //bind drag
+                startDrag($("zxxDragBg"), $("zxxCropBox"), "drag");
+                //bind pull
+                startDrag($("dragLeftTop"), $("zxxCropBox"), "nw");
+                startDrag($("dragLeftBot"), $("zxxCropBox"), "sw");
+                startDrag($("dragRightTop"), $("zxxCropBox"), "ne");
+                startDrag($("dragRightBot"), $("zxxCropBox"), "se");
+                startDrag($("dragTopCenter"), $("zxxCropBox"), "n");
+                startDrag($("dragBotCenter"), $("zxxCropBox"), "s");
+                startDrag($("dragRightCenter"), $("zxxCropBox"), "e");
+                startDrag($("dragLeftCenter"), $("zxxCropBox"), "w");
+                $("zxxCropBoxCancel").addEventListener("click", ()=> {
+                    clearLayers()
+                })
+                $("zxxCropBoxConfirm").addEventListener("click", ()=> {
+                    alert(456);
+                })
+            }else if(op>=3){
                 fixPosition(currentR)
             }
             currentR = null;
-            flag = false;
+            flag = 0;
             reshow(x, y);
             op = 0;
         }
@@ -275,20 +323,107 @@ class WorkbenchMain extends React.Component {
         canvas.onmouseenter = function () {
             canvas.onmousedown = mousedown;
             canvas.onmousemove = mousemove;
-            document.onmouseup = mouseup;
+            canvas.onmouseup = mouseup;
         }
 
+        var startDrag = function (point, target, kind) {
+            params.width = getCss(target, "width");
+            params.height = getCss(target, "height");
+            if (getCss(target, "left") !== "auto") {
+              params.left = getCss(target, "left");
+            }
+            if (getCss(target, "top") !== "auto") {
+              params.top = getCss(target, "top");
+            }
+            let clickFlag = false;
+            point.onmousedown = function (event) {
+              params.kind = kind;
+              params.flag = true;
+              clickFlag = true;
+              if (!event) {
+                event = window.event;
+              }
+              var e = event;
+              params.currentX = e.clientX;  //mouse down x coordinates
+              params.currentY = e.clientY;  //mouse down y coordinates
+              
+              document.onmousemove = function (event) {
+                let e = event ? event : window.event;
+                clickFlag = false;
+                if (params.flag) {
+                  var nowX = e.clientX; // mouse move x coordinates
+                  var nowY = e.clientY;   // mouse down y coordinates
+                  var disX = nowX - params.currentX;  // mouse move x distance
+                  var disY = nowY - params.currentY;  // mouse move y distance
+                  if (params.kind === "n") {
+                    //pull top, height increace or minus
+                    target.style.top = parseInt(params.top) + disY + "px";
+                    target.style.height = parseInt(params.height) - disY + "px";
+                  } else if (params.kind === "w") { //pull left
+                    target.style.left = parseInt(params.left) + disX + "px";
+                    target.style.width = parseInt(params.width) - disX + "px";
+                  } else if (params.kind === "e") { //pull right
+                    target.style.width = parseInt(params.width) + disX + "px";
+                  } else if (params.kind === "s") { //pull bottom
+                    target.style.height = parseInt(params.height) + disY + "px";
+                  } else if (params.kind === "nw") { //pull left top
+                    target.style.left = parseInt(params.left) + disX + "px";
+                    target.style.width = parseInt(params.width) - disX + "px";
+                    target.style.top = parseInt(params.top) + disY + "px";
+                    target.style.height = parseInt(params.height) - disY + "px";
+                  } else if (params.kind === "ne") { //pull right top
+                    target.style.top = parseInt(params.top) + disY + "px";
+                    target.style.height = parseInt(params.height) - disY + "px";
+                    target.style.width = parseInt(params.width) + disX + "px";
+                  } else if (params.kind === "sw") { //pull left bottom
+                    target.style.left = parseInt(params.left) + disX + "px";
+                    target.style.width = parseInt(params.width) - disX + "px";
+                    target.style.height = parseInt(params.height) + disY + "px";
+                  } else if (params.kind === "se") { //pull left bottom
+                    target.style.width = parseInt(params.width) + disX + "px";
+                    target.style.height = parseInt(params.height) + disY + "px";
+                  } else { //move
+                    target.style.left = parseInt(params.left) + disX + "px";
+                    target.style.top = parseInt(params.top) + disY + "px";
+                  }
+                }
+  
+                document.onmouseup = function () {
+                  params.flag = false;
+                  if (getCss(target, "left") !== "auto") {
+                    params.left = getCss(target, "left");
+                  }
+                  if (getCss(target, "top") !== "auto") {
+                    params.top = getCss(target, "top");
+                  }
+                  params.width = getCss(target, "width");
+                  params.height = getCss(target, "height");
+
+                  //给隐藏文本框赋值
+                  posX = parseInt(target.style.left);
+                  posY = parseInt(target.style.top);
+                  cropW = parseInt(target.style.width);
+                  cropH = parseInt(target.style.height);
+                  if (posX < 0) {
+                    posX = 0;
+                  }
+                  if (posY < 0) {
+                    posY = 0;
+                  }
+                  if ((posX + cropW) > elementWidth) {
+                    cropW = elementWidth - posX;
+                  }
+                  if ((posY + cropH) > elementHeight) {
+                    cropH = elementHeight - posY;
+                  }
+                };
+              }
+            };
+        };
+       
     }
 
     render() {
-        const {cropH, cropW, posX, posY, display} = this.state;
-        const zxxCropBoxStyle = {
-            display: display? "block":"none",
-            height: `${cropH}px`,
-            width: `${cropW}px`,
-            left: `${posX}px`,
-            top: `${posY}px`
-        };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id= "workbenchMain">
                 <div className="workbench-work-wrap">
@@ -297,13 +432,6 @@ class WorkbenchMain extends React.Component {
                             Select the text or the red box to translate
                         </div>
                         <div className="canvas-container">
-                            <div id="zxxCropBox" className="zxxCropBox" style = {zxxCropBoxStyle}>
-                                {zxxDragData.map((item, index)=> {
-                                    return (
-                                        <div key={index} {...item}></div>
-                                    )
-                                })}
-                            </div>
                             <canvas ref={this.canvas} className="lower-canvas" width="565" height="800" ></canvas>
                         </div>
                     </div>
@@ -313,8 +441,10 @@ class WorkbenchMain extends React.Component {
     }
 }
 
-const $ = function (id) {
+const $ =  (id)=> {
     return document.getElementById(id);
 };
-
+const getCss = (o, key) => {
+    return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, false)[key];
+  };
 export default WorkbenchMain;
