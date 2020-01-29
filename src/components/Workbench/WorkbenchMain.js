@@ -1,4 +1,6 @@
 import React from 'react';
+import Modal from '../Modal';
+import TranslpopUp from './TranslpopUp';
 
 class WorkbenchMain extends React.Component {
     constructor(props) {
@@ -14,7 +16,8 @@ class WorkbenchMain extends React.Component {
     }
 
     componentDidUpdate() {
-        const {elementWidth = 565, elementHeight = 800, navigateWidth = 215, headerHeight = 50} = this.state;
+        const that = this;
+        const {elementWidth, elementHeight, navigateWidth, headerHeight} = this.state;
         let startx,
             starty,
             flag = 0,
@@ -28,7 +31,6 @@ class WorkbenchMain extends React.Component {
             topDistance,
             op = 0,
             scale = 1,
-            type = 0,
             layers = [],
             odiv,
             currentR;
@@ -50,7 +52,7 @@ class WorkbenchMain extends React.Component {
         const img = new Image();
         img.src = this.props.selectedImage;
         img.onload = () => {
-            canvas.style.backgroundImage = "url(" + img.src + ")";
+            canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${elementWidth}px ${elementHeight}px`;
         }
         document.oncontextmenu = (e) => {
@@ -212,7 +214,7 @@ class WorkbenchMain extends React.Component {
         }
         function clearLayers () {
             layers.pop();
-            ctx.clearRect(0,0,elementWidth,elementHeight);
+            ctx.clearRect(0, 0, elementWidth, elementHeight);
             reshow();
             if(odiv)  odiv.remove();
         }
@@ -302,10 +304,13 @@ class WorkbenchMain extends React.Component {
                 startDrag($("dragRightCenter"), $("zxxCropBox"), "e");
                 startDrag($("dragLeftCenter"), $("zxxCropBox"), "w");
                 $("zxxCropBoxCancel").addEventListener("click", ()=> {
-                    clearLayers()
+                    clearLayers();
+                    that.props.openModal();
                 })
                 $("zxxCropBoxConfirm").addEventListener("click", ()=> {
-                    alert(456);
+                    const cropedImg = cropImage(img, posX / scale, posY / scale, parseInt(cropW) / scale, parseInt(cropH) / scale);
+                    that.props.setCropImg(cropedImg);
+                    that.props.openTranlPopUp();
                 })
             }else if(op>=3){
                 fixPosition(currentR)
@@ -326,6 +331,25 @@ class WorkbenchMain extends React.Component {
             canvas.onmouseup = mouseup;
         }
 
+        function cropImage(img, cropPosX, cropPosY, width, height) {
+            /*var cropContainer = ID("cropContainer");
+            cropContainer.parentNode.removeChild(cropContainer);*/
+            /*ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);*/
+            //sx,sy 是相对于图片的坐标。巨坑
+            var newCanvas = document.createElement('canvas');
+            newCanvas.setAttribute('id', 'newCanvas');
+            newCanvas.width = width * scale;
+            newCanvas.height = height * scale;
+            var newCtx = newCanvas.getContext('2d');
+            newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, width * scale, height * scale);
+        
+            // canvas转化为图片
+            var newImage = new Image();
+            newImage.src = newCanvas.toDataURL("image/png");
+            console.log("newImage", newImage);
+            return newImage
+          }
+
         var startDrag = function (point, target, kind) {
             params.width = getCss(target, "width");
             params.height = getCss(target, "height");
@@ -335,11 +359,11 @@ class WorkbenchMain extends React.Component {
             if (getCss(target, "top") !== "auto") {
               params.top = getCss(target, "top");
             }
-            let clickFlag = false;
+            
             point.onmousedown = function (event) {
               params.kind = kind;
               params.flag = true;
-              clickFlag = true;
+              
               if (!event) {
                 event = window.event;
               }
@@ -349,7 +373,6 @@ class WorkbenchMain extends React.Component {
               
               document.onmousemove = function (event) {
                 let e = event ? event : window.event;
-                clickFlag = false;
                 if (params.flag) {
                   var nowX = e.clientX; // mouse move x coordinates
                   var nowY = e.clientY;   // mouse down y coordinates
@@ -424,6 +447,8 @@ class WorkbenchMain extends React.Component {
     }
 
     render() {
+        const {modalOpen} = this.props;
+        const modalProps = {};
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id= "workbenchMain">
                 <div className="workbench-work-wrap">
@@ -434,6 +459,14 @@ class WorkbenchMain extends React.Component {
                         <div className="canvas-container">
                             <canvas ref={this.canvas} className="lower-canvas" width="565" height="800" ></canvas>
                         </div>
+                        {modalOpen &&
+                            <Modal {...modalProps}>
+                                123242
+                            </Modal>
+                        }
+                        <TranslpopUp>
+
+                        </TranslpopUp>
                     </div>
                 </div>
             </div>
@@ -447,4 +480,5 @@ const $ =  (id)=> {
 const getCss = (o, key) => {
     return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, false)[key];
   };
+
 export default WorkbenchMain;

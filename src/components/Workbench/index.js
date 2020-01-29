@@ -4,7 +4,7 @@ import RightMenu from './RightMenu';
 import WorkbenchMain from './WorkbenchMain';
 import './index.css';
 
-function Workbench({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, zoomCanvasValue, selectedImage}) {
+function Workbench({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, zoomCanvasValue, selectedImage, openModal, setCropImg, modalOpen}) {
     const canvasZoomProps = {
         zoomCanvasBech,
         zoomCanvasPlus,
@@ -12,7 +12,10 @@ function Workbench({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, zoomCanvasV
         value: zoomCanvasValue
     };
     const workbenchMainProps = {
-        selectedImage
+        selectedImage,
+        openModal,
+        setCropImg,
+        modalOpen
     };
     return (
         <div className="workbench">

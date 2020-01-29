@@ -7,7 +7,7 @@ import {
   Workbench
 } from '../components';
 import {handlerLanguage} from '../modules/language';
-import {getTranslImages, selecteCanvas} from '../modules/images';
+import {getTranslImages, selecteCanvas, receivedCropedImg} from '../modules/images';
 import {
   hanlerMarquee,
   handlerToggleAutoClear, 
@@ -16,7 +16,9 @@ import {
   handlerSelectImage,
   handlerZoomCanvasBech,
   handlerZoomCanvasPlus,
-  handlerZoomCanvasMinus
+  handlerZoomCanvasMinus,
+  openModal,
+  closeModal
 } from '../modules/ui';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,12 +37,15 @@ function App(props) {
     handlerDropDownItem,
     onToggle,
     selectedImg,
+    openModal,
+    setCropImg,
     selectItem,
     selectedImage,
     zoomCanvasValue,
     zoomCanvasBech,
     zoomCanvasPlus,
-    zoomCanvasMinus
+    zoomCanvasMinus,
+    modalOpen
   } = props;
   
   const headerProps = {
@@ -64,7 +69,10 @@ function App(props) {
     zoomCanvasValue,
     zoomCanvasBech,
     zoomCanvasPlus,
-    zoomCanvasMinus
+    zoomCanvasMinus,
+    openModal,
+    setCropImg,
+    modalOpen
   }
   
   return (
@@ -88,7 +96,8 @@ const mapStateToProps = (state) => {
     switchAutoOCR = true, 
     switchAutoTranslate= true,
     selectedImg,
-    zoomCanvasValue
+    zoomCanvasValue,
+    modalOpen
   } = state.ui;
   const contentText = strings.screen[language];
   return {
@@ -100,6 +109,7 @@ const mapStateToProps = (state) => {
     switchAutoTranslate,
     selectedImg,
     zoomCanvasValue,
+    modalOpen,
     selectedImage,
     contentText
   }
@@ -147,8 +157,17 @@ const mapDispatchToProps = (dispatch) => {
     },
     zoomCanvasMinus: (value)=> {
         dispatch(handlerZoomCanvasMinus(value));
+    },
+    openModal: ()=> {
+      dispatch(openModal());
+    },
+    closeModal: ()=> {
+      dispatch(closeModal());
+    },
+    setCropImg: (img)=> {
+      dispatch(receivedCropedImg())
     }
-    }
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
