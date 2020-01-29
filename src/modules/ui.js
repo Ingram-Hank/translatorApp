@@ -14,6 +14,10 @@ const uiReducer = (state = {}, action)=> {
             return Object.assign({}, state, {selectedImg: action.payload})
         case actions.UI_ZOOM_CANVAS_BECH:
             return Object.assign({}, state, {zoomCanvasValue: action.payload})
+        case actions.UI_OPEN_MODAL:
+            return Object.assign({}, state, {modalOpen: true})
+        case actions.UI_CLOSE_MODAL:
+            return Object.assign({}, state, {modalOpen: false})
         default: 
             return state
     }
@@ -49,6 +53,14 @@ export const handlerZoomCanvasBech = (payload)=> ({
     payload
 });
 
+export const openModal = ()=> ({
+    type: actions.UI_OPEN_MODAL
+})
+
+export const closeModal = ()=> ({
+    type: actions.UI_CLOSE_MODAL
+})
+
 export const handlerZoomCanvasPlus = (value) => {
     return (dispatch, getState) => {
         let payload = (Number(value) + 0.1).toFixed(1);
@@ -68,6 +80,5 @@ export const handlerZoomCanvasMinus = (value) => {
         dispatch(handlerZoomCanvasBech(payload))
     }
 }
-
 
 export default uiReducer;

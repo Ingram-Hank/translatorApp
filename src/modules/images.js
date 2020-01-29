@@ -8,6 +8,8 @@ const imagesReducer = (state={}, action)=> {
             return Object.assign({}, state, {imagesCollection: action.payload})
         case actions.RECEIVED_SELECTED_IMG:
             return Object.assign({}, state, {selectedImage: action.payload})
+        case actions.RECEIVED_CROPED_IMG:
+            return Object.assign({}, state, {cropedImage: action.payload})
         default: 
             return state
     }
@@ -23,9 +25,13 @@ export const receiveSelectedImg = (payload)=> ({
     payload
 });
 
+export const receivedCropedImg = (payload) => ({
+    type: actions.RECEIVED_CROPED_IMG,
+    payload
+})
+
 export const getTranslImages = ()=> {
     return (dispatch, getState)=> {
-
         dispatch(receivedImages(images));
     }
 };
