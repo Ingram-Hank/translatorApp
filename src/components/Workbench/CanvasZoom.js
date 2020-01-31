@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CanvasZoom ({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, value = 1}) {
+function CanvasZoom ({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, value}) {
     const zoomScrollProps = {
         title: "Slide to zoom",
         className: "canvas-zoom-scroll",
@@ -8,7 +8,7 @@ function CanvasZoom ({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, value = 1
         step: "0.1",
         min: "0.5",
         max: "1.5",
-        defaultValue : "1",
+        value,
         onChange: (e)=> {zoomCanvasBech(e)}
     };
     return (

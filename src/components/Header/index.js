@@ -23,7 +23,7 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
         <div className="header">
             <div className="col-md-2 col-xs-2 col-lg-2">
                 <Button>
-                    {"< " + contentText.back}
+                    &lt; {contentText.back}
                 </Button>
             </div>
             <div className="col-md-8 col-xs-8 col-lg-8">

@@ -2,10 +2,10 @@ import thunk from 'redux-thunk';
 
 const logger = store => next => action => {
     let result = next(action);
-    console.group('state');
+    console.groupCollapsed('action---------state');
         console.log('action', action);
         console.log('state', store.getState());
-    console.groupEnd('state');
+    console.groupEnd();
     return result;
 }
 

@@ -22,15 +22,11 @@
         color: #777;
         text-align: center; }
       .workbench-main .workbench-work-wrap .canvas-container {
-        width: 565px;
-        height: 800px;
         position: relative;
         user-select: none;
         margin: 0 auto; }
         .workbench-main .workbench-work-wrap .canvas-container .lower-canvas {
           position: absolute;
-          width: 565px;
-          height: 800px;
           left: 0px;
           top: 0px;
           touch-action: none;
@@ -80,13 +76,15 @@
         height: 110px;
         margin: 0 -30px; }
 
-.zxxCropBox {
-  position: absolute; }
+.cropBox {
+  position: absolute;
+  min-width: 60px;
+  min-height: 60px; }
 
 .cancel {
   position: absolute;
-  top: -20px;
-  right: -20px;
+  top: -16px;
+  right: -16px;
   border-radius: 50%;
   background-color: #ef9e9f;
   background-image: linear-gradient(45deg, #ff4f81 30%, #fe6c5f);
@@ -104,7 +102,7 @@
 .source-area-tip {
   position: absolute;
   bottom: -50px;
-  right: -2px;
+  right: 2px;
   width: 160px; }
   .source-area-tip .content-tip {
     color: white;
