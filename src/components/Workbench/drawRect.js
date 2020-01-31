@@ -215,7 +215,7 @@ class drawRect {
     mousedown(e) {
         this.startx = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
         this.starty = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
-
+        
         this.currentR = this.isPointInRetc(this.startx, this.starty);
         if (this.currentR) {
             this.leftDistance = this.startx - this.currentR.x1;
@@ -242,19 +242,19 @@ class drawRect {
     }
 
     mouseup() {
+        this.posX = this.startx;
+        this.posY = this.starty;
+        this.cropW = this.x - this.startx;
+        this.cropH = this.y - this.starty;
+        if (this.x - this.startx < 0) {
+            this.posX = this.x;
+            this.cropW = this.startx - this.x;
+        }
+        if (this.y - this.starty < 0) {
+            this.posY = this.y;
+            this.cropH = this.starty - this.y;
+        }
         if (this.op === 1) {
-            this.posX = this.startx;
-            this.posY = this.starty;
-            this.cropW = this.x - this.startx;
-            this.cropH = this.y - this.starty;
-            if (this.x - this.startx < 0) {
-                this.posX = this.x;
-                this.cropW = this.startx - this.x;
-            }
-            if (this.y - this.starty < 0) {
-                this.posY = this.y;
-                this.cropH = this.starty - this.y;
-            }
             this.odiv = document.createElement("div");
             this.canvasParentElement.appendChild(this.odiv);
             this.odiv.setAttribute("id", "cropBox");
@@ -357,7 +357,7 @@ class drawRect {
             const e = event;
             this.params.currentX = e.clientX;  //mouse down x coordinates
             this.params.currentY = e.clientY;  //mouse down y coordinates
-            document.addEventListener("mousemove", (event) => {
+            point.addEventListener("mousemove", (event) => {
                 let e = event ? event : window.event;
                 if (this.params.flag) {
                     const nowX = e.clientX; // mouse move x coordinates
@@ -397,7 +397,7 @@ class drawRect {
                     }
                 }
 
-                document.addEventListener("mouseup", () => {
+                point.addEventListener("mouseup", () => {
                     this.params.flag = false;
                     if ($("cropBoxCancel")) $("cropBoxCancel").style.display = "block";
                     if ($("cropBoxSourceArea")) $("cropBoxSourceArea").style.display = "block";
