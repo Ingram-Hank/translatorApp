@@ -1,5 +1,17 @@
 [
     {
+        "className": "border-top"
+    },
+    {
+        "className": "border-left"
+    },
+    {
+        "className": "border-bottom"
+    },
+    {
+        "className": "border-right"
+    },
+    {
         "id": "zxxDragBg", 
         "className": "move"
     },

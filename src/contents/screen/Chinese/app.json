@@ -58,5 +58,10 @@
             "text": "自动翻译"
         }
     ],
-    "selectImage": "选择图片"
+    "selectImage": "选择图片",
+    "lastChapter": "上一话",
+    "currentChapter": "当前话",
+    "nextChapter": "下一话",
+    "prompt": "请选择文字或者红色选框开始翻译",
+    "canvasPrompt": "当前浏览器不支持Canvas，请更换浏览器后再试"
 }

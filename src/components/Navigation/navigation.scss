@@ -5,10 +5,23 @@
         color: #f1f1f1;
         padding-top: 15px;
         padding-bottom: 15px;
+        margin: 0 auto;
         h5 {
             margin-top: 0;
-            margin-bottom: 0;
+            margin-bottom: 10px;
             font-size: 14px;
+        }
+        .chapter {
+            margin-bottom: 0;
+            -moz-user-select:none;
+            -webkit-user-select:none;
+            user-select:none;
+            .glyphicon {
+                cursor: pointer;
+            }
+            &-current {
+                margin: 0 20px;
+            }
         }
     }
     &-body {

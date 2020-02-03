@@ -3,22 +3,22 @@ import {connect} from 'react-redux';
 import {
   Header,
   Content,
-  Navigation,
-  Workbench
+  Navigation
 } from '../components';
+import Workbench from './Workbench';
 import {handlerLanguage} from '../modules/language';
-import {getTranslImages, selecteCanvas, receivedCropedImg} from '../modules/images';
+import {
+  getTranslImages,
+  selecteCanvas,
+  minusChapter,
+  plusChapter
+} from '../modules/images';
 import {
   hanlerMarquee,
   handlerToggleAutoClear, 
   handlerToggleAutoOCR,
   handlerToggleAutoTranslate,
-  handlerSelectImage,
-  handlerZoomCanvasBech,
-  handlerZoomCanvasPlus,
-  handlerZoomCanvasMinus,
-  openModal,
-  closeModal
+  handlerSelectImage
 } from '../modules/ui';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -37,15 +37,11 @@ function App(props) {
     handlerDropDownItem,
     onToggle,
     selectedImg,
-    openModal,
-    setCropImg,
-    selectItem,
-    selectedImage,
-    zoomCanvasValue,
-    zoomCanvasBech,
-    zoomCanvasPlus,
-    zoomCanvasMinus,
-    modalOpen
+    toLastChapter,
+    toNextChapter,
+    currentNumber,
+    totalNumber,
+    selectItem
   } = props;
   
   const headerProps = {
@@ -61,26 +57,20 @@ function App(props) {
   const navigationProps= {
     contentText,
     selectedImg,
+    toLastChapter,
+    toNextChapter,
+    currentNumber,
+    totalNumber,
     selectItem,
     images
   };
-  const workbenchProps = {
-    selectedImage,
-    zoomCanvasValue,
-    zoomCanvasBech,
-    zoomCanvasPlus,
-    zoomCanvasMinus,
-    openModal,
-    setCropImg,
-    modalOpen
-  }
   
   return (
     <div className="main">
       <Header {...headerProps}/>
       <Content>
         <Navigation {...navigationProps}/>
-        <Workbench {...workbenchProps}/>
+        <Workbench {...props}/>
       </Content>
     </div>
   );
@@ -88,18 +78,21 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   const language = state.languageMoudels.language || "English";
+  const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
-  const selectedImage = state.images.selectedImage;
+  const {
+    selectedImage, 
+    currentNumber,
+    totalNumber
+  } = state.images;
   const {
     marquee, 
     switchAutoClear = true, 
     switchAutoOCR = true, 
     switchAutoTranslate= true,
-    selectedImg,
-    zoomCanvasValue,
-    modalOpen
+    selectedImg
   } = state.ui;
-  const contentText = strings.screen[language];
+  
   return {
     language,
     images,
@@ -108,8 +101,8 @@ const mapStateToProps = (state) => {
     switchAutoOCR,
     switchAutoTranslate,
     selectedImg,
-    zoomCanvasValue,
-    modalOpen,
+    currentNumber,
+    totalNumber,
     selectedImage,
     contentText
   }
@@ -149,24 +142,12 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(handlerSelectImage(selectedImg));
       dispatch(selecteCanvas());
     },
-    zoomCanvasBech: (e)=> {
-      dispatch(handlerZoomCanvasBech(e.target.value));
+    toLastChapter: (currentNumber) => {
+      dispatch(minusChapter(currentNumber));
     },
-    zoomCanvasPlus: (value)=> {
-        dispatch(handlerZoomCanvasPlus(value));
+    toNextChapter: (currentNumber) => {
+      dispatch(plusChapter(currentNumber));
     },
-    zoomCanvasMinus: (value)=> {
-        dispatch(handlerZoomCanvasMinus(value));
-    },
-    openModal: ()=> {
-      dispatch(openModal());
-    },
-    closeModal: ()=> {
-      dispatch(closeModal());
-    },
-    setCropImg: (img)=> {
-      dispatch(receivedCropedImg())
-    }
   }
 };
 
