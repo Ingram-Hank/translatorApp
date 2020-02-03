@@ -8,22 +8,27 @@ import {
     openModal,
     closeModal
 } from '../modules/ui';
-import {receivedCropedImg} from '../modules/images';
+import {
+    receivedCropedImg,
+    createTranslArea,
+    clearPreCropArea
+} from '../modules/images';
 
 
 function WorkbenchContainer (props){
-   
     return (
         <Workbench {...props}/>
     )
 }
 
 const mapStateToProps = (state) => {
-    const {selectedImage, cropedImage} = state.images;
+    const {selectedImage, cropedImage, hasCropedImg, createdTranslBox} = state.images;
     const {zoomCanvasValue = 1, modalOpen} = state.ui;
     return {
         selectedImage,
         cropedImage,
+        hasCropedImg,
+        createdTranslBox,
         zoomCanvasValue,
         modalOpen
     }
@@ -46,8 +51,12 @@ const mapDispatchToProps = (dispatch) => {
         closeModal: ()=> {
             dispatch(closeModal());
         },
-        setCropImg: (img)=> {
-            dispatch(receivedCropedImg(img))
+        setCropImg: (data)=> {
+            dispatch(receivedCropedImg(data.cropedImg))
+            dispatch(createTranslArea(data));
+        },
+        createNewCropArea: ()=> {
+            dispatch(clearPreCropArea());
         }
     }
 }

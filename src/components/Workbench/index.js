@@ -4,7 +4,24 @@ import RightMenu from './RightMenu';
 import WorkbenchMain from './WorkbenchMain';
 import './index.css';
 
-function Workbench({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, zoomCanvasValue, selectedImage, cropedImage, openModal, closeModal, setCropImg, modalOpen}) {
+function Workbench(props) {
+    const {
+        contentText,
+        zoomCanvasBech,
+        zoomCanvasPlus,
+        zoomCanvasMinus,
+        zoomCanvasValue,
+        selectedImage,
+        cropedImage,
+        openModal,
+        closeModal,
+        setCropImg,
+        createNewCropArea,
+        hasCropedImg,
+        createdTranslBox,
+        modalOpen
+        } = props;
+    
     const canvasZoomProps = {
         zoomCanvasBech,
         zoomCanvasPlus,
@@ -13,11 +30,16 @@ function Workbench({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, zoomCanvasV
     };
 
     const workbenchMainProps = {
+        contentText,
         selectedImage,
+        cropedImage,
         openModal,
         closeModal,
         setCropImg,
+        createNewCropArea,
         modalOpen,
+        hasCropedImg,
+        createdTranslBox,
         scale: zoomCanvasValue
     };
 

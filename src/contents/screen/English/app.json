@@ -58,5 +58,10 @@
             "text": "Auto-translation"
         }
     ],
-    "selectImage": "Select The Image"
+    "selectImage": "Select The Image",
+    "lastChapter": "Last Chapter",
+    "currentChapter": "Current Chapter",
+    "nextChapter": "Next Chapter",
+    "prompt": "Select the text or the red box to translate",
+    "canvasPrompt": "Please try to change your browser, since the current version do not support canvas."
 }

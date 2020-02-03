@@ -9,7 +9,9 @@ import Workbench from './Workbench';
 import {handlerLanguage} from '../modules/language';
 import {
   getTranslImages,
-  selecteCanvas
+  selecteCanvas,
+  minusChapter,
+  plusChapter
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -35,6 +37,10 @@ function App(props) {
     handlerDropDownItem,
     onToggle,
     selectedImg,
+    toLastChapter,
+    toNextChapter,
+    currentNumber,
+    totalNumber,
     selectItem
   } = props;
   
@@ -51,6 +57,10 @@ function App(props) {
   const navigationProps= {
     contentText,
     selectedImg,
+    toLastChapter,
+    toNextChapter,
+    currentNumber,
+    totalNumber,
     selectItem,
     images
   };
@@ -68,8 +78,13 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   const language = state.languageMoudels.language || "English";
+  const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
-  const {selectedImage} = state.images;
+  const {
+    selectedImage, 
+    currentNumber,
+    totalNumber
+  } = state.images;
   const {
     marquee, 
     switchAutoClear = true, 
@@ -77,7 +92,7 @@ const mapStateToProps = (state) => {
     switchAutoTranslate= true,
     selectedImg
   } = state.ui;
-  const contentText = strings.screen[language];
+  
   return {
     language,
     images,
@@ -86,6 +101,8 @@ const mapStateToProps = (state) => {
     switchAutoOCR,
     switchAutoTranslate,
     selectedImg,
+    currentNumber,
+    totalNumber,
     selectedImage,
     contentText
   }
@@ -124,7 +141,13 @@ const mapDispatchToProps = (dispatch) => {
     selectItem: (selectedImg)=> {
       dispatch(handlerSelectImage(selectedImg));
       dispatch(selecteCanvas());
-    }
+    },
+    toLastChapter: (currentNumber) => {
+      dispatch(minusChapter(currentNumber));
+    },
+    toNextChapter: (currentNumber) => {
+      dispatch(plusChapter(currentNumber));
+    },
   }
 };
 
