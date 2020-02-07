@@ -28,23 +28,20 @@ class WorkbenchMain extends React.Component {
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
-            this._drawCanvas = new drawRect(this.canvas.current, this.props.scale, img, this.props);
+            this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.props);
+            canvas.addEventListener("mouseleave", ()=> {
+                canvas.addEventListener('mousedown', null);
+                canvas.addEventListener('mousemove', null);
+                canvas.addEventListener('mouseup', null);
+            });
+            canvas.addEventListener("mouseenter", ()=> {
+                if(this._drawCanvas) {
+                    canvas.addEventListener('mousedown', (e) => this._drawCanvas.mousedown(e));
+                    canvas.addEventListener('mousemove', (e) => this._drawCanvas.mousemove(e));
+                    canvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
+                }
+            })
         }
-        if(this.props.hasCropedImg) {
-            canvas.removeEventListener('mouseenter', ()=> console.log("remove event"))
-        }
-        canvas.addEventListener("mouseleave", ()=>{
-            canvas.addEventListener('mousedown', null);
-            canvas.addEventListener('mousemove', null);
-            canvas.addEventListener('mouseup', null);
-        });
-        canvas.addEventListener("mouseenter", ()=> {
-            if(this._drawCanvas){
-                canvas.addEventListener('mousedown', (e) => this._drawCanvas.mousedown(e));
-                canvas.addEventListener('mousemove', (e) => this._drawCanvas.mousemove(e));
-                canvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
-            }
-        })
         document.oncontextmenu = (e) => {
             e.preventDefault();
         }
@@ -56,7 +53,12 @@ class WorkbenchMain extends React.Component {
                 selectedImage: this.props.selectedImage
             })
         }
-        if(this.props.hasCropedImg) this._drawCanvas = null;
+        if(!this.props.hasCropBox && this._drawCanvas) {
+            this._drawCanvas.clearLayers();
+            console.log('clear layers');
+            this._drawCanvas.clearCropBox();
+        }
+        
         this.drawCanvasBackGround()
     }
 
@@ -72,9 +74,11 @@ class WorkbenchMain extends React.Component {
             scale,
             contentText,
             cropedImage,
-            hasCropedImg = false, 
+            fontSettings,
+            hasCropedImg = false,
             createdTranslBox,
-            createNewCropArea
+            createNewCropArea,
+            font
         } = this.props;
         const { elementWidth, elementHeight } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -87,18 +91,26 @@ class WorkbenchMain extends React.Component {
             className: "lower-canvas",
             ref: this.canvas,
             width: currentElementWidth,
-            height: currentElementHeight
+            height: currentElementHeight,
+            style: {
+                cursor: hasCropedImg ? "default" : "crosshair"
+            }
         };
         const translpopUpProps = {
             contentText,
-            cropedImage
+            cropedImage,
+            createdTranslBox,
+            fontSettings,
+            font
         };
         const translAreaBoxProps = {
+            contentText,
             data: createdTranslBox,
             modalOpen,
             openModal,
             closeModal,
-            createNewCropArea
+            createNewCropArea,
+            scale: 1
         };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">
@@ -111,9 +123,8 @@ class WorkbenchMain extends React.Component {
                             <canvas {...canvasProps}>
                                 {contentText.canvasPrompt}
                             </canvas>
-                            <TranslAreaBox {...translAreaBoxProps}/>
+                            {hasCropedImg && <TranslAreaBox {...translAreaBoxProps}/>}
                         </div>
-                        
                     </div>
                 </div>
                 {hasCropedImg && <TranslpopUp {...translpopUpProps}/>}

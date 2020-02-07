@@ -266,15 +266,29 @@
 
 .translAreaBox {
     position: absolute;
-    border: 1px dashed #ff4f81;
+    border: 1px dashed hsl(343, 100%, 65%);
+    .canvasContainer {
+        position: relative;
+        left: 0;
+        top: 0;
+        .translCanvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: crosshair;
+            overflow: hidden;
+            opacity: 0.6;
+            filter:alpha(opacity = 60);
+            
+        }
+    }
 }
 
 .translContainer {
     position: fixed;
     top: 50px;
-    right: 207px;
+    right: 0;
     width: 250px;
-    transform: translate3d(0, 0, 0);
     z-index: 10000;
     box-shadow: 0 0 52px -5px rgba(0,0,0,.7);
     border: 1px solid #000;
@@ -467,6 +481,7 @@
             .font-family {
                 button {
                     width: 173px;
+                    overflow-x: hidden;
                 }
                 .dropdown-menu {
                     max-height: 150px;
@@ -556,7 +571,6 @@
                         left: 0;
                         right: 0;
                         bottom: 0;
-                        background-color: rgb(105, 59, 71);
                         opacity: 1;
                     }
                 }
@@ -581,6 +595,7 @@
                 cursor: pointer;
                 &.active{
                     background: #333a45 linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,.9));
+                    z-index: auto;
                 }
             }
             .func-title {

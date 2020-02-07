@@ -16,6 +16,21 @@
         background-color: white;
         transform: translate(-50%, -50%);
     }
+    &-canvasContainer {
+        position: relative;
+        top: 50%;
+        left:50%;
+        max-width: 400px;
+        border-radius: 5px;
+        transform: translate(-50%, -50%);
+        &-canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: crosshair;
+        }
+        
+    }
     &-header {
         position: relative;
         padding: 15px;

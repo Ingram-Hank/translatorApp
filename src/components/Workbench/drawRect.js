@@ -1,4 +1,4 @@
-
+import {$, getCss} from '../../utilities';
 class drawRect {
     constructor(canvas, scale, img, componentProps) {
         this.canvas = canvas;
@@ -210,6 +210,7 @@ class drawRect {
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         this.reshow();
     }
+
     clearCropBox() {
         if (this.odiv) this.odiv.remove();
     }
@@ -236,13 +237,11 @@ class drawRect {
         this.x = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
         this.y = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
         this.ctx.setLineDash([10]);
-        this.canvas.style.cursor = "crosshair";
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         if (this.flag && this.op === 1) {
             this.ctx.strokeRect(this.startx, this.starty, this.x - this.startx, this.y - this.starty);
         }
         this.reshow(this.x, this.y);
-        
     }
 
     mouseup() {
@@ -258,6 +257,7 @@ class drawRect {
             this.posY = this.y;
             this.cropH = this.starty - this.y;
         }
+        
         if (this.op === 1) {
             this.layers.push(this.fixPosition({
                 x1: this.startx,
@@ -267,6 +267,12 @@ class drawRect {
                 strokeStyle:'transparent',
                 type: this.type
             }))
+            if (this.cropW < 50) {
+                this.cropW = 60;
+            }
+            if (this.cropH < 50) {
+                this.cropH = 60;
+            }
             this.odiv = document.createElement("div");
             this.canvasParentElement.appendChild(this.odiv);
             this.odiv.setAttribute("id", "cropBox");
@@ -282,7 +288,7 @@ class drawRect {
                 </div>
                 <div class="source-area-tip" id="cropBoxSourceArea">
                     <div class="content-tip">
-                        Create the text frame
+                        ${this.props.contentText.cropBoxHelpText}
                     </div>
                     <div class="ok" title="confirm" id="cropBoxConfirm"> 
                         <span class="glyphicon glyphicon-ok"></span>
@@ -318,6 +324,10 @@ class drawRect {
                 this.clearCropBox();
             })
             $("cropBoxConfirm").addEventListener("click", () => {
+                if(this.cropW < 50 && this.cropH < 50) {
+                    this.cropW = 60;
+                    this.cropH = 60;
+                }
                 const cropedImg = this.cropImage(
                     this.img,
                     this.posX / this.scaleX,
@@ -348,10 +358,12 @@ class drawRect {
 
     cropImage(img, cropPosX, cropPosY, width, height) {
         const newCanvas = document.createElement('canvas');
-        newCanvas.width = width * this.scaleX;
-        newCanvas.height = height * this.scaleY;
+        let cropImgWidth = width * this.scaleX;
+        let cropImgHeight = height * this.scaleY;
+        newCanvas.width = cropImgWidth;
+        newCanvas.height = cropImgHeight;
         const newCtx = newCanvas.getContext('2d');
-        newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, width * this.scaleX, height * this.scaleY);
+        newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, cropImgWidth, cropImgHeight);
 
         // canvas transform to img
         const newImage = new Image();
@@ -455,13 +467,6 @@ class drawRect {
     }
 
 }
-
-const $ = (id) => {
-    return document.getElementById(id);
-};
-const getCss = (o, key) => {
-    return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, false)[key];
-};
 
 
 export default drawRect;

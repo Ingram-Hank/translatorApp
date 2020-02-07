@@ -1,4 +1,8 @@
 import React from 'react';
+import 'react-app-polyfill/ie9';
+import 'react-app-polyfill/stable';
+import 'core-js/es6/map';
+import 'core-js/es6/set';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';

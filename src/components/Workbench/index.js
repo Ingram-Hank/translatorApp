@@ -13,13 +13,16 @@ function Workbench(props) {
         zoomCanvasValue,
         selectedImage,
         cropedImage,
+        fontSettings,
         openModal,
         closeModal,
         setCropImg,
         createNewCropArea,
         hasCropedImg,
         createdTranslBox,
-        modalOpen
+        hasCropBox,
+        modalOpen,
+        font
         } = props;
     
     const canvasZoomProps = {
@@ -33,6 +36,7 @@ function Workbench(props) {
         contentText,
         selectedImage,
         cropedImage,
+        fontSettings,
         openModal,
         closeModal,
         setCropImg,
@@ -40,10 +44,13 @@ function Workbench(props) {
         modalOpen,
         hasCropedImg,
         createdTranslBox,
+        hasCropBox,
+        font,
         scale: zoomCanvasValue
     };
 
     const rightMenuProps = {
+        contentText,
         cropedImage
     };
     return (

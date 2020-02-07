@@ -23,3 +23,16 @@ export const queryString=(url, query)=> {
     let paramStr = str.join('&')
     return paramStr ? `${url}?${paramStr}` : url
 }
+
+export const $ = (id) => {
+    return document.getElementById(id);
+};
+
+export const getCss = (o, key) => {
+    return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, false)[key];
+};
+
+
+export const getStyle = (o, key) => {
+    return Number(getCss(o, key).replace(/px/, ''));
+}

@@ -25,6 +25,8 @@ const imagesReducer = (state={}, action)=> {
             return Object.assign({}, state, {hasCropedImg: true})
         case actions.IMAGES_CLEAR_PRE_CROP_AREA:
             return Object.assign({}, state, {hasCropedImg: false, createdTranslBox: null})
+        case actions.IMAGES_CLEAR_CROP_BOX:
+            return Object.assign({}, state, {hasCropBox: false})
         default: 
             return state
     }
@@ -68,6 +70,10 @@ export const clearPreCropArea = ()=> ({
     type: actions.IMAGES_CLEAR_PRE_CROP_AREA
 });
 
+export const clearCropBox = ()=> ({
+    type: actions.IMAGES_CLEAR_CROP_BOX
+});
+
 export const getTranslImages = (chapterNumber)=> {
     return (dispatch, getState)=> {
         const data = {
@@ -87,6 +93,13 @@ export const selecteCanvas = ()=> {
         dispatch(receiveSelectedImg(images[selectedImg]));
     }
 }
+
+export const setClearCropox = ()=> {
+    return (dispatch, getState)=> {
+        dispatch(clearCropBox());
+        dispatch(clearPreCropArea());
+    }
+};
 
 export const plusChapter = ()=> {
     return (dispatch, getState) => {

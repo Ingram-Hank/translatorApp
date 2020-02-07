@@ -236,14 +236,25 @@
 
 .translAreaBox {
   position: absolute;
-  border: 1px dashed #ff4f81; }
+  border: 1px dashed #ff4d7f; }
+  .translAreaBox .canvasContainer {
+    position: relative;
+    left: 0;
+    top: 0; }
+    .translAreaBox .canvasContainer .translCanvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      cursor: crosshair;
+      overflow: hidden;
+      opacity: 0.6;
+      filter: alpha(opacity=60); }
 
 .translContainer {
   position: fixed;
   top: 50px;
-  right: 207px;
+  right: 0;
   width: 250px;
-  transform: translate3d(0, 0, 0);
   z-index: 10000;
   box-shadow: 0 0 52px -5px rgba(0, 0, 0, 0.7);
   border: 1px solid #000;
@@ -402,7 +413,8 @@
         line-height: 1.5;
         border-radius: .2rem; }
       .translContainer .translate-area .translate-attribute-box .font-family button {
-        width: 173px; }
+        width: 173px;
+        overflow-x: hidden; }
       .translContainer .translate-area .translate-attribute-box .font-family .dropdown-menu {
         max-height: 150px;
         overflow-y: scroll; }
@@ -470,7 +482,6 @@
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: #693b47;
           opacity: 1; }
       .translContainer .translate-area .translate-attribute-box .font-weight-style input[type=checkbox] {
         display: none; }
@@ -484,7 +495,8 @@
         background: #333a45 linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4));
         cursor: pointer; }
         .translContainer .translate-area .translate-attribute-box .btn.btn-default.active {
-          background: #333a45 linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.9)); }
+          background: #333a45 linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.9));
+          z-index: auto; }
       .translContainer .translate-area .translate-attribute-box .func-title {
         color: #fff;
         font-size: 13px;

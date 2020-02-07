@@ -11,7 +11,8 @@ import {
   getTranslImages,
   selecteCanvas,
   minusChapter,
-  plusChapter
+  plusChapter,
+  setClearCropox
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -141,6 +142,7 @@ const mapDispatchToProps = (dispatch) => {
     selectItem: (selectedImg)=> {
       dispatch(handlerSelectImage(selectedImg));
       dispatch(selecteCanvas());
+      dispatch(setClearCropox());
     },
     toLastChapter: (currentNumber) => {
       dispatch(minusChapter(currentNumber));
