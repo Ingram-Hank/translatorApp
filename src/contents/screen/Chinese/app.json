@@ -92,5 +92,8 @@
     "cancel": "取消",
     "confirm": "确定",
     "cropedImg": "截取的图片",
-    "cropBoxHelpText": "创建文字模板"
+    "cropBoxHelpText": "创建文字模板",
+    "target": "目标语言",
+    "English": "英语",
+    "noContent": "无内容"
 }

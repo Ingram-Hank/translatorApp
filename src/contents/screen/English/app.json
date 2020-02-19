@@ -92,5 +92,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "cropedImg": "cropedImg",
-    "cropBoxHelpText": "Create the text frame"
+    "cropBoxHelpText": "Create the text frame",
+    "target": "Target",
+    "English": "English",
+    "noContent": "No Content"
 }

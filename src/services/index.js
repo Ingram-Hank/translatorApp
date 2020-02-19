@@ -1,10 +1,20 @@
 import http from './service';
 
 export default  {
-  login(data, token){
-    return http.post("/login", data, token)
+  getImageData(params){
+    const {orderNo, chapterId} = params;
+    if(chapterId){
+      return http.get("/comic/list?"+ orderNo + "&&" + chapterId)
+    }
+    return http.get("/comic/list?"+ orderNo)
   },
-  getUserInfo(data, token){
-    return http.get("/getUserInfo",data, token)
+  clearText(data){
+    return http.post("ai/szmc", data)
+  },
+  getORC(data){
+    return http.post("ai/ocr", data)
+  },
+  getTranslResult(data){
+    return http.post("ai/tm", data)
   }
 }

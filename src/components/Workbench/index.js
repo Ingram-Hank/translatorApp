@@ -18,12 +18,34 @@ function Workbench(props) {
         closeModal,
         setCropImg,
         createNewCropArea,
-        hasCropedImg,
+        createMaskLayer,
+        tabToTranslate,
+        brushEvents,
+        tabToClearText,
         createdTranslBox,
         hasCropBox,
         modalOpen,
-        font
-        } = props;
+        marquee,
+        font,
+        brush,
+        maskTextImgs,
+        correctTransl,
+        hasCorrect,
+        originORCText,
+        translatedText,
+        hanlerChangeORCText,
+        handlerChangeTranslatedText,
+        handerTranslText,
+        handlerCompleteTranslate,
+        resultLayers,
+        displayTranslPopUp,
+        displayTranslBox,
+        displayResultBox,
+        createStartNumber,
+        startNumber,
+        setResultBoxStyle,
+        resultBoxStyleParams
+    } = props;
     
     const canvasZoomProps = {
         zoomCanvasBech,
@@ -31,7 +53,6 @@ function Workbench(props) {
         zoomCanvasMinus,
         value: zoomCanvasValue
     };
-
     const workbenchMainProps = {
         contentText,
         selectedImage,
@@ -41,17 +62,38 @@ function Workbench(props) {
         closeModal,
         setCropImg,
         createNewCropArea,
+        createMaskLayer,
+        tabToTranslate,
+        brushEvents,
+        tabToClearText,
         modalOpen,
-        hasCropedImg,
+        marquee,
         createdTranslBox,
         hasCropBox,
         font,
-        scale: zoomCanvasValue
+        brush,
+        maskTextImgs,
+        correctTransl,
+        hasCorrect,
+        originORCText,
+        translatedText,
+        hanlerChangeORCText,
+        handlerChangeTranslatedText,
+        handerTranslText,
+        handlerCompleteTranslate,
+        scale: zoomCanvasValue,
+        displayTranslPopUp,
+        displayTranslBox,
+        displayResultBox,
+        createStartNumber,
+        startNumber,
+        setResultBoxStyle,
+        resultBoxStyleParams
     };
 
     const rightMenuProps = {
         contentText,
-        cropedImage
+        resultLayers
     };
     return (
         <div className="workbench">

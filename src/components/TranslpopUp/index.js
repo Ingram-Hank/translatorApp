@@ -7,20 +7,22 @@ import dragPopUp from './dragPopUP.js';
 import ColorPicker from './ColorPicker.js';
 import ColorAbsorb from './ColorAbsorb.js';
 
-function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = false, fontSettings, font }) {
+function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, hasCorrect = false,
+    originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText, handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText }) {
     const {
         font_family = "Microsoft YaHei",
-        font_size = "12",
-        font_color = "white",
-        font_style,
-        font_weight,
-        text_align = 'left',
-        outline_color = 'white',
-        shadow_color = 'white',
+        font_size = 12,
+        font_color = "rgb(0, 0, 0, .65)",
+        hasFontItalic,
+        hasFontWeight,
+        text_align = "center",
+        outline_color,
+        shadow_color,
         outline_size = 0,
         shadow_size = 0,
         popUp
     } = font;
+    
     const {
         handlerSelectFontFamily,
         handlerSelectFontSize,
@@ -45,9 +47,8 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
             e.target.removeEventListener("mouseup", ()=> console.log("remove mouseup"));
         },
         onMouseEnter: (e)=> {
-            const boxTitle = document.getElementById("box-title");
             const translContainer = document.getElementById("translContainer");
-            const startDrag = new dragPopUp(boxTitle, translContainer);
+            const startDrag = new dragPopUp(translContainer);
             e.target.addEventListener("mousedown", (el)=> startDrag.mousedown(el));
             document.addEventListener("mousemove", (el)=> startDrag.mousemove(el));
             document.addEventListener("mouseup", (el)=> startDrag.mouseup(el));
@@ -56,7 +57,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
     const ColorAbsorbProps = {
         contentText,
         cropedImage,
-        createdTranslBox,
+        createdTranslBox: createdTranslBox[startNumber],
         handlerSelectFontColor,
         handerColorAbsorbComplete,
         font_color
@@ -65,8 +66,8 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
     const fontFillColorWhiteClassName = classNames("btn btn-default", {'active': font_color === 'white'});
     const fontFillColorBlackClassName = classNames("btn btn-default", {'active': font_color === 'black'});
     const fontFillColorOthersClassName = classNames("btn btn-default font-fill-action", {'active': font_color !== 'black' && font_color !== 'white'});
-    const fontStyleBoldClassName = classNames("btn btn-default", {"active": font_weight === 'bold'});
-    const fontStyleItalicsClassName = classNames("btn btn-default", {"active": font_style === 'italics'});
+    const fontStyleBoldClassName = classNames("btn btn-default", {"active": hasFontWeight});
+    const fontStyleItalicsClassName = classNames("btn btn-default", {"active": hasFontItalic});
     const textAlignClassName_left = classNames("btn btn-default", {"active": text_align === 'left'});
     const textAlignClassName_center = classNames("btn btn-default", {"active": text_align === 'center'});
     const textAlignClassName_right = classNames("btn btn-default", {"active": text_align === 'right'});
@@ -80,6 +81,14 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                 <div {...dragProps}>
                     <i className='dots-horizontal'>▪▪▪</i>
                 </div>
+                <div className="one-step-change-tool-tab">
+                    <span className='inpaint-tool-btn' onClick={()=> tabToClearText()}>
+                        Clear Text
+                    </span>
+                    <span className='inpaint-tool-btn active'>
+                        Translate
+                    </span>
+                </div>
                 <div className='source-area'>
                     {cropedImage && <img src={cropedImage.src} alt='' />}
                 </div>
@@ -87,26 +96,26 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                     <div className='ocr-operation text-white'>
                         <div className='ocr-title'>OCR</div>
                         <div className='ml-auto ocr-btn-box'>
-                            <span className="ocr-btn">{hasCorrect ? contentText.submit : contentText.correct}</span>
+                            <span className="ocr-btn" onClick={()=> correctTransl(hasCorrect)}>{hasCorrect ? contentText.submit : contentText.correct}</span>
                         </div>
                     </div>
                     <div className='ocr-result'>
                         <div className='ocr-result-inner'>
-                            {hasCorrect ? <textarea rows="4" className="ocr-input"></textarea> :
-                                <span className="ocr-word">{contentText.loading}</span>
+                            {hasCorrect ? <textarea rows="4" className="ocr-input" onChange={(e)=> hanlerChangeORCText(e)} value={originORCText}></textarea> :
+                                <span className="ocr-word">{originORCText || contentText.loading}</span>
                             }
                         </div>
                     </div>
                 </div>
                 <div className='translate-btn-area'>
-                    <span className="translate-btn" title={contentText.translate}>
+                    <span className="translate-btn" title={contentText.translate} onClick={()=> handerTranslText(originORCText)}>
                         <i className="mdi mdi-loading mdi-spin"></i>
                         <span className="mx-2"> {contentText.translate} </span>
                     </span>
                 </div>
                 <div className='translate-area'>
                     <div className='input-box'>
-                        <textarea name="result" rows="4" placeholder={contentText.enterTheTranslation}></textarea>
+                        <textarea name="result" rows="4" placeholder={contentText.enterTheTranslation} value={translatedText} onChange={(e)=> handlerChangeTranslatedText(e)}></textarea>
                     </div>
                     <div className='translate-attribute-box'>
                         <div className='btn-group btn-group-sm font-family'>
@@ -180,10 +189,10 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                         <div className="nd-btn-group" style={{ marginTop: "10px" }}>
                             {/* style settings */}
                             <div className="btn-group btn-group-sm font-weight-style">
-                                <label className={fontStyleBoldClassName} title={contentText.bold} onClick={()=> handlerSelectFontWeight('bold')}>
+                                <label className={fontStyleBoldClassName} title={contentText.bold} onClick={()=> handlerSelectFontWeight(hasFontWeight)}>
                                     <i className="glyphicon glyphicon-bold"></i>
                                 </label>
-                                <label className={fontStyleItalicsClassName}  title={contentText.italics} onClick={()=> handlerSelectFontStyle('italics')}>
+                                <label className={fontStyleItalicsClassName}  title={contentText.italics} onClick={()=> handlerSelectFontStyle(hasFontItalic)}>
                                     <i className="glyphicon glyphicon-italic"></i>
                                 </label>
                             </div>
@@ -215,7 +224,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                             </div>
                             <div className="btn-group btn-group-sm stroke-width">
                                 <label className="btn btn-default">
-                                    <span className="">{outline_size}</span>px
+                                    <span className="">{outline_size}px</span>
                                 </label>
                                 <input className="stroke-width-input" type="range" step="1" min="0" max="10" value={outline_size} onChange={(e) => handlerSelectFontOutlineSize(e) } />
                             </div>
@@ -233,7 +242,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                             </div>
                             <div className="btn-group btn-group-sm stroke-width">
                                 <label className="btn btn-default">
-                                    <span className="">{shadow_size}</span>px
+                                    <span className="">{shadow_size}px</span>
                                 </label>
                                 <input className="stroke-width-input" type="range" step="1" min="0" max="10" value={shadow_size} onChange={(e) => handlerSelectFontShadowSize(e)} />
                             </div>
@@ -241,7 +250,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, hasCorrect = 
                     </div>
                 </div>
                 <div className='one-step-translate-step'>
-                    <span className="btn translate-finish">{contentText.use}</span>
+                    <span className="btn translate-finish" onClick={()=> handlerCompleteTranslate()}>{contentText.use}</span>
                 </div>
             </div>
         </div>

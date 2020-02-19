@@ -1,94 +1,118 @@
 import React from 'react';
-import Modal from '../Modal';
+import InpaintBox from './InpaintBox';
 
 class TranslAreaBox extends React.Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.canvas = React.createRef();
         this.state = {
-            brushWidth: 8
+            flag: false
         }
     }
 
     doodling() {
-        const canvas = this.canvas.current;
+        const { currentMaskTextImgs = [], createMaskLayer, startNumber } = this.props;
+        const canvas = document.getElementById(`maskCanvas_${startNumber}`);
         const context = canvas.getContext("2d");
-        const brushWidth = this.state.brushWidth * this.props.scale;
-        
+        const { scale, brush } = this.props;
+        const { brushWidth = 10 } = brush;
+        const brush_Width = brushWidth * scale;
+        let img = this.props.data.cropedImg;
+        if (currentMaskTextImgs.length) {
+            img = new Image();
+            img.src = currentMaskTextImgs[currentMaskTextImgs.length-1].cropedImg;
+        }
+        img.onload = () => {
+            context.drawImage(img, 0, 0, canvas.width, canvas.height)
+        };
         canvas.onmousedown = (e) => {
+            this.setState({ flag: true });
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = canvas.width;
+            newCanvas.height = canvas.height;
+            const newCtx = newCanvas.getContext('2d');
             canvas.onmousemove = (e) => {
-                const wid = e.offsetX;
-                const hei = e.offsetY;
+                const x = e.offsetX;
+                const y = e.offsetY;
+
+                context.save();
                 context.beginPath();
-                context.arc(wid, hei, brushWidth, 0, 2 * Math.PI);
+                context.arc(x, y, brush_Width, 0, 2 * Math.PI);
                 context.closePath();
                 context.fillStyle = '#ff4f81';
                 context.fill();
+                context.restore();
+
+                newCtx.save();
+                newCtx.beginPath();
+                newCtx.arc(x, y, brush_Width, 0, 2 * Math.PI);
+                newCtx.closePath();
+                newCtx.fillStyle = 'red';
+                newCtx.fill();
+
+                canvas.onmouseup = () => {
+                    this.setState({ flag: false });
+                    canvas.onmousemove = null;
+                    newCtx.globalCompositeOperation = 'destination-in';
+                    newCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    // canvas transform to img
+                    const newImage = new Image();
+                    newImage.src = newCanvas.toDataURL("image/png");
+                    createMaskLayer(newImage);
+                }
             }
         }
-        canvas.onmouseup = () => {
-            canvas.onmousemove = "null";
-        }
     }
-
-    componentDidUpdate(preProps) {
-        if(preProps.scale !== this.props.scale) {
-            this.setState({
-                brushWidth: this.state.brushWidth * this.props.scale
-            })
-        }
+    componentDidUpdate() {
         this.doodling()
     }
     componentDidMount() {
         this.doodling()
     }
-
-    render () {
-        const {contentText, data, createNewCropArea, modalOpen, openModal, closeModal} = this.props;
-        if(data){
+    render() {
+        const {
+            contentText,
+            data,
+            tabToTranslate,
+            brushEvents,
+            openModal,
+            brush,
+            displayTranslBox,
+            startNumber
+        } = this.props;
+        if (data) {
             const translAreaBoxStyle = {
-                height: `${data.height}px`,
-                width: `${data.width}px`,
+                height: `${data.height} + 3px`,
+                width: `${data.width} + 3px`,
                 left: `${data.left}px`,
-                top: `${data.top}px`
+                top: `${data.top}px`,
+                border: displayTranslBox ? "none" : "1px dashed hsl(343, 100%, 65%)"
             };
-            
             const canvasContainerStyle = {
                 height: `${data.height}px`,
                 width: `${data.width}px`,
             };
+            const inpaintBoxProps = {
+                tabToTranslate,
+                brush,
+                brushEvents
+            };
             return (
-                <div className='translAreaBox' id='translAreaBox' style={translAreaBoxStyle}>
-                    <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={openModal}>
-                        <span className="glyphicon glyphicon-trash"></span>
-                    </div>
-                    <div className='canvasContainer' style={canvasContainerStyle}>
-                        <span id='brush' className='brush'></span>
-                        <canvas ref={this.canvas} className="translCanvas" width={data.width} height={data.height}></canvas>
-                    </div>
-                    {modalOpen &&
-                        <Modal>
-                            <div className="popup-header">
-                                <h5>{contentText.Delete}</h5>
-                                <span className="dismissPopUp" onClick={closeModal}>
-                                    <span className="glyphicon glyphicon-remove"></span>
-                                </span>
-                            </div>
-                            <div className="popup-content text-center">
-                                {contentText.popUpHelpText}
-                            </div>
-                            <div className="popup-footer text-right">
-                                <button type="button" className="btn btn-default" onClick={closeModal}> {contentText.cancel} </button>
-                                <button type="button" className="btn btn-default active" onClick={()=> {closeModal() ; createNewCropArea()}}> {contentText.confirm} </button>
-                            </div>
-                        </Modal>
+                <div className='translAreaBox' style={translAreaBoxStyle}>
+                    {!displayTranslBox &&
+                        <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={openModal}>
+                            <span className="glyphicon glyphicon-trash"></span>
+                        </div>
                     }
+                    <div className='canvasContainer' style={canvasContainerStyle}>
+                        <canvas id={`maskCanvas_${startNumber}`} className="translCanvas" width={data.width} height={data.height}></canvas>
+                    </div>
+                    <InpaintBox {...inpaintBoxProps} />
                 </div>
             )
-        }else {
+        } else {
             return null
         }
-        
     }
 }
 

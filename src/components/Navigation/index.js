@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './navigation.css';
 
-function Navigation (props){
+function Navigation(props) {
     const {
         contentText,
         selectedImg,
@@ -17,7 +17,7 @@ function Navigation (props){
     const lastChapterProps = {
         className: "glyphicon glyphicon-backward",
         title: contentText.lastChapter,
-        onClick: ()=> toLastChapter(currentNumber)
+        onClick: () => toLastChapter(currentNumber)
     };
     const currentChapterProps = {
         className: "chapter-current",
@@ -26,7 +26,7 @@ function Navigation (props){
     const nextChapterProps = {
         className: "glyphicon glyphicon-forward",
         title: contentText.nextChapter,
-        onClick: ()=> toNextChapter(currentNumber)
+        onClick: () => toNextChapter(currentNumber)
     };
     return (
         <div className="navigation">
@@ -40,19 +40,19 @@ function Navigation (props){
             </div>
             <div className="navigation-body">
                 <ul className="list-group">
-                    {images.map((src, index)=>{
+                    {images.map((src, index) => {
                         const listGroupItemProps = {
                             key: index,
                             className: classNames("list-group-item text-right", {
-                                "active": selectedImg ? selectedImg === index: index===0
+                                "active": selectedImg ? selectedImg === index : index === 0
                             }),
-                            onClick: ()=> selectItem(index)
+                            onClick: () => selectItem(index)
                         };
                         return (
                             <li {...listGroupItemProps}>
-                                <span className="item_position pr-1">{index+1}</span>
+                                <span className="item_position pr-1">{index + 1}</span>
                                 <a href="##">
-                                    <img src={src} alt={"image_"+ index} />
+                                    <img src={src} alt={"image_" + index} />
                                 </a>
                             </li>
                         )
