@@ -1,36 +1,39 @@
 
 
-import axios from 'axios'
-import {queryString} from '../utilities';
-import qs from 'querystring';
+import axios from 'axios';
+// import { queryString } from '../utilities';
+// import qs from 'querystring';
 
-let root = process.env.NODE_ENV === 'development'? `http://localhost:3001/api`:`http://127.0.0.1:3001/api`;
+let root = process.env.NODE_ENV === 'development' ? `http://liyao-305623587.picp.io/ht/` : `http://127.0.0.1:3001/api`;
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-function apiAxios(method, url, params, token) {
+const apiAxios = (method, url, params) => {
   return axios({
     method: method,
-    url: method === 'GET'|| method === 'DELETE' ? queryString(url,params) : url,
-    data: method === 'POST' || method === 'PUT' ? qs.stringify(params) : null,
+    // url: method === 'GET' || method === 'DELETE' ? queryString(url, params) : url,
+    url: url,
+    data: method === 'POST' || method === 'PUT' ? JSON.stringify(params) : null,
     baseURL: root,
     timeout: 10000,
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8"
+    },
     withCredentials: false
   })
 }
 
 export default {
-  get: function (url, params, token) {
-    return apiAxios('GET', url, params, token)
+  get: (url, params) => {
+    return apiAxios('GET', url, params)
   },
-  post: function (url, params, token) {
-    return apiAxios('POST', url, params, token)
+  post: (url, params) => {
+    return apiAxios('POST', url, params)
   },
-  put: function (url, params, token) {
-    return apiAxios('PUT', url, params, token)
+  put: (url, params) => {
+    return apiAxios('PUT', url, params)
   },
-  delete: function (url, params, token) {
-    return apiAxios('DELETE', url, params, token)
+  delete: (url, params) => {
+    return apiAxios('DELETE', url, params)
   },
 }

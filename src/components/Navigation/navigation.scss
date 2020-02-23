@@ -16,11 +16,18 @@
             -moz-user-select:none;
             -webkit-user-select:none;
             user-select:none;
-            .glyphicon {
+            .chapterBtn {
                 cursor: pointer;
+                text-decoration: underline;
+                font-size: 12px;
+                display: inline-block;
+                width: 50px;
+                &:hover {
+                    font-size: 14px;
+                }
             }
             &-current {
-                margin: 0 20px;
+                margin: 0 10px;
             }
         }
     }
@@ -40,6 +47,7 @@
                 display: block;
                 overflow: hidden;
                 border-radius: 0;
+                user-select: none;
                 background-color: #373e47;
                 padding: 0;
                 border: 2px solid #fff;

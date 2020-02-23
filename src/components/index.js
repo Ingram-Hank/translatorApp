@@ -6,6 +6,7 @@ import Input from './Input';
 import Navigation from './Navigation';
 import Toggle from './Toggle';
 import Workbench from './Workbench';
+import LoadingSpinner from './LoadingSpinner';
 
 export {
     Button,
@@ -15,5 +16,6 @@ export {
     Input,
     Navigation,
     Toggle,
-    Workbench
+    Workbench,
+    LoadingSpinner
 };

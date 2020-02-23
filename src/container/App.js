@@ -3,7 +3,8 @@ import {connect} from 'react-redux';
 import {
   Header,
   Content,
-  Navigation
+  Navigation,
+  LoadingSpinner
 } from '../components';
 import Workbench from './Workbench';
 import {handlerLanguage} from '../modules/language';
@@ -11,14 +12,16 @@ import {
   getTranslImages,
   selecteCanvas,
   minusChapter,
-  plusChapter
+  plusChapter,
+  setClearCropox
 } from '../modules/images';
 import {
   hanlerMarquee,
   handlerToggleAutoClear, 
   handlerToggleAutoOCR,
   handlerToggleAutoTranslate,
-  handlerSelectImage
+  handlerSelectImage,
+  setStartNumber
 } from '../modules/ui';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -37,11 +40,14 @@ function App(props) {
     handlerDropDownItem,
     onToggle,
     selectedImg,
+    loading,
     toLastChapter,
     toNextChapter,
-    currentNumber,
-    totalNumber,
-    selectItem
+    jpgPc,
+    chapterPc,
+    selectItem,
+    openModal,
+    selectedImage
   } = props;
   
   const headerProps = {
@@ -52,15 +58,17 @@ function App(props) {
     switchAutoTranslate, 
     language,
     handlerDropDownItem,
-    onToggle
+    onToggle,
+    openModal,
+    selectedImage
   };
   const navigationProps= {
     contentText,
     selectedImg,
     toLastChapter,
     toNextChapter,
-    currentNumber,
-    totalNumber,
+    jpgPc,
+    chapterPc,
     selectItem,
     images
   };
@@ -72,25 +80,27 @@ function App(props) {
         <Navigation {...navigationProps}/>
         <Workbench {...props}/>
       </Content>
+      {loading && <LoadingSpinner />}
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  const language = state.languageMoudels.language || "English";
+  const language = state.languageMoudels.language || "Chinese";
   const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
   const {
     selectedImage, 
-    currentNumber,
-    totalNumber
+    jpgPc,
+    chapterPc
   } = state.images;
   const {
     marquee, 
     switchAutoClear = true, 
     switchAutoOCR = true, 
     switchAutoTranslate= true,
-    selectedImg
+    selectedImg = 0,
+    loading = false
   } = state.ui;
   
   return {
@@ -101,8 +111,9 @@ const mapStateToProps = (state) => {
     switchAutoOCR,
     switchAutoTranslate,
     selectedImg,
-    currentNumber,
-    totalNumber,
+    loading,
+    jpgPc,
+    chapterPc,
     selectedImage,
     contentText
   }
@@ -110,7 +121,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   dispatch(getTranslImages());
-  dispatch(selecteCanvas());
   return {
     handlerDropDownItem: (id, item)=> {
       switch (id) {
@@ -138,9 +148,11 @@ const mapDispatchToProps = (dispatch) => {
           break;
       }
     },
-    selectItem: (selectedImg)=> {
+    selectItem: (selectedImg, translationOrderId)=> {
+      dispatch(setStartNumber(0));
       dispatch(handlerSelectImage(selectedImg));
-      dispatch(selecteCanvas());
+      dispatch(selecteCanvas(translationOrderId));
+      dispatch(setClearCropox());
     },
     toLastChapter: (currentNumber) => {
       dispatch(minusChapter(currentNumber));

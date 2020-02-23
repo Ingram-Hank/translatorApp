@@ -13,14 +13,40 @@ function Workbench(props) {
         zoomCanvasValue,
         selectedImage,
         cropedImage,
+        fontSettings,
         openModal,
         closeModal,
         setCropImg,
         createNewCropArea,
-        hasCropedImg,
+        createMaskLayer,
+        tabToTranslate,
+        brushEvents,
+        tabToClearText,
         createdTranslBox,
-        modalOpen
-        } = props;
+        hasCropBox,
+        modalOpen,
+        marquee,
+        font,
+        brush,
+        maskTextImgs,
+        correctTransl,
+        hasCorrect,
+        originORCText,
+        translatedText,
+        hanlerChangeORCText,
+        handlerChangeTranslatedText,
+        handerTranslText,
+        handlerCompleteTranslate,
+        resultLayers,
+        displayTranslPopUp,
+        displayTranslBox,
+        displayResultBox,
+        createStartNumber,
+        startNumber,
+        setResultBoxStyle,
+        resultBoxStyleParams,
+        selectedImg
+    } = props;
     
     const canvasZoomProps = {
         zoomCanvasBech,
@@ -28,23 +54,48 @@ function Workbench(props) {
         zoomCanvasMinus,
         value: zoomCanvasValue
     };
-
     const workbenchMainProps = {
         contentText,
         selectedImage,
         cropedImage,
+        fontSettings,
         openModal,
         closeModal,
         setCropImg,
         createNewCropArea,
+        createMaskLayer,
+        tabToTranslate,
+        brushEvents,
+        tabToClearText,
         modalOpen,
-        hasCropedImg,
+        marquee,
         createdTranslBox,
-        scale: zoomCanvasValue
+        hasCropBox,
+        font,
+        brush,
+        maskTextImgs,
+        correctTransl,
+        hasCorrect,
+        originORCText,
+        translatedText,
+        hanlerChangeORCText,
+        handlerChangeTranslatedText,
+        handerTranslText,
+        handlerCompleteTranslate,
+        scale: zoomCanvasValue,
+        displayTranslPopUp,
+        displayTranslBox,
+        displayResultBox,
+        createStartNumber,
+        startNumber,
+        setResultBoxStyle,
+        resultBoxStyleParams,
+        selectedImg
     };
 
     const rightMenuProps = {
-        cropedImage
+        contentText,
+        resultLayers
     };
     return (
         <div className="workbench">
