@@ -3,7 +3,7 @@ import DragInpaintBox from './DragInpaintBox';
 
 class InpaintBox extends React.Component {
     render() {
-        const {tabToTranslate, brushEvents, brush} = this.props;
+        const {contentText, tabToTranslate, brushEvents, brush} = this.props;
         const {brushWidth = 10} = brush;
         const {handlerBrushWidth, handlerResetBrush, handlerUndoBrush} = brushEvents;
         const hoverElementProps = {
@@ -28,15 +28,15 @@ class InpaintBox extends React.Component {
                 </div>
                 <div className="one-step-change-tool-tab">
                     <span className='inpaint-tool-btn active'>
-                        Clear Text
+                        {contentText.clearText}
                     </span>
                     <span className='inpaint-tool-btn' onClick={()=> tabToTranslate()}>
-                        Translate
+                        {contentText.translate}
                     </span>
                 </div>
                 <div className="box-operation">
                     <div className="text">
-                        Adjust erase size
+                        {contentText.adjustErase}
                     </div>
                     <div className="brush-range-area" title="Adjust erase size">
                         <input className="paint-size" type="range" min="8" max="100" value={brushWidth} onChange={(e) => {handlerBrushWidth(e)}} />
@@ -44,31 +44,31 @@ class InpaintBox extends React.Component {
                     <div className="brush-btn-area">
                         <div className="paint-content-btn">
                             <span className="back-paint" onClick={()=> handlerResetBrush()}>
-                                <span className="fa fa-rotate-left"></span> Reset
+                                <span className="fa fa-rotate-left"></span> {contentText.reset}
                             </span>
                         </div>
                         <div className="paint-content-btn">
                             <span className="back-paint" onClick={()=> handlerUndoBrush()}>
-                                <span className="fa fa-reply"></span> Undo
+                                <span className="fa fa-reply"></span> {contentText.undo}
                             </span>
                         </div>
                     </div>
                     <div className="brush-btn-area">
                         <div className="paint-content-btn">
                             <span className="back-paint">
-                                <span className="fa fa-search"></span> Zoom
+                                <span className="fa fa-search"></span> {contentText.zoom}
                             </span>
                         </div>
                         <div className="paint-content-btn">
                             <span className="back-paint">
-                                <span className="fa fa-paint-brush"></span> Brush
+                                <span className="fa fa-paint-brush"></span> {contentText.brush}
                             </span>
                         </div>
                     </div>
                 </div>
                 <div className="one-step-translate-step">
                     <span className="btn one-step-next" onClick={()=> tabToTranslate()}>
-                        Next
+                        {contentText.next}
                     </span>
                 </div>
             </div>

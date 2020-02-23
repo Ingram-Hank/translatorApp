@@ -56,10 +56,11 @@ class WorkbenchMain extends React.Component {
                 const img = new Image();
                 img.src = cropedImg;
                 img.onload = ()=> {
+                    // ctx_upper.fillStyle = ctx_upper.createPattern(img, "no-repeat");
+                    // ctx_upper.fillRect(left, top, width, height);
                     ctx_upper.drawImage(img, left, top, width, height);
                 }
             }
-
         }
         document.oncontextmenu = (e) => {
             e.preventDefault();
@@ -167,17 +168,17 @@ class WorkbenchMain extends React.Component {
             className: "lower-canvas",
             ref: this.canvas,
             width: currentElementWidth,
-            height: currentElementHeight,
-            style: {
-                cursor: hasCropBox && !displayResultBox ? "default" : "crosshair"
-            }
+            height: currentElementHeight
         };
 
         const uppercanvasProps = {
             id: "upper-canvas",
             className: "upper-canvas",
             width: currentElementWidth,
-            height: currentElementHeight
+            height: currentElementHeight,
+            style: {
+                cursor: (hasCropBox || displayTranslBox) ? "default" : "crosshair"
+            }
         }
         const translpopUpProps = {
             contentText,

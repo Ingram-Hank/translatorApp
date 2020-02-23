@@ -9,50 +9,50 @@ function Navigation(props) {
         selectItem,
         toLastChapter,
         toNextChapter,
-        currentNumber,
-        totalNumber,
+        chapterPc,
         images = []
     } = props;
 
     const lastChapterProps = {
-        className: "glyphicon glyphicon-backward",
+        className: "chapterBtn",
         title: contentText.lastChapter,
-        onClick: () => toLastChapter(currentNumber)
+        onClick: () => toLastChapter()
     };
     const currentChapterProps = {
         className: "chapter-current",
         title: contentText.currentChapter
     };
     const nextChapterProps = {
-        className: "glyphicon glyphicon-forward",
+        className: "chapterBtn",
         title: contentText.nextChapter,
-        onClick: () => toNextChapter(currentNumber)
+        onClick: () => toNextChapter()
     };
     return (
         <div className="navigation">
             <div className="navigation-header text-center">
-                <h5>{contentText.selectImage}</h5>
+                <h5>{selectedImg}/{images.length}</h5>
                 <div className="chapter">
-                    <span {...lastChapterProps}></span>
-                    <span {...currentChapterProps}>{currentNumber}/{totalNumber}</span>
-                    <span {...nextChapterProps}></span>
+                    <span {...lastChapterProps}>{contentText.lastChapter}</span>
+                    <span {...currentChapterProps}>{chapterPc}</span>
+                    <span {...nextChapterProps}>{contentText.nextChapter}</span>
                 </div>
             </div>
             <div className="navigation-body">
                 <ul className="list-group">
-                    {images.map((src, index) => {
+                    {images.map((image, index) => {
                         const listGroupItemProps = {
                             key: index,
                             className: classNames("list-group-item text-right", {
-                                "active": selectedImg ? selectedImg === index : index === 0
+                                "active": selectedImg === index + 1
                             }),
-                            onClick: () => selectItem(index)
+                            
+                            onClick: () => selectItem(index+1, image.comicTranslationOrderId)
                         };
                         return (
                             <li {...listGroupItemProps}>
                                 <span className="item_position pr-1">{index + 1}</span>
                                 <a href="##">
-                                    <img src={src} alt={"image_" + index} />
+                                    <img src={image.thumbnail} alt={"image_" + index} />
                                 </a>
                             </li>
                         )

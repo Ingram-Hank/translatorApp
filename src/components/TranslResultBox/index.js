@@ -18,6 +18,7 @@ class TranslResultBox extends React.Component {
     };
 
     componentDidMount() {
+        
         $("cropBoxCancel").addEventListener("mousedown", (e) => {
             e.stopPropagation();
         })
@@ -32,7 +33,7 @@ class TranslResultBox extends React.Component {
         this.startDrag($("dragRightCenter"), $("translResultBox-container"), "e");
         this.startDrag($("dragLeftCenter"), $("translResultBox-container"), "w");
     }
-
+    
     startDrag(point, target, kind) {
         this.params.width = getCss(target, "width");
         this.params.height = getCss(target, "height");

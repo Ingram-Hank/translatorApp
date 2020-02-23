@@ -95,5 +95,13 @@
     "cropBoxHelpText": "创建文字模板",
     "target": "目标语言",
     "English": "英语",
-    "noContent": "无内容"
+    "noContent": "无内容",
+    "contrast": "对照",
+    "clearText": "清除文字",
+    "adjustErase": "调整橡皮擦大小",
+    "reset": "重置",
+    "undo": "取消",
+    "zoom": "缩放",
+    "brush": "画笔",
+    "next": "下一步"
 }

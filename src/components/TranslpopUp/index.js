@@ -83,10 +83,10 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                 </div>
                 <div className="one-step-change-tool-tab">
                     <span className='inpaint-tool-btn' onClick={()=> tabToClearText()}>
-                        Clear Text
+                        {contentText.clearText}
                     </span>
                     <span className='inpaint-tool-btn active'>
-                        Translate
+                        {contentText.translate}
                     </span>
                 </div>
                 <div className='source-area'>

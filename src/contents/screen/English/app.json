@@ -95,5 +95,13 @@
     "cropBoxHelpText": "Create the text frame",
     "target": "Target",
     "English": "English",
-    "noContent": "No Content"
+    "noContent": "No Content",
+    "contrast": "Contrast",
+    "clearText": "Clear Text",
+    "adjustErase": "Adjust erase size",
+    "reset": "Reset",
+    "undo": "Undo",
+    "zoom": "Zoom",
+    "brush": "Brush",
+    "next": "Next"
 }

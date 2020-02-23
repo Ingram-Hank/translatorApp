@@ -1,19 +1,25 @@
 import * as actions from './actions';
+import {handlerSelectImage, uiloadingStart, uiloadingComplete} from './ui';
 import services from '../services';
-const requireContext = require.context("../images/", true, /^\.\/.*\.jpg$/);
-const images = requireContext.keys().map(requireContext);
 
 const imagesReducer = (state = {}, action) => {
     switch (action.type) {
         case actions.RECEIVED_IMAGES:
-            const { images, currentNumber, totalNumber } = action.payload;
+            const { images, chapterPc, jpgPc, chapterIds, comicChapterId } = action.payload;
             return Object.assign({}, state, {
                 imagesCollection: images,
-                currentNumber: currentNumber,
-                totalNumber: totalNumber
+                chapterPc: chapterPc,
+                jpgPc: jpgPc,
+                chapterIds: chapterIds,
+                comicChapterId: comicChapterId
             })
         case actions.RECEIVED_SELECTED_IMG:
-            return Object.assign({}, state, { selectedImage: action.payload })
+            const {selectedImage, tip, status} = action.payload;
+            return Object.assign({}, state, { 
+                selectedImage: selectedImage,
+                currentTip: tip,
+                status: status
+             })
         case actions.RECEIVED_CROPED_IMG:
             return Object.assign({}, state, { cropedImage: action.payload })
         case actions.IMAGES_CHAPTER_PLUS:
@@ -47,7 +53,11 @@ const imagesReducer = (state = {}, action) => {
                 hasCropBox: false,
                 displayTranslBox: false,
                 displayTranslPopUp: false,
-                createdTranslBox: null
+                createdTranslBox: {},
+                maskTextImgs: {},
+                resultLayers: [],
+                displayResultBox: {},
+                resultBoxStyleParams: {}
             })
         default:
             return state
@@ -134,21 +144,41 @@ export const createResultBox = (payload)=> ({
 
 export const getTranslImages = (chapterNumber) => {
     return (dispatch, getState) => {
-        const data = {
-            currentNumber: 2,
-            totalNumber: 10,
-            images: images
-        };
-        dispatch(receivedImages(data));
+        dispatch(uiloadingStart())
+        services.getImageData({orderNo: 672002200455577}).then(({data})=> {
+            const imgData = data.data;
+            const {chapterIds = [], comicJpgs=[], chapterPc = "", jpgPc = "", comicChapterId} = imgData;
+            dispatch(receivedImages({
+                images: comicJpgs,
+                chapterPc,
+                jpgPc,
+                chapterIds,
+                comicChapterId
+            }));
+            const comicTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
+            dispatch(handlerSelectImage(1));
+            dispatch(selecteCanvas(comicTranslationOrderId));
+            dispatch(uiloadingComplete())
+        }).catch(err=> {
+            dispatch(uiloadingComplete())
+            console.error(err)
+        })
+        
     }
 };
 
-export const selecteCanvas = () => {
+export const selecteCanvas = (id) => {
     return (dispatch, getState) => {
-        const state = getState();
-        const images = state.images.imagesCollection;
-        const { selectedImg = 0 } = state.ui;
-        dispatch(receiveSelectedImg(images[selectedImg]));
+        dispatch(uiloadingStart())
+        services.getLargeImageData(id).then(({data})=> {
+            const {imgSrc, tip, status} = data.data;
+            dispatch(receiveSelectedImg({
+                selectedImage: imgSrc,
+                tip,
+                status
+            }));
+            dispatch(uiloadingComplete())
+        }).catch(err=>console.log(err))
     }
 }
 

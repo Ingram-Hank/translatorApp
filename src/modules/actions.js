@@ -12,6 +12,8 @@ export const UI_OPEN_MODAL = "UI_OPEN_MODAL";
 export const UI_CLOSE_MODAL = "UI_CLOSE_MODAL";
 export const UI_SET_START_NUMBER = "UI_SET_START_NUMBER";
 export const UI_HANDLER_SET_FONT = "UI_HANDLER_SET_FONT";
+export const UI_LOADING_START = "UI_LOADING_START";
+export const UI_LOADING_COMPLETE = "UI_LOADING_COMPLETE";
 
 // images actions
 export const RECEIVED_IMAGES = "RECEIVED_IMAGES";

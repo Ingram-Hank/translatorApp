@@ -34,7 +34,6 @@ class TranslAreaBox extends React.Component {
             canvas.onmousemove = (e) => {
                 const x = e.offsetX;
                 const y = e.offsetY;
-
                 context.save();
                 context.beginPath();
                 context.arc(x, y, brush_Width, 0, 2 * Math.PI);
@@ -93,6 +92,7 @@ class TranslAreaBox extends React.Component {
                 width: `${data.width}px`,
             };
             const inpaintBoxProps = {
+                contentText,
                 tabToTranslate,
                 brush,
                 brushEvents

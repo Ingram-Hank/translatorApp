@@ -24,6 +24,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { modalOpen: true })
         case actions.UI_CLOSE_MODAL:
             return Object.assign({}, state, { modalOpen: false })
+        case actions.UI_LOADING_START:
+            return Object.assign({}, state, { loading: true })
+        case actions.UI_LOADING_COMPLETE:
+            return Object.assign({}, state, { loading: false })
         default:
             return state
     }
@@ -81,6 +85,15 @@ export const openModal = () => ({
 export const closeModal = () => ({
     type: actions.UI_CLOSE_MODAL
 })
+
+export const uiloadingStart = ()=> ({
+    type: actions.UI_LOADING_START
+});
+
+export const uiloadingComplete = ()=> ({
+    type: actions.UI_LOADING_COMPLETE
+});
+
 
 export const handlerZoomCanvasPlus = (value) => {
     return (dispatch, getState) => {

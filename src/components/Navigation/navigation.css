@@ -15,10 +15,16 @@
       -moz-user-select: none;
       -webkit-user-select: none;
       user-select: none; }
-      .navigation-header .chapter .glyphicon {
-        cursor: pointer; }
+      .navigation-header .chapter .chapterBtn {
+        cursor: pointer;
+        text-decoration: underline;
+        font-size: 12px;
+        display: inline-block;
+        width: 50px; }
+        .navigation-header .chapter .chapterBtn:hover {
+          font-size: 14px; }
       .navigation-header .chapter-current {
-        margin: 0 20px; }
+        margin: 0 10px; }
   .navigation-body {
     overflow: auto;
     height: calc(100vh - 101px); }

@@ -356,6 +356,8 @@
       top: 0;
       overflow: hidden;
       cursor: crosshair; }
+    .translAreaBox .canvasContainer .resultCanvas {
+      position: absolute; }
   .translAreaBox .inpaint-box {
     position: absolute;
     width: 250px;

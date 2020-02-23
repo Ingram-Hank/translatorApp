@@ -216,10 +216,10 @@ class drawRect {
     }
 
     mousedown(e) {
-        // e.stopPropagation();
+        e.stopPropagation();
         this.startx = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
         this.starty = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
-        if((this.props.hasCropBox || this.props.displayTranslBox) && !this.props.displayResultBox) return false
+        if(this.props.hasCropBox || this.props.displayTranslBox) return false
         this.currentR = this.isPointInRetc(this.startx, this.starty);
         if (this.currentR) {
             this.leftDistance = this.startx - this.currentR.x1;
@@ -237,6 +237,7 @@ class drawRect {
     mousemove(e) {
         this.x = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
         this.y = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
+        if(this.props.hasCropBox || this.props.displayTranslBox) return false
         this.ctx.setLineDash([10]);
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         if (this.flag && this.op === 1) {

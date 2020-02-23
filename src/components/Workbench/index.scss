@@ -407,6 +407,9 @@
             overflow: hidden;
             cursor: crosshair;
         }
+        .resultCanvas{
+            position: absolute;
+        }
     }
     .inpaint-box {
         position: absolute;

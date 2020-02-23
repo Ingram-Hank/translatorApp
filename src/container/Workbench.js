@@ -78,7 +78,8 @@ const mapStateToProps = (state) => {
         marquee,
         hasCorrect,
         startNumber = 0,
-        font = {}
+        font = {},
+        selectedImg
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -104,7 +105,8 @@ const mapStateToProps = (state) => {
         translatedText,
         resultLayers,
         displayResultBox: currentDisplayResult.display,
-        resultBoxStyleParams
+        resultBoxStyleParams,
+        selectedImg
     }
 }
 

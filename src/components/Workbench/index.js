@@ -44,7 +44,8 @@ function Workbench(props) {
         createStartNumber,
         startNumber,
         setResultBoxStyle,
-        resultBoxStyleParams
+        resultBoxStyleParams,
+        selectedImg
     } = props;
     
     const canvasZoomProps = {
@@ -88,7 +89,8 @@ function Workbench(props) {
         createStartNumber,
         startNumber,
         setResultBoxStyle,
-        resultBoxStyleParams
+        resultBoxStyleParams,
+        selectedImg
     };
 
     const rightMenuProps = {
