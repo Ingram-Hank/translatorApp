@@ -9,7 +9,10 @@ import {
     openModal,
     closeModal,
     setStartNumber,
-    getFontsettings
+    getFontsettings,
+    setStopClearPreResultContainer,
+    toggleFeedBackMsg,
+    handlerSelectImage
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -29,7 +32,9 @@ import {
     updateTranslText,
     submitCorrectedText,
     getTranslText,
-    completeTranslate
+    completeTranslate,
+    getTranslImages,
+    clearSelectedImage
 } from '../modules/images';
 import {
     selectFontFamily,
@@ -70,16 +75,20 @@ const mapStateToProps = (state) => {
         maskTextImgs,
         resultLayers = [],
         displayResultBox = {},
-        resultBoxStyleParams = {}
+        resultBoxStyleParams = {},
+        currentTip,
+        status
     } = images;
     const {
         zoomCanvasValue = 1,
         modalOpen,
+        modalId,
         marquee,
         hasCorrect,
         startNumber = 0,
         font = {},
-        selectedImg
+        selectedImg,
+        clearPreTranslResult
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -95,6 +104,7 @@ const mapStateToProps = (state) => {
         hasCropBox,
         zoomCanvasValue,
         modalOpen,
+        modalId,
         marquee,
         font: font[startNumber] || {},
         brush,
@@ -106,7 +116,10 @@ const mapStateToProps = (state) => {
         resultLayers,
         displayResultBox: currentDisplayResult.display,
         resultBoxStyleParams,
-        selectedImg
+        selectedImg,
+        clearPreTranslResult,
+        currentTip,
+        status
     }
 }
 
@@ -122,8 +135,8 @@ const mapDispatchToProps = (dispatch) => {
         zoomCanvasMinus: value => {
             dispatch(handlerZoomCanvasMinus(value));
         },
-        openModal: () => {
-            dispatch(openModal());
+        openModal: (id) => {
+            dispatch(openModal(id));
         },
         closeModal: () => {
             dispatch(closeModal());
@@ -137,6 +150,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(createTranslArea());
             dispatch(displayTranslAreaBox());
             dispatch(clearPreFontSettings());
+            dispatch(setStopClearPreResultContainer());
         },
         createNewCropArea: (displayTranslBox) => {
             dispatch(clearPreCropArea());
@@ -175,7 +189,13 @@ const mapDispatchToProps = (dispatch) => {
         handlerCompleteTranslate: () => {
             dispatch(completeTranslate());
         },
-
+        handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
+            dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
+            dispatch(toggleFeedBackMsg(true));
+            dispatch(handlerSelectImage(null));
+            dispatch(clearSelectedImage());
+            dispatch(closeModal());
+          },
         fontSettings: {
             handlerSelectFontFamily: payload => {
                 dispatch(selectFontFamily(payload))

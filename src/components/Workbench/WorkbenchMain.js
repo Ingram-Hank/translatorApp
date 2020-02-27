@@ -32,7 +32,7 @@ class WorkbenchMain extends React.Component {
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
-            
+
             const marquee = this.props.marquee;
             if(marquee==="rectangular" || !marquee) {
                 this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.props);
@@ -56,10 +56,12 @@ class WorkbenchMain extends React.Component {
                 const img = new Image();
                 img.src = cropedImg;
                 img.onload = ()=> {
-                    // ctx_upper.fillStyle = ctx_upper.createPattern(img, "no-repeat");
-                    // ctx_upper.fillRect(left, top, width, height);
                     ctx_upper.drawImage(img, left, top, width, height);
                 }
+            }
+
+            if(this.props.clearPreTranslResult) {
+                ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight)
             }
         }
         document.oncontextmenu = (e) => {
@@ -68,25 +70,51 @@ class WorkbenchMain extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.selectedImage !== this.props.selectedImage) {
+        const {
+            selectedImage,
+            hasCropBox,
+            displayResultBox,
+            displayTranslBox,
+            selectedImg,
+            translatedText,
+            clearPreTranslResult,
+            status,
+            openModal
+         } = this.props;
+        if (prevProps.selectedImage !== selectedImage) {
             this.setState({
-                selectedImage: this.props.selectedImage
+                selectedImage: selectedImage
             })
         }
-        if(((!this.props.hasCropBox && this.props.displayResultBox) || !this.props.displayTranslBox ) && this._drawCanvas) {
+        if(((!hasCropBox && displayResultBox) || !displayTranslBox ) && this._drawCanvas) {
             this._drawCanvas.clearLayers();
             this._drawCanvas.clearCropBox();
         }
-        this.drawCanvasBackGround();
-        if(prevProps.displayResultBox !== this.props.displayResultBox && this.props.translatedText) {
+        if(selectedImg) {
+            this.drawCanvasBackGround();
+        }
+        if(prevProps.displayResultBox !== displayResultBox && translatedText) {
             this.ResultBox();
         }
+        if(clearPreTranslResult) {
+            const _resultContainers = document.getElementsByClassName("resultContainer");
+            if(_resultContainers.length) {
+                try {
+                    for(let i = 0; i<_resultContainers.length; i++) {
+                        if(_resultContainers[i] !== null){
+                            _resultContainers[i].parentNode.removeChild(_resultContainers[i])
+                        }
+                    }
+                }catch (error){
+                    console.error(error)
+                }
+            }
+        }
+        if(prevProps.status !== status && status === 2) {
+            openModal('feedBackMsg')
+        }
     }
-
-    componentDidMount() {
-        this.drawCanvasBackGround()
-    }
-
+    
     ResultBox() {
         const {startNumber, resultBoxStyleParams, translatedText, font} = this.props;
         const {
@@ -126,6 +154,7 @@ class WorkbenchMain extends React.Component {
     render() {
         const {
             modalOpen,
+            modalId,
             openModal,
             closeModal,
             scale,
@@ -154,14 +183,18 @@ class WorkbenchMain extends React.Component {
             displayTranslBox,
             displayResultBox,
             startNumber,
-            setResultBoxStyle
+            setResultBoxStyle,
+            selectedImg,
+            currentTip = [],
+            handlerSelectFeedBackMsg
         } = this.props;
         const { elementWidth, elementHeight } = this.state;
         const currentElementWidth = elementWidth * scale;
         const currentElementHeight = elementHeight * scale;
         const canvasContainerStyle = {
             width: `${currentElementWidth}px`,
-            height: `${currentElementHeight}px`
+            height: `${currentElementHeight}px`,
+            backgroundColor: !selectedImg && "gray"
         };
         const lowercanvasProps = {
             id: "lower-canvas",
@@ -229,15 +262,19 @@ class WorkbenchMain extends React.Component {
                             {contentText.prompt}
                         </div>
                         <div className="canvas-container" id="canvasContainer" style={canvasContainerStyle}>
-                            <canvas {...lowercanvasProps}>{contentText.canvasPrompt}</canvas>
-                            <canvas {...uppercanvasProps}>{contentText.canvasPrompt}</canvas>
+                            {selectedImg && 
+                                <React.Fragment>
+                                    <canvas {...lowercanvasProps}>{contentText.canvasPrompt}</canvas>
+                                    <canvas {...uppercanvasProps}>{contentText.canvasPrompt}</canvas>
+                                </React.Fragment>
+                            }
                             {hasCropBox && <TranslAreaBox {...translAreaBoxProps}/>}
                             {displayTranslBox && <TranslResultBox {...translResultBoxProps} />}
                         </div>
                     </div>
                 </div>
                 {displayTranslPopUp && <TranslpopUp {...translpopUpProps}/>}
-                {modalOpen &&
+                {modalOpen && modalId === "cancel" &&
                     <Modal>
                         <div className="popup-header">
                             <h5>{contentText.Delete}</h5>
@@ -251,6 +288,26 @@ class WorkbenchMain extends React.Component {
                         <div className="popup-footer text-right">
                             <button type="button" className="btn btn-default" onClick={closeModal}> {contentText.cancel} </button>
                             <button type="button" className="btn btn-default active" onClick={() => { closeModal(); createNewCropArea(displayTranslBox) }}> {contentText.confirm} </button>
+                        </div>
+                    </Modal>
+                }
+                {modalOpen && modalId === "feedBackMsg" &&
+                    <Modal>
+                        <div className="popup-header">
+                            <h5>{contentText.feedMsgTitle}</h5>
+                            <span className="dismissPopUp" onClick={closeModal}>
+                                <span className="glyphicon glyphicon-remove"></span>
+                            </span>
+                        </div>
+                        <div className="popup-content text-left">
+                            {currentTip.length && currentTip.map((item, index)=> {
+                                const {comicTranslationOrderId, tag, content, orderNo} = item;
+                                return (
+                                    <div className="feedMsg-item" key={index} onClick={()=> handlerSelectFeedBackMsg(comicTranslationOrderId, orderNo)}> 
+                                        <div>{tag} {content}</div>
+                                    </div>
+                                )
+                            })}
                         </div>
                     </Modal>
                 }

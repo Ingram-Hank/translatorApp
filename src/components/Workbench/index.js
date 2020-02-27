@@ -25,6 +25,7 @@ function Workbench(props) {
         createdTranslBox,
         hasCropBox,
         modalOpen,
+        modalId,
         marquee,
         font,
         brush,
@@ -45,7 +46,11 @@ function Workbench(props) {
         startNumber,
         setResultBoxStyle,
         resultBoxStyleParams,
-        selectedImg
+        selectedImg,
+        clearPreTranslResult,
+        currentTip,
+        status,
+        handlerSelectFeedBackMsg
     } = props;
     
     const canvasZoomProps = {
@@ -68,6 +73,7 @@ function Workbench(props) {
         brushEvents,
         tabToClearText,
         modalOpen,
+        modalId,
         marquee,
         createdTranslBox,
         hasCropBox,
@@ -90,7 +96,11 @@ function Workbench(props) {
         startNumber,
         setResultBoxStyle,
         resultBoxStyleParams,
-        selectedImg
+        selectedImg,
+        clearPreTranslResult,
+        currentTip,
+        status,
+        handlerSelectFeedBackMsg
     };
 
     const rightMenuProps = {

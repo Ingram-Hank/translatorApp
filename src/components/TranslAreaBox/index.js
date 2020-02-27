@@ -100,7 +100,7 @@ class TranslAreaBox extends React.Component {
             return (
                 <div className='translAreaBox' style={translAreaBoxStyle}>
                     {!displayTranslBox &&
-                        <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={openModal}>
+                        <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                             <span className="glyphicon glyphicon-trash"></span>
                         </div>
                     }

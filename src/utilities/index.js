@@ -42,14 +42,11 @@ export const mapToObject = (array, key) => {
     for (let index in array) {
         obj[array[index][key]] = array[index]
     }
-
     return obj;
 }
 
-export const canvasTextAutoLine = (str, canvas, initX, initY, lineHeight) => {
-    const ctx = canvas.getContext("2d");
+export const canvasTextAutoLine = (str, ctx, canvasWidth, initX, initY, lineHeight) => {
     let lineWidth = 0;
-    const canvasWidth = canvas.width;
     let lastSubStrIndex = 0;
     for (let i = 0; i < str.length; i++) {
         lineWidth += ctx.measureText(str[i]).width;

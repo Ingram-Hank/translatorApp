@@ -1,8 +1,45 @@
 import React from 'react';
 import {Button, ButtonDropDown, Toggle} from '../';
+import PreviewTranslResult from './PreviewTranslResult';
+import FeedBackMessage from './FeedBackMessage';
 import './header.css';
+import ImgMerge from './ImgMerge ';
 
-function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAutoTranslate, language, handlerDropDownItem, onToggle, openModal, selectedImage}){
+const buildImgs = (selectedImage, resultData)=> {
+    let imgs = [
+        {
+            url: selectedImage,
+            x: 0,
+            y: 0,
+            width: 565,
+            height: 800
+        }
+    ];
+    if(Object.keys(resultData).length) {
+        Object.values(resultData).forEach(item => {
+            const {mask, translText, font} = item;
+            const {left, top, width, height, cropedImg} = mask;
+            imgs.push({
+                url: cropedImg,
+                x: left,
+                y: top,
+                width,
+                height,
+                font,
+                text: translText
+            })
+        })
+    }
+    return imgs;
+};
+
+function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAutoTranslate, language,
+    handlerDropDownItem, handlerPreview, handlerClosePreview, onToggle, selectedImage, resultData, 
+    startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg }){
+    const imgs = buildImgs(selectedImage, resultData);
+    const imgMerge = new ImgMerge(imgs);
+    let resultImg = new Image();
+    imgMerge.then(img => resultImg.src = img);
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],
@@ -26,21 +63,25 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
     const saveDataProps = {
         attributes: {
             onClick: ()=> {
-                const upperCanvas = document.getElementById("upper-canvas");
-                const lowerCanvas = document.getElementById("lower-canvas");
-                const ctx_upper = upperCanvas.getContext("2d");
-                if(lowerCanvas) {
-                    ctx_upper.drawImage(lowerCanvas, 0, 0, upperCanvas.width, upperCanvas.height);
-                    const img = new Image();
-                    img.src = upperCanvas.toDataURL("image/jpeg");
-                    img.onload = ()=> {
-                        console.log("img.src----------", img.src);
-                    }
-                }
-                
+                handlerSaveData(resultImg);
             }
         }
     }
+    const previewProps = {
+        attributes: {
+            onClick: ()=> handlerPreview()
+        }
+    };
+    
+    const previewTranslResultProps = {
+        img: resultImg,
+        handlerClosePreview
+    };
+    const feedBackMessageProps = {
+        contentText,
+        feedMsg,
+        handlerSelectFeedBackMsg
+    };
     return (
         <div className="header">
             <div className="col-md-2 col-xs-2 col-lg-2">
@@ -55,7 +96,7 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
                     </Button>
                 </div>
                 <div className="btn-group">
-                    <Button>
+                    <Button data={previewProps}>
                         <span className="glyphicon glyphicon-eye-open"></span> {contentText.preview} 
                     </Button>
                     <Button data={saveDataProps}>
@@ -96,8 +137,19 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
                 </div>
             </div>
             <div className="col-md-2 col-xs-2 col-lg-2">
-                <ButtonDropDown {...switchLanguageProps}/>
+                <div className="btn-group">
+                    <ButtonDropDown {...switchLanguageProps}/>
+                </div>
+                <div className="btn-group">
+                    <div className="comments dropdown-toggle" data-toggle="dropdown">
+                        <span className="fa fa-bell-o"></span>
+                        {feedMsg.length && <span className="badge">{feedMsg.length}</span>}
+                    </div>
+                    <FeedBackMessage {...feedBackMessageProps}/>
+                </div>
             </div>
+            {startPreview && <PreviewTranslResult {...previewTranslResultProps}/>}
+            
         </div>
     )
 }

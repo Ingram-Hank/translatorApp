@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import {
   Header,
   Content,
@@ -7,26 +7,60 @@ import {
   LoadingSpinner
 } from '../components';
 import Workbench from './Workbench';
-import {handlerLanguage} from '../modules/language';
+import { handlerLanguage } from '../modules/language';
 import {
   getTranslImages,
+  getFeedBackMessage,
   selecteCanvas,
   minusChapter,
   plusChapter,
-  setClearCropox
+  setClearCropox,
+  saveData,
+  clearSelectedImage
 } from '../modules/images';
 import {
   hanlerMarquee,
-  handlerToggleAutoClear, 
+  handlerToggleAutoClear,
   handlerToggleAutoOCR,
   handlerToggleAutoTranslate,
   handlerSelectImage,
-  setStartNumber
+  toggleFeedBackMsg,
+  setStartNumber,
+  openPreviewMoal,
+  closePreviewModal,
+  setClearPreTranslResult
 } from '../modules/ui';
+import { mapToObject } from '../utilities';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 import '../scss/global.css';
+
+const buildGroupData = (parms) => {
+  const {resultBoxStyleParams = {}, maskTextImgs = {}, resultLayersMap = {}, font = {}} = parms;
+  const defaultFont = {
+    font_family: "Microsoft YaHei",
+    font_size: 12,
+    font_color: "rgb(0, 0, 0, .65)",
+    hasFontItalic: false,
+    hasFontWeight: false,
+    text_align: "center"
+  };
+  const obj = {};
+  if(Object.keys(resultBoxStyleParams).length && Object.keys(maskTextImgs).length) {
+    Object.keys(resultBoxStyleParams).forEach( key => {
+       if(resultLayersMap[key]) {
+        obj[key] = {
+          mask: maskTextImgs[key][maskTextImgs[key].length - 1],
+          position: resultBoxStyleParams[key],
+          translText: resultLayersMap[key].translText,
+          font: font[key] || defaultFont
+        }
+       }
+    })
+  }
+  return obj;
+}
 
 function App(props) {
   const {
@@ -47,22 +81,40 @@ function App(props) {
     chapterPc,
     selectItem,
     openModal,
-    selectedImage
+    handlerPreview,
+    selectedImage,
+    resultData,
+    startPreview,
+    handlerClosePreview,
+    handlerSaveData,
+    feedMsg,
+    handlerSelectFeedBackMsg,
+    handlerToggleFeedBackMsg,
+    openFeedBackMsg
   } = props;
-  
+
   const headerProps = {
     contentText,
     marquee,
     switchAutoClear,
     switchAutoOCR,
-    switchAutoTranslate, 
+    switchAutoTranslate,
     language,
     handlerDropDownItem,
     onToggle,
     openModal,
-    selectedImage
+    selectedImage,
+    handlerPreview,
+    handlerClosePreview,
+    resultData,
+    startPreview,
+    handlerSaveData,
+    feedMsg,
+    handlerSelectFeedBackMsg,
+    handlerToggleFeedBackMsg,
+    openFeedBackMsg
   };
-  const navigationProps= {
+  const navigationProps = {
     contentText,
     selectedImg,
     toLastChapter,
@@ -72,13 +124,13 @@ function App(props) {
     selectItem,
     images
   };
-  
+
   return (
     <div className="main">
-      <Header {...headerProps}/>
+      <Header {...headerProps} />
       <Content>
-        <Navigation {...navigationProps}/>
-        <Workbench {...props}/>
+        <Navigation {...navigationProps} />
+        <Workbench {...props} />
       </Content>
       {loading && <LoadingSpinner />}
     </div>
@@ -90,19 +142,32 @@ const mapStateToProps = (state) => {
   const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
   const {
-    selectedImage, 
+    selectedImage,
     jpgPc,
-    chapterPc
+    chapterPc,
+    maskTextImgs = {},
+    resultBoxStyleParams = {},
+    resultLayers = [],
+    feedMsg
   } = state.images;
   const {
-    marquee, 
-    switchAutoClear = true, 
-    switchAutoOCR = true, 
-    switchAutoTranslate= true,
+    marquee,
+    switchAutoClear = true,
+    switchAutoOCR = true,
+    switchAutoTranslate = true,
     selectedImg = 0,
-    loading = false
+    loading = false,
+    font = {},
+    startPreview,
+    openFeedBackMsg
   } = state.ui;
-  
+  const resultData = buildGroupData({
+    resultBoxStyleParams,
+    maskTextImgs,
+    resultLayersMap: mapToObject(resultLayers, "index"),
+    font
+  });
+
   return {
     language,
     images,
@@ -115,14 +180,21 @@ const mapStateToProps = (state) => {
     jpgPc,
     chapterPc,
     selectedImage,
-    contentText
+    maskTextImgs,
+    resultBoxStyleParams,
+    contentText,
+    resultData,
+    startPreview,
+    feedMsg,
+    openFeedBackMsg
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   dispatch(getTranslImages());
+  dispatch(getFeedBackMessage());
   return {
-    handlerDropDownItem: (id, item)=> {
+    handlerDropDownItem: (id, item) => {
       switch (id) {
         case "language":
           dispatch(handlerLanguage(item));
@@ -133,7 +205,7 @@ const mapDispatchToProps = (dispatch) => {
         default:
       }
     },
-    onToggle: (id, payload)=> {
+    onToggle: (id, payload) => {
       switch (id) {
         case 'autoClear':
           dispatch(handlerToggleAutoClear(payload));
@@ -148,11 +220,12 @@ const mapDispatchToProps = (dispatch) => {
           break;
       }
     },
-    selectItem: (selectedImg, translationOrderId)=> {
+    selectItem: (selectedImg, translationOrderId) => {
       dispatch(setStartNumber(0));
       dispatch(handlerSelectImage(selectedImg));
       dispatch(selecteCanvas(translationOrderId));
       dispatch(setClearCropox());
+      dispatch(setClearPreTranslResult());
     },
     toLastChapter: (currentNumber) => {
       dispatch(minusChapter(currentNumber));
@@ -160,6 +233,25 @@ const mapDispatchToProps = (dispatch) => {
     toNextChapter: (currentNumber) => {
       dispatch(plusChapter(currentNumber));
     },
+    handlerPreview: ()=> {
+      dispatch(openPreviewMoal())
+    },
+    handlerClosePreview: ()=> {
+      dispatch(closePreviewModal());
+    },
+    handlerSaveData:(data)=>{
+      dispatch(saveData(data))
+    },
+    handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
+      dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
+      dispatch(toggleFeedBackMsg(true));
+      dispatch(handlerSelectImage(null));
+      dispatch(clearSelectedImage());
+      dispatch(setClearPreTranslResult());
+    },
+    handlerToggleFeedBackMsg: (payload)=> {
+      dispatch(toggleFeedBackMsg(payload));
+    }
   }
 };
 

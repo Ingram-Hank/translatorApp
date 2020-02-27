@@ -14,6 +14,8 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { selectedImg: action.payload })
         case actions.UI_SET_CORRECT_TRANSL_RESULT:
             return Object.assign({}, state, { hasCorrect: !action.payload })
+        case actions.UI_TOGGLE_FEEDBACK_MESSAGE:
+            return Object.assign({}, state, { openFeedBackMsg: !action.payload })
         case actions.UI_ZOOM_CANVAS_BECH:
             return Object.assign({}, state, { zoomCanvasValue: action.payload })
         case actions.UI_SET_START_NUMBER:
@@ -21,13 +23,21 @@ const uiReducer = (state = {}, action) => {
         case actions.UI_HANDLER_SET_FONT:
             return Object.assign({}, state, { font: action.payload })
         case actions.UI_OPEN_MODAL:
-            return Object.assign({}, state, { modalOpen: true })
+            return Object.assign({}, state, { modalOpen: true, modalId: action.payload })
         case actions.UI_CLOSE_MODAL:
             return Object.assign({}, state, { modalOpen: false })
+        case actions.UI_START_PREVIEW:
+            return Object.assign({}, state, { startPreview: true })
+        case actions.UI_CLOSE_PREVIEW:
+            return Object.assign({}, state, { startPreview: false })
         case actions.UI_LOADING_START:
             return Object.assign({}, state, { loading: true })
         case actions.UI_LOADING_COMPLETE:
             return Object.assign({}, state, { loading: false })
+        case actions.UI_SET_CLEAR_PRETRANSL_RESULT:
+            return Object.assign({}, state, { clearPreTranslResult: true })
+        case actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT:
+            return Object.assign({}, state, { clearPreTranslResult: false })
         default:
             return state
     }
@@ -45,6 +55,11 @@ export const handlerToggleAutoClear = (payload) => ({
 
 export const handlerToggleAutoOCR = (payload) => ({
     type: actions.UI_TOGGLE_AUTO_OCR,
+    payload
+});
+
+export const toggleFeedBackMsg = (payload) => ({
+    type: actions.UI_TOGGLE_FEEDBACK_MESSAGE,
     payload
 });
 
@@ -78,13 +93,22 @@ export const handlersetFont = (payload) => ({
     payload
 });
 
-export const openModal = () => ({
-    type: actions.UI_OPEN_MODAL
+export const openModal = (payload) => ({
+    type: actions.UI_OPEN_MODAL,
+    payload
 })
 
 export const closeModal = () => ({
     type: actions.UI_CLOSE_MODAL
 })
+
+export const openPreviewMoal = ()=> ({
+    type: actions.UI_START_PREVIEW
+});
+
+export const closePreviewModal = ()=> ({
+    type: actions.UI_CLOSE_PREVIEW
+});
 
 export const uiloadingStart = ()=> ({
     type: actions.UI_LOADING_START
@@ -94,6 +118,13 @@ export const uiloadingComplete = ()=> ({
     type: actions.UI_LOADING_COMPLETE
 });
 
+export const setClearPreTranslResult = ()=> ({
+    type: actions.UI_SET_CLEAR_PRETRANSL_RESULT
+});
+
+export const setStopClearPreResultContainer = ()=> ({
+    type: actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT
+});
 
 export const handlerZoomCanvasPlus = (value) => {
     return (dispatch, getState) => {
@@ -122,7 +153,6 @@ export const getFontsettings = () => {
         const { startNumber = 0 } = ui;
         const fontInUi = ui.font;
         const resultFont = Object.assign({}, fontInUi, { [startNumber]: font });
-        console.log("resultFont--------------->", resultFont);
         dispatch(handlersetFont(resultFont))
     }
 };
