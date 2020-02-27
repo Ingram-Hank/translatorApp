@@ -59,9 +59,9 @@
         }
     ],
     "selectImage": "Select The Image",
-    "lastChapter": "Last Chapter",
+    "lastChapter": "Last",
     "currentChapter": "Current Chapter",
-    "nextChapter": "Next Chapter",
+    "nextChapter": "Next",
     "prompt": "Select the text or the red box to translate",
     "canvasPrompt": "Please try to change your browser, since the current version do not support canvas.",
     "submit": "Submit",
@@ -103,5 +103,6 @@
     "undo": "Undo",
     "zoom": "Zoom",
     "brush": "Brush",
-    "next": "Next"
+    "next": "Next",
+    "feedMsgTitle": "Note"
 }

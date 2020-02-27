@@ -160,7 +160,7 @@ class TranslResultBox extends React.Component {
         return (
             <div className="translResultBox-container" id="translResultBox-container" style={translResultBoxContainerStyle}>
                 <div {...moveBoxProps}>{translatedText}</div>
-                <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={openModal}>
+                <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                     <span className="glyphicon glyphicon-trash"></span>
                 </div>
                 <div className="border-top"></div>

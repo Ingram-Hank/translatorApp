@@ -103,5 +103,6 @@
     "undo": "取消",
     "zoom": "缩放",
     "brush": "画笔",
-    "next": "下一步"
+    "next": "下一步",
+    "feedMsgTitle": "站内消息通知"
 }

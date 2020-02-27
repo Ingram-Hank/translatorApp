@@ -1,8 +1,6 @@
 
 
 import axios from 'axios';
-// import { queryString } from '../utilities';
-// import qs from 'querystring';
 
 let root = process.env.NODE_ENV === 'development' ? `http://liyao-305623587.picp.io/ht/` : `http://127.0.0.1:3001/api`;
 
@@ -11,11 +9,10 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 const apiAxios = (method, url, params) => {
   return axios({
     method: method,
-    // url: method === 'GET' || method === 'DELETE' ? queryString(url, params) : url,
     url: url,
     data: method === 'POST' || method === 'PUT' ? JSON.stringify(params) : null,
     baseURL: root,
-    timeout: 10000,
+    timeout: 100000,
     headers: {
       "Content-Type": "application/json;charset=utf-8"
     },

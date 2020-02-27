@@ -28,6 +28,38 @@
     .popup-loading p {
       margin-top: 20px;
       font-size: 18px; }
+  .popup-preview {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    color: rgba(0, 0, 0, 0.65);
+    max-width: 620px;
+    height: 96vh;
+    overflow-y: auto;
+    transition: width .3s ease-out; }
+    .popup-preview-header {
+      padding: 1rem;
+      border-bottom: 1px solid #e9ecef;
+      border-top-left-radius: .3rem;
+      border-top-right-radius: .3rem; }
+      .popup-preview-header .modal-title {
+        margin-bottom: 0;
+        line-height: 1.5;
+        display: inline-block; }
+      .popup-preview-header .close {
+        float: right;
+        cursor: pointer; }
+      .popup-preview-header:after {
+        clear: both;
+        display: block;
+        content: ''; }
+    .popup-preview-body {
+      position: relative; }
+      .popup-preview-body canvas {
+        position: absolute;
+        left: 20px; }
   .popup-canvasContainer {
     position: relative;
     top: 50%;

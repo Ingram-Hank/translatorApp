@@ -1,5 +1,5 @@
 import * as actions from './actions';
-import {handlerSelectImage, uiloadingStart, uiloadingComplete} from './ui';
+import {uiloadingStart, uiloadingComplete} from './ui';
 import services from '../services';
 
 const imagesReducer = (state = {}, action) => {
@@ -14,10 +14,10 @@ const imagesReducer = (state = {}, action) => {
                 comicChapterId: comicChapterId
             })
         case actions.RECEIVED_SELECTED_IMG:
-            const {selectedImage, tip, status} = action.payload;
+            const {selectedImage, feedbackMsg, status} = action.payload;
             return Object.assign({}, state, { 
                 selectedImage: selectedImage,
-                currentTip: tip,
+                currentTip: feedbackMsg,
                 status: status
              })
         case actions.RECEIVED_CROPED_IMG:
@@ -34,6 +34,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { createdTranslBox: action.payload })
         case actions.IMAGES_CREATE_RESULT_LAYER:
             return Object.assign({}, state, { resultLayers: action.payload })
+        case actions.IMAGES_RECEIVED_TRANSLATION_ORDERID:
+            return Object.assign({}, state, { comicTranslationOrderId: action.payload })
         case actions.IMAGES_DISPLAY_TRANSL_AREA_BOX:
             return Object.assign({}, state, { hasCropBox: true })
         case actions.IMAGES_DISPLAY_TRANSLPOPUP:
@@ -46,8 +48,12 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { hasCropBox: false })
         case actions.IMAGES_CLEAR_TRANSL_POP_UP:
             return Object.assign({}, state, { displayTranslPopUp: false })
+        case actions.IMAGES_CLEAR_SELECTED_IMAGE:
+            return Object.assign({}, state, { selectedImage: "" })
         case actions.IMAGES_CREATE_RESULT_BOX:
             return Object.assign({}, state, { displayResultBox: action.payload })
+        case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
+            return Object.assign({}, state, { feedMsg: action.payload })
         case actions.IMAGES_CLEAR_PRE_CROP_AREA:
             return Object.assign({}, state, {
                 hasCropBox: false,
@@ -104,6 +110,11 @@ export const receivedResultBoxStyle = (payload) => ({
     payload
 });
 
+export const receivedTranslationOrderId = payload => ({
+    type: actions.IMAGES_RECEIVED_TRANSLATION_ORDERID,
+    payload
+});
+
 export const displayTranslPopUp = () => ({
     type: actions.IMAGES_DISPLAY_TRANSLPOPUP
 });
@@ -132,8 +143,17 @@ export const clearTranslPopUp = () => ({
     type: actions.IMAGES_CLEAR_TRANSL_POP_UP
 });
 
+export const clearSelectedImage = () => ({
+    type: actions.IMAGES_CLEAR_SELECTED_IMAGE
+});
+
 export const createResultLayer = (payload) => ({
     type: actions.IMAGES_CREATE_RESULT_LAYER,
+    payload
+});
+
+export const receivedFeedBackMsg = (payload) => ({
+    type: actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE,
     payload
 });
 
@@ -142,10 +162,24 @@ export const createResultBox = (payload)=> ({
     payload
 });
 
-export const getTranslImages = (chapterNumber) => {
+export const getTranslImages = (payload) => {
     return (dispatch, getState) => {
-        dispatch(uiloadingStart())
-        services.getImageData({orderNo: 672002200455577}).then(({data})=> {
+        dispatch(uiloadingStart());
+        const params = {
+            orderNo: 672002279982576
+        };
+        if(payload) {
+            if(payload.chapterId) {
+                params.chapterId = payload.chapterId;
+            }
+            if(payload.comicTranslationOrderId) {
+                params.comicTranslationOrderId = payload.comicTranslationOrderId;
+            }
+            if(payload.orderNo) {
+                params.orderNo = payload.orderNo;
+            }
+        }
+        services.getImageData(params).then(({data})=> {
             const imgData = data.data;
             const {chapterIds = [], comicJpgs=[], chapterPc = "", jpgPc = "", comicChapterId} = imgData;
             dispatch(receivedImages({
@@ -155,9 +189,6 @@ export const getTranslImages = (chapterNumber) => {
                 chapterIds,
                 comicChapterId
             }));
-            const comicTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
-            dispatch(handlerSelectImage(1));
-            dispatch(selecteCanvas(comicTranslationOrderId));
             dispatch(uiloadingComplete())
         }).catch(err=> {
             dispatch(uiloadingComplete())
@@ -167,18 +198,38 @@ export const getTranslImages = (chapterNumber) => {
     }
 };
 
+export const getFeedBackMessage = (id)=> {
+    return (dispatch, getState)=> {
+        services.getFeedBackMsg(id).then(({data})=> {
+            dispatch(receivedFeedBackMsg(data.data));
+        }).catch(err => console.error(err))
+    }
+};
+
 export const selecteCanvas = (id) => {
     return (dispatch, getState) => {
-        dispatch(uiloadingStart())
+        dispatch(uiloadingStart());
+        dispatch(receivedTranslationOrderId(id));
         services.getLargeImageData(id).then(({data})=> {
-            const {imgSrc, tip, status} = data.data;
-            dispatch(receiveSelectedImg({
-                selectedImage: imgSrc,
-                tip,
-                status
-            }));
-            dispatch(uiloadingComplete())
-        }).catch(err=>console.log(err))
+            const {imgSrc, feedbackMsg, status, imgTgt} = data.data;
+            if(status) {
+                dispatch(receiveSelectedImg({
+                    selectedImage: imgTgt,
+                    feedbackMsg,
+                    status
+                }));
+            }else {
+                dispatch(receiveSelectedImg({
+                    selectedImage: imgSrc,
+                    feedbackMsg,
+                    status
+                }));
+            }
+            dispatch(uiloadingComplete());
+        }).catch(err => {
+            dispatch(uiloadingComplete());
+            console.log(err);
+        })
     }
 }
 
@@ -199,6 +250,7 @@ export const setClearText = (payload) => {
             comicSrc = currentMaskTextImgs[currentMaskTextImgs.length-1].cropedImg
         }
         const comicMask = payload.src;
+        dispatch(uiloadingStart());
         services.clearText({comicSrc, comicMask}).then(({data})=> {
             const clearedTextData = data.data;
             const layerParams = {
@@ -211,7 +263,11 @@ export const setClearText = (payload) => {
             };
             maskTextImgs[startNumber].push(layerParams);
             dispatch(receivedMaskImg(maskTextImgs));
-        }).catch(error=> console.error(error));
+            dispatch(uiloadingComplete());
+        }).catch(error=> {
+            console.error(error);
+            dispatch(uiloadingComplete());
+        });
 
     }
 };
@@ -268,6 +324,7 @@ export const createTranslArea = () => {
         const {maskTextImgs = {}, createdTranslBox} = state.images;
         const {left, top, width, height, cropedImg} = createdTranslBox[startNumber];
         const comicSrc = cropedImg.src;
+        dispatch(uiloadingStart());
         services.clearText({comicSrc}).then(({ data }) => {
             const clearedTextData = data.data;
             const layerParams = {
@@ -283,7 +340,9 @@ export const createTranslArea = () => {
             const combinedLayer = Object.assign({}, maskTextImgs, {[startNumber]: newMaskArrary});
             dispatch(receivedMaskImg(combinedLayer))
             dispatch(getORCText());
+            dispatch(uiloadingComplete());
         }).catch(error => {
+            dispatch(uiloadingComplete());
             console.error(error);
         })
     }
@@ -305,6 +364,7 @@ export const getORCText = ()=> {
         const {startNumber} = state.ui;
         const {resultLayers=[]} = state.images;
         const imgBase64 = state.images.cropedImage.src;
+        dispatch(uiloadingStart());
         services.getORC({imgBase64}).then(({data})=> {
             const originTextArray = data.data;
             if(originTextArray.length) {
@@ -318,8 +378,12 @@ export const getORCText = ()=> {
                 })
                 dispatch(createResultLayer(resultLayers));
                 dispatch(getTranslText(originText));
+                dispatch(uiloadingComplete());
             }
-        }).catch(error => console.error(error));
+        }).catch(error =>{
+            console.error(error);
+            dispatch(uiloadingComplete());
+        });
     }
 }
 
@@ -330,11 +394,13 @@ export const getTranslText = (originText) => {
         const {resultLayers=[]} = state.images;
         services.getTranslResult({srcText: originText, orderNo: 871911160398842}).then(({data})=> {
             const translatedText = data.data.result;
-            resultLayers.forEach(element => {
-                if(element.index === startNumber){
-                    element.translText = translatedText
-                }
-            });
+            if(translatedText) {
+                resultLayers.forEach(element => {
+                    if(element.index === startNumber){
+                        element.translText = translatedText;
+                    }
+                });
+            }
             dispatch(createResultLayer(resultLayers));
         }).catch(error=> console.error(error));
     }
@@ -405,6 +471,21 @@ export const setResultBoxStyle = ()=> {
         resultBoxStyleParams = Object.assign({}, resultBoxStyleParams, {[startNumber]: payload})
         dispatch(receivedResultBoxStyle(resultBoxStyleParams))
         dispatch(hiddenTranslBox());
+    }
+};
+
+export const saveData = (payload)=> {
+    return(dispatch, getState)=> {
+        const state = getState();
+        const {comicTranslationOrderId} = state.images;
+        dispatch(uiloadingStart());
+        services.saveImage({imgBase64: payload.src, comicTranslationOrderId}).then(({data})=> {
+            console.log(data)
+            dispatch(uiloadingComplete());
+        }).catch(err => {
+            console.error(err);
+            dispatch(uiloadingComplete());
+        })
     }
 };
 
