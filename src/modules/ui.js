@@ -14,14 +14,18 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { selectedImg: action.payload })
         case actions.UI_SET_CORRECT_TRANSL_RESULT:
             return Object.assign({}, state, { hasCorrect: !action.payload })
-        case actions.UI_TOGGLE_FEEDBACK_MESSAGE:
-            return Object.assign({}, state, { openFeedBackMsg: !action.payload })
         case actions.UI_ZOOM_CANVAS_BECH:
             return Object.assign({}, state, { zoomCanvasValue: action.payload })
         case actions.UI_SET_START_NUMBER:
             return Object.assign({}, state, { startNumber: action.payload })
         case actions.UI_HANDLER_SET_FONT:
             return Object.assign({}, state, { font: action.payload })
+        case actions.UI_RECEIVED_CURRENT_SELECTED_ITEM:
+            return Object.assign({}, state, { currentSelectedItem: action.payload })
+        case actions.UI_RECEIVED_CURRENT_TRANSLATION_ORDERID:
+            return Object.assign({}, state, { currentTranslationOrderId: action.payload })
+        case actions.UI_RECEIVED_ERROR_MESSAGE:
+            return Object.assign({}, state, { notificationMsg: action.payload })
         case actions.UI_OPEN_MODAL:
             return Object.assign({}, state, { modalOpen: true, modalId: action.payload })
         case actions.UI_CLOSE_MODAL:
@@ -38,6 +42,14 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { clearPreTranslResult: true })
         case actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT:
             return Object.assign({}, state, { clearPreTranslResult: false })
+        case actions.UI_SET_IS_BACKTO_TRANSLATE_PAGE:
+            return Object.assign({}, state, { isBackToTranslPage: true })
+        case actions.UI_SET_IS_NOT_BACKTO_TRANSLATE_PAGE:
+            return Object.assign({}, state, { isBackToTranslPage: false })
+        case actions.UI_SET_IS_TO_LAST_CHAPTER:
+            return Object.assign({}, state, { isToLastChapter: true })
+        case actions.UI_SET_IS_TO_NEXT_CHAPTER:
+            return Object.assign({}, state, { isToNextChapter: true })
         default:
             return state
     }
@@ -58,11 +70,6 @@ export const handlerToggleAutoOCR = (payload) => ({
     payload
 });
 
-export const toggleFeedBackMsg = (payload) => ({
-    type: actions.UI_TOGGLE_FEEDBACK_MESSAGE,
-    payload
-});
-
 export const handlerToggleAutoTranslate = (payload) => ({
     type: actions.UI_TOGGLE_AUTO_TRANSLATE,
     payload
@@ -70,6 +77,15 @@ export const handlerToggleAutoTranslate = (payload) => ({
 
 export const handlerSelectImage = (payload) => ({
     type: actions.UI_SELECT_IMAGE,
+    payload
+});
+
+export const receivedCurrentSelectedItem = (payload)=> ({
+    type: actions.UI_RECEIVED_CURRENT_SELECTED_ITEM,
+    payload
+});
+export const receivedCurrenttranslationOrderId = (payload)=> ({
+    type: actions.UI_RECEIVED_CURRENT_TRANSLATION_ORDERID,
     payload
 });
 
@@ -95,6 +111,11 @@ export const handlersetFont = (payload) => ({
 
 export const openModal = (payload) => ({
     type: actions.UI_OPEN_MODAL,
+    payload
+})
+
+export const receivedErrorMsg = (payload) => ({
+    type: actions.UI_RECEIVED_ERROR_MESSAGE,
     payload
 })
 
@@ -124,6 +145,22 @@ export const setClearPreTranslResult = ()=> ({
 
 export const setStopClearPreResultContainer = ()=> ({
     type: actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT
+});
+
+export const backToTransl = ()=> ({
+    type: actions.UI_SET_IS_BACKTO_TRANSLATE_PAGE
+});
+
+export const isNotBackToTransl = ()=> ({
+    type: actions.UI_SET_IS_NOT_BACKTO_TRANSLATE_PAGE
+});
+
+export const setIsToLastChapter = () => ({
+    type: actions.UI_SET_IS_TO_LAST_CHAPTER
+});
+
+export const setIsToNextChapter = () => ({
+    type: actions.UI_SET_IS_TO_NEXT_CHAPTER
 });
 
 export const handlerZoomCanvasPlus = (value) => {

@@ -62,8 +62,6 @@ class ImgMerge {
     }
 
     drawTextOn(t, x, y, w, font) {
-        console.log("--------------------x",x, "w...........................",w)
-
         const chr = t.split("");
         let temp = "";
         let row = [];
@@ -130,10 +128,6 @@ class ImgMerge {
 
             this.ctx.drawImage(...drawPara);
             if (this.imgs[i_1].text) {
-                this.ctx.setLineDash([2]);
-                this.ctx.lineWidth = 1;
-                this.ctx.strokeStyle = '#ff4f81';
-                this.ctx.strokeRect(this.imgs[i_1].x, this.imgs[i_1].y, this.imgs[i_1].width, this.imgs[i_1].height);
                 this.drawTextOn(this.imgs[i_1].text, this.imgs[i_1].x, this.imgs[i_1].y, this.imgs[i_1].width, this.imgs[i_1].font);
             }
 

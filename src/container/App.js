@@ -10,13 +10,15 @@ import Workbench from './Workbench';
 import { handlerLanguage } from '../modules/language';
 import {
   getTranslImages,
-  getFeedBackMessage,
-  selecteCanvas,
-  minusChapter,
-  plusChapter,
+  handlerToLastChapter,
+  handlerToNextChapter,
   setClearCropox,
   saveData,
-  clearSelectedImage
+  clearSelectedImage,
+  initialTranslPage,
+  restoreTranslPic,
+  handlerSelectItem,
+  abandonSaveAction
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -24,11 +26,11 @@ import {
   handlerToggleAutoOCR,
   handlerToggleAutoTranslate,
   handlerSelectImage,
-  toggleFeedBackMsg,
   setStartNumber,
   openPreviewMoal,
   closePreviewModal,
-  setClearPreTranslResult
+  setClearPreTranslResult,
+  closeModal
 } from '../modules/ui';
 import { mapToObject } from '../utilities';
 import strings from '../contents';
@@ -37,7 +39,7 @@ import 'bootstrap/dist/js/bootstrap';
 import '../scss/global.css';
 
 const buildGroupData = (parms) => {
-  const {resultBoxStyleParams = {}, maskTextImgs = {}, resultLayersMap = {}, font = {}} = parms;
+  const { resultBoxStyleParams = {}, maskTextImgs = {}, resultLayersMap = {}, font = {} } = parms;
   const defaultFont = {
     font_family: "Microsoft YaHei",
     font_size: 12,
@@ -47,16 +49,16 @@ const buildGroupData = (parms) => {
     text_align: "center"
   };
   const obj = {};
-  if(Object.keys(resultBoxStyleParams).length && Object.keys(maskTextImgs).length) {
-    Object.keys(resultBoxStyleParams).forEach( key => {
-       if(resultLayersMap[key]) {
+  if (Object.keys(resultBoxStyleParams).length && Object.keys(maskTextImgs).length) {
+    Object.keys(resultBoxStyleParams).forEach(key => {
+      if (resultLayersMap[key] && maskTextImgs[key]) {
         obj[key] = {
           mask: maskTextImgs[key][maskTextImgs[key].length - 1],
           position: resultBoxStyleParams[key],
           translText: resultLayersMap[key].translText,
           font: font[key] || defaultFont
         }
-       }
+      }
     })
   }
   return obj;
@@ -66,6 +68,8 @@ function App(props) {
   const {
     contentText,
     marquee,
+    modalOpen,
+    modalId,
     switchAutoClear,
     switchAutoOCR,
     switchAutoTranslate,
@@ -79,40 +83,52 @@ function App(props) {
     toNextChapter,
     jpgPc,
     chapterPc,
+    chapterIds,
+    comicChapterId,
     selectItem,
-    openModal,
+    closeModal,
     handlerPreview,
+    status,
     selectedImage,
+    selectedTranslImage,
     resultData,
     startPreview,
     handlerClosePreview,
     handlerSaveData,
+    handlerAbandonSave,
     feedMsg,
     handlerSelectFeedBackMsg,
-    handlerToggleFeedBackMsg,
-    openFeedBackMsg
+    handlerRestore,
+    lastChapterDisable,
+    nextChapterDisable,
+    notificationMsg
   } = props;
 
   const headerProps = {
     contentText,
     marquee,
+    modalOpen,
+    modalId,
     switchAutoClear,
     switchAutoOCR,
     switchAutoTranslate,
     language,
     handlerDropDownItem,
     onToggle,
-    openModal,
+    closeModal,
+    status,
     selectedImage,
+    selectedTranslImage,
     handlerPreview,
     handlerClosePreview,
     resultData,
     startPreview,
     handlerSaveData,
+    handlerAbandonSave,
     feedMsg,
     handlerSelectFeedBackMsg,
-    handlerToggleFeedBackMsg,
-    openFeedBackMsg
+    handlerRestore,
+    notificationMsg
   };
   const navigationProps = {
     contentText,
@@ -121,8 +137,12 @@ function App(props) {
     toNextChapter,
     jpgPc,
     chapterPc,
+    chapterIds,
+    comicChapterId,
     selectItem,
-    images
+    images,
+    lastChapterDisable,
+    nextChapterDisable
   };
 
   return (
@@ -143,15 +163,23 @@ const mapStateToProps = (state) => {
   const images = state.images.imagesCollection;
   const {
     selectedImage,
+    selectedTranslImage,
     jpgPc,
     chapterPc,
+    chapterIds,
+    comicChapterId,
     maskTextImgs = {},
     resultBoxStyleParams = {},
     resultLayers = [],
-    feedMsg
+    feedMsg,
+    lastChapterDisable,
+    nextChapterDisable,
+    status
   } = state.images;
   const {
     marquee,
+    modalOpen,
+    modalId,
     switchAutoClear = true,
     switchAutoOCR = true,
     switchAutoTranslate = true,
@@ -159,7 +187,7 @@ const mapStateToProps = (state) => {
     loading = false,
     font = {},
     startPreview,
-    openFeedBackMsg
+    notificationMsg
   } = state.ui;
   const resultData = buildGroupData({
     resultBoxStyleParams,
@@ -172,6 +200,8 @@ const mapStateToProps = (state) => {
     language,
     images,
     marquee,
+    modalOpen,
+    modalId,
     switchAutoClear,
     switchAutoOCR,
     switchAutoTranslate,
@@ -179,20 +209,25 @@ const mapStateToProps = (state) => {
     loading,
     jpgPc,
     chapterPc,
+    chapterIds,
+    comicChapterId,
+    status,
     selectedImage,
+    selectedTranslImage,
     maskTextImgs,
     resultBoxStyleParams,
     contentText,
     resultData,
     startPreview,
     feedMsg,
-    openFeedBackMsg
+    lastChapterDisable,
+    nextChapterDisable,
+    notificationMsg
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
-  dispatch(getTranslImages());
-  dispatch(getFeedBackMessage());
+  dispatch(initialTranslPage());
   return {
     handlerDropDownItem: (id, item) => {
       switch (id) {
@@ -220,37 +255,41 @@ const mapDispatchToProps = (dispatch) => {
           break;
       }
     },
+    closeModal: () => {
+      dispatch(closeModal());
+    },
     selectItem: (selectedImg, translationOrderId) => {
+      dispatch(handlerSelectItem(selectedImg, translationOrderId));
+    },
+    toLastChapter: () => {
+      dispatch(handlerToLastChapter());
+    },
+    toNextChapter: () => {
+      dispatch(handlerToNextChapter());
+    },
+    handlerPreview: () => {
+      dispatch(openPreviewMoal())
+    },
+    handlerClosePreview: () => {
+      dispatch(closePreviewModal());
+    },
+    handlerAbandonSave: () => {
+      dispatch(abandonSaveAction());
+    },
+    handlerSaveData: (data) => {
+      dispatch(saveData(data));
       dispatch(setStartNumber(0));
-      dispatch(handlerSelectImage(selectedImg));
-      dispatch(selecteCanvas(translationOrderId));
       dispatch(setClearCropox());
       dispatch(setClearPreTranslResult());
     },
-    toLastChapter: (currentNumber) => {
-      dispatch(minusChapter(currentNumber));
-    },
-    toNextChapter: (currentNumber) => {
-      dispatch(plusChapter(currentNumber));
-    },
-    handlerPreview: ()=> {
-      dispatch(openPreviewMoal())
-    },
-    handlerClosePreview: ()=> {
-      dispatch(closePreviewModal());
-    },
-    handlerSaveData:(data)=>{
-      dispatch(saveData(data))
-    },
-    handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
-      dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
-      dispatch(toggleFeedBackMsg(true));
+    handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo) => {
+      dispatch(getTranslImages({ comicTranslationOrderId, orderNo }));
       dispatch(handlerSelectImage(null));
       dispatch(clearSelectedImage());
       dispatch(setClearPreTranslResult());
     },
-    handlerToggleFeedBackMsg: (payload)=> {
-      dispatch(toggleFeedBackMsg(payload));
+    handlerRestore: () => {
+      dispatch(restoreTranslPic())
     }
   }
 };

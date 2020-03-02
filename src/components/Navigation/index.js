@@ -10,11 +10,15 @@ function Navigation(props) {
         toLastChapter,
         toNextChapter,
         chapterPc,
-        images = []
+        chapterIds = [],
+        comicChapterId,
+        images = [],
+        lastChapterDisable,
+        nextChapterDisable
     } = props;
 
     const lastChapterProps = {
-        className: "chapterBtn",
+        className: classNames("chapterBtn", {"disabled": lastChapterDisable}),
         title: contentText.lastChapter,
         onClick: () => toLastChapter()
     };
@@ -23,17 +27,27 @@ function Navigation(props) {
         title: contentText.currentChapter
     };
     const nextChapterProps = {
-        className: "chapterBtn",
+        className: classNames("chapterBtn", {"disabled": nextChapterDisable}),
         title: contentText.nextChapter,
         onClick: () => toNextChapter()
+    };
+    const statusTexts = {
+        0: contentText.untranslated,
+        1: contentText.translated,
+        2: contentText.translatedHasProblem
+    };
+    const statusColors = {
+        0: 'white',
+        1: 'green',
+        2: "red"
     };
     return (
         <div className="navigation">
             <div className="navigation-header text-center">
-                <h5>{selectedImg}/{images.length}</h5>
+                <h5>{chapterPc}</h5>
                 <div className="chapter">
                     <span {...lastChapterProps}>{contentText.lastChapter}</span>
-                    <span {...currentChapterProps}>{chapterPc}</span>
+                    <span {...currentChapterProps}>{chapterIds.indexOf(comicChapterId)+1}/{chapterIds.length}</span>
                     <span {...nextChapterProps}>{contentText.nextChapter}</span>
                 </div>
             </div>
@@ -45,11 +59,15 @@ function Navigation(props) {
                             className: classNames("list-group-item text-right", {
                                 "active": selectedImg === index + 1
                             }),
-                            
                             onClick: () => selectItem(index+1, image.comicTranslationOrderId)
                         };
+                        const lightClassName = classNames("light " + statusColors[image.status]);
                         return (
                             <li {...listGroupItemProps}>
+                                <div className="item_status">
+                                    <span className={lightClassName}></span>
+                                    {statusTexts[image.status]}
+                                </div>
                                 <span className="item_position pr-1">{index + 1}</span>
                                 <a href="##">
                                     <img src={image.thumbnail} alt={"image_" + index} />

@@ -11,13 +11,12 @@ class TranslAreaBox extends React.Component {
     }
 
     doodling() {
-        const { currentMaskTextImgs = [], createMaskLayer, startNumber } = this.props;
+        const { currentMaskTextImgs = [], createMaskLayer, startNumber, data, scale, brush } = this.props;
         const canvas = document.getElementById(`maskCanvas_${startNumber}`);
         const context = canvas.getContext("2d");
-        const { scale, brush } = this.props;
         const { brushWidth = 10 } = brush;
         const brush_Width = brushWidth * scale;
-        let img = this.props.data.cropedImg;
+        let img = data.cropedImg;
         if (currentMaskTextImgs.length) {
             img = new Image();
             img.src = currentMaskTextImgs[currentMaskTextImgs.length-1].cropedImg;

@@ -23,6 +23,11 @@
         width: 50px; }
         .navigation-header .chapter .chapterBtn:hover {
           font-size: 14px; }
+        .navigation-header .chapter .chapterBtn.disabled {
+          opacity: .4;
+          user-select: none;
+          pointer-events: none;
+          cursor: not-allowed; }
       .navigation-header .chapter-current {
         margin: 0 10px; }
   .navigation-body {
@@ -45,9 +50,25 @@
         background-color: #373e47;
         padding: 0;
         border: 2px solid #fff;
-        transition: border .3s ease-in-out; }
-        .navigation-body .list-group-item .item_position {
-          color: #fff; }
+        transition: border .3s ease-in-out;
+        color: #fff; }
+        .navigation-body .list-group-item .item_status {
+          position: absolute;
+          left: 10px;
+          display: inline-block;
+          text-align: left; }
+          .navigation-body .list-group-item .item_status .light {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 5px; }
+            .navigation-body .list-group-item .item_status .light.white {
+              background-color: white; }
+            .navigation-body .list-group-item .item_status .light.green {
+              background-color: mediumturquoise; }
+            .navigation-body .list-group-item .item_status .light.red {
+              background-color: #fa7c90; }
         .navigation-body .list-group-item:not(:last-child) {
           margin-bottom: 10px; }
         .navigation-body .list-group-item.active {

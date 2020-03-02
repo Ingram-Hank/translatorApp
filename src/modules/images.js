@@ -1,5 +1,19 @@
 import * as actions from './actions';
-import {uiloadingStart, uiloadingComplete} from './ui';
+import { 
+    uiloadingStart,
+    uiloadingComplete,
+    isNotBackToTransl,
+    handlerSelectImage,
+    receivedCurrentSelectedItem,
+    receivedCurrenttranslationOrderId,
+    receivedErrorMsg,
+    openModal,
+    closeModal,
+    setStartNumber,
+    setClearPreTranslResult,
+    setIsToLastChapter,
+    setIsToNextChapter
+} from './ui';
 import services from '../services';
 
 const imagesReducer = (state = {}, action) => {
@@ -14,18 +28,15 @@ const imagesReducer = (state = {}, action) => {
                 comicChapterId: comicChapterId
             })
         case actions.RECEIVED_SELECTED_IMG:
-            const {selectedImage, feedbackMsg, status} = action.payload;
-            return Object.assign({}, state, { 
+            const { selectedImage, selectedTranslImage, feedbackMsg, status } = action.payload;
+            return Object.assign({}, state, {
                 selectedImage: selectedImage,
+                selectedTranslImage: selectedTranslImage,
                 currentTip: feedbackMsg,
                 status: status
-             })
+            })
         case actions.RECEIVED_CROPED_IMG:
             return Object.assign({}, state, { cropedImage: action.payload })
-        case actions.IMAGES_CHAPTER_PLUS:
-            return Object.assign({}, state, { currentNumber: action.payload })
-        case actions.IMAGES_CHAPTER_MINUS:
-            return Object.assign({}, state, { currentNumber: action.payload })
         case actions.IMAGES_RECEIVED_MASK_IMG:
             return Object.assign({}, state, { maskTextImgs: action.payload })
         case actions.IMAGES_RECEIVED_RESULT_BOX_STYLE:
@@ -52,8 +63,18 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { selectedImage: "" })
         case actions.IMAGES_CREATE_RESULT_BOX:
             return Object.assign({}, state, { displayResultBox: action.payload })
+        case actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE:
+            return Object.assign({}, state, { selectedTranslImage: action.payload })
         case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
             return Object.assign({}, state, { feedMsg: action.payload })
+        case actions.IMAGES_DISABLED_SWITCH_CHAPTER:
+            return Object.assign({}, state, { lastChapterDisable: true, nextChapterDisable: true })
+        case actions.IMAGES_DISABLED_LAST_CHAPTER:
+            return Object.assign({}, state, { lastChapterDisable: true })
+        case actions.IMAGES_DISABLED_NEXT_CHAPTER:
+            return Object.assign({}, state, { nextChapterDisable: true })
+        case actions.IMAGES_ENABLE_SWITCH_CHAPTER:
+            return Object.assign({}, state, { lastChapterDisable: false, nextChapterDisable: false })
         case actions.IMAGES_CLEAR_PRE_CROP_AREA:
             return Object.assign({}, state, {
                 hasCropBox: false,
@@ -84,16 +105,6 @@ export const receivedCropedImg = (payload) => ({
     type: actions.RECEIVED_CROPED_IMG,
     payload
 })
-
-export const chapterPlus = (payload) => ({
-    type: actions.IMAGES_CHAPTER_PLUS,
-    payload
-});
-
-export const chapterMinus = (payload) => ({
-    type: actions.IMAGES_CHAPTER_MINUS,
-    payload
-});
 
 export const createTranslAreaBox = (payload) => ({
     type: actions.IMAGES_CREATE_TRANSLAREA_BOX,
@@ -157,31 +168,132 @@ export const receivedFeedBackMsg = (payload) => ({
     payload
 });
 
-export const createResultBox = (payload)=> ({
+export const createResultBox = (payload) => ({
     type: actions.IMAGES_CREATE_RESULT_BOX,
     payload
 });
+
+export const receivedSelectedTranslImage = (payload)=> ({
+    type: actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE,
+    payload
+})
+
+export const disabledSwitchChapter = () => ({
+    type: actions.IMAGES_DISABLED_SWITCH_CHAPTER
+});
+
+export const disabledLastChapter = () => ({
+    type: actions.IMAGES_DISABLED_LAST_CHAPTER
+});
+
+export const disabledNextChapter = () => ({
+    type: actions.IMAGES_DISABLED_NEXT_CHAPTER
+});
+
+export const enableSwitchChapter = () => ({
+    type: actions.IMAGES_ENABLE_SWITCH_CHAPTER
+});
+
+export const abandonSaveAction = ()=> {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {currentSelectedItem, currentTranslationOrderId, isToLastChapter, isToNextChapter} = state.ui;
+        dispatch(closeModal());
+        if(currentSelectedItem && currentTranslationOrderId) {
+            dispatch(handlerSelectImage(currentSelectedItem));
+            dispatch(selecteCanvas(currentTranslationOrderId));
+        }
+        if(isToLastChapter) {
+            dispatch(minusChapter());
+            dispatch(handlerSelectImage(null));
+            dispatch(clearSelectedImage());
+        }
+        if(isToNextChapter) {
+            dispatch(plusChapter());
+            dispatch(handlerSelectImage(null));
+            dispatch(clearSelectedImage());
+        }
+        dispatch(setStartNumber(0));
+        dispatch(setClearCropox());
+        dispatch(setClearPreTranslResult());
+    }
+};
+
+export const handlerSelectItem = (selectedImg, translationOrderId)=> {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {resultLayers = []} = state.images;
+        if(resultLayers.length) {
+            dispatch(openModal("promteSave"));
+            dispatch(receivedCurrentSelectedItem(selectedImg));
+            dispatch(receivedCurrenttranslationOrderId(translationOrderId));
+        }else {
+            dispatch(handlerSelectImage(selectedImg));
+            dispatch(selecteCanvas(translationOrderId));
+        }
+    }
+};
+
+export const initialChapter = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const { chapterIds = [], comicChapterId } = state.images;
+        if (chapterIds.length) {
+            switch (chapterIds.length) {
+                case 0:
+                case 1:
+                    dispatch(disabledSwitchChapter())
+                    break;
+                case 2:
+                    if (chapterIds.indexOf(comicChapterId) === 0) {
+                        dispatch(disabledLastChapter())
+                    } else {
+                        dispatch(disabledNextChapter())
+                    }
+                    break;
+                case 3:
+                    if (chapterIds.indexOf(comicChapterId) === 0) {
+                        dispatch(disabledLastChapter())
+                    } else if (chapterIds.indexOf(comicChapterId) === 2) {
+                        dispatch(disabledNextChapter())
+                    } else {
+                        dispatch(enableSwitchChapter())
+                    }
+                    break;
+                default:
+                    if (chapterIds.indexOf(comicChapterId) === 0) {
+                        dispatch(disabledLastChapter())
+                    } else if (chapterIds.indexOf(comicChapterId) === chapterIds.length-1) {
+                        dispatch(disabledNextChapter())
+                    } else {
+                        dispatch(enableSwitchChapter())
+                    }
+                    break;
+            }
+        }
+    }
+};
 
 export const getTranslImages = (payload) => {
     return (dispatch, getState) => {
         dispatch(uiloadingStart());
         const params = {
-            orderNo: 672002279982576
+            orderNo: 672002285686393
         };
-        if(payload) {
-            if(payload.chapterId) {
+        if (payload) {
+            if (payload.chapterId) {
                 params.chapterId = payload.chapterId;
             }
-            if(payload.comicTranslationOrderId) {
+            if (payload.comicTranslationOrderId) {
                 params.comicTranslationOrderId = payload.comicTranslationOrderId;
             }
-            if(payload.orderNo) {
+            if (payload.orderNo) {
                 params.orderNo = payload.orderNo;
             }
         }
-        services.getImageData(params).then(({data})=> {
+        services.getImageData(params).then(({ data }) => {
             const imgData = data.data;
-            const {chapterIds = [], comicJpgs=[], chapterPc = "", jpgPc = "", comicChapterId} = imgData;
+            const { chapterIds = [], comicJpgs = [], chapterPc = "", jpgPc = "", comicChapterId } = imgData;
             dispatch(receivedImages({
                 images: comicJpgs,
                 chapterPc,
@@ -189,18 +301,20 @@ export const getTranslImages = (payload) => {
                 chapterIds,
                 comicChapterId
             }));
+            dispatch(initialChapter());
+            dispatch(isNotBackToTransl());
             dispatch(uiloadingComplete())
-        }).catch(err=> {
+        }).catch(err => {
             dispatch(uiloadingComplete())
             console.error(err)
         })
-        
+
     }
 };
 
-export const getFeedBackMessage = (id)=> {
-    return (dispatch, getState)=> {
-        services.getFeedBackMsg(id).then(({data})=> {
+export const getFeedBackMessage = (id) => {
+    return (dispatch, getState) => {
+        services.getFeedBackMsg(id).then(({ data }) => {
             dispatch(receivedFeedBackMsg(data.data));
         }).catch(err => console.error(err))
     }
@@ -210,21 +324,14 @@ export const selecteCanvas = (id) => {
     return (dispatch, getState) => {
         dispatch(uiloadingStart());
         dispatch(receivedTranslationOrderId(id));
-        services.getLargeImageData(id).then(({data})=> {
-            const {imgSrc, feedbackMsg, status, imgTgt} = data.data;
-            if(status) {
-                dispatch(receiveSelectedImg({
-                    selectedImage: imgTgt,
-                    feedbackMsg,
-                    status
-                }));
-            }else {
-                dispatch(receiveSelectedImg({
-                    selectedImage: imgSrc,
-                    feedbackMsg,
-                    status
-                }));
-            }
+        services.getLargeImageData(id).then(({ data }) => {
+            const { imgSrc, feedbackMsg, status, imgTgt } = data.data;
+            dispatch(receiveSelectedImg({
+                selectedImage: imgSrc,
+                selectedTranslImage: imgTgt,
+                feedbackMsg,
+                status
+            }));
             dispatch(uiloadingComplete());
         }).catch(err => {
             dispatch(uiloadingComplete());
@@ -242,16 +349,16 @@ export const setClearText = (payload) => {
     return (dispatch, getState) => {
         const state = getState();
         const { startNumber = 0 } = state.ui;
-        const {maskTextImgs = {}, createdTranslBox} = state.images;
-        const {left, top, width, height, cropedImg} = createdTranslBox[startNumber];
+        const { maskTextImgs = {}, createdTranslBox } = state.images;
+        const { left, top, width, height, cropedImg } = createdTranslBox[startNumber];
         let comicSrc = cropedImg.src;
-        if(Object.keys(maskTextImgs).length) {
-            const currentMaskTextImgs = maskTextImgs[startNumber] || []; 
-            comicSrc = currentMaskTextImgs[currentMaskTextImgs.length-1].cropedImg
+        if (Object.keys(maskTextImgs).length) {
+            const currentMaskTextImgs = maskTextImgs[startNumber] || [];
+            comicSrc = currentMaskTextImgs[currentMaskTextImgs.length - 1].cropedImg
         }
         const comicMask = payload.src;
         dispatch(uiloadingStart());
-        services.clearText({comicSrc, comicMask}).then(({data})=> {
+        services.clearText({ comicSrc, comicMask }).then(({ data }) => {
             const clearedTextData = data.data;
             const layerParams = {
                 index: startNumber,
@@ -264,7 +371,7 @@ export const setClearText = (payload) => {
             maskTextImgs[startNumber].push(layerParams);
             dispatch(receivedMaskImg(maskTextImgs));
             dispatch(uiloadingComplete());
-        }).catch(error=> {
+        }).catch(error => {
             console.error(error);
             dispatch(uiloadingComplete());
         });
@@ -272,103 +379,125 @@ export const setClearText = (payload) => {
     }
 };
 
-export const resetBrush = ()=> {
+export const resetBrush = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { startNumber = 0 } = state.ui;
-        dispatch(receivedMaskImg({[startNumber]: []}))
+        dispatch(receivedMaskImg({ [startNumber]: [] }))
     }
 };
 
-export const undoBrush = ()=> {
-    return (dispatch, getState)=> {
+export const undoBrush = () => {
+    return (dispatch, getState) => {
         const state = getState();
         const { startNumber = 0 } = state.ui;
-        const {maskTextImgs} = state.images;
+        const { maskTextImgs } = state.images;
         const payload = maskTextImgs[startNumber].pop();
         dispatch(receivedMaskImg(payload));
     }
 };
 
+export const handlerToLastChapter = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {resultLayers = []} = state.images;
+        if(resultLayers.length) {
+            dispatch(openModal("promteSave"));
+            dispatch(setIsToLastChapter());
+        }else {
+            dispatch(minusChapter());
+            dispatch(handlerSelectImage(null));
+            dispatch(clearSelectedImage());
+        }
+    }
+}
+
+export const handlerToNextChapter = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {resultLayers = []} = state.images;
+        if(resultLayers.length) {
+            dispatch(openModal("promteSave"));
+            dispatch(setIsToNextChapter());
+        }else {
+            dispatch(plusChapter());
+            dispatch(handlerSelectImage(null));
+            dispatch(clearSelectedImage());
+        }
+    }
+}
+
 export const plusChapter = () => {
     return (dispatch, getState) => {
         const state = getState();
-        let { currentNumber, totalNumber } = state.images;
-        let payload = 0;
-        if (Number(currentNumber) >= totalNumber) {
-            payload = totalNumber;
-        } else {
-            payload = currentNumber + 1;
-        }
-        dispatch(chapterPlus(payload));
+        const { chapterIds = [], comicChapterId } = state.images;
+        const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) + 1];
+        dispatch(getTranslImages({ chapterId }))
     }
 };
 export const minusChapter = () => {
     return (dispatch, getState) => {
         const state = getState();
-        let { currentNumber } = state.images;
-        let payload = 0;
-        if (Number(currentNumber) <= 2) {
-            payload = 1;
-        } else {
-            payload = currentNumber - 1;
-        }
-        dispatch(chapterMinus(payload));
+        const { chapterIds = [], comicChapterId } = state.images;
+        const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) - 1];
+        dispatch(getTranslImages({ chapterId }))
     }
 };
 
 export const createTranslArea = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const {startNumber = 0} = state.ui;
-        const {maskTextImgs = {}, createdTranslBox} = state.images;
-        const {left, top, width, height, cropedImg} = createdTranslBox[startNumber];
+        const { startNumber = 0, switchAutoClear = true, switchAutoOCR = true} = state.ui;
+        const { maskTextImgs = {}, createdTranslBox } = state.images;
+        const { left, top, width, height, cropedImg } = createdTranslBox[startNumber];
         const comicSrc = cropedImg.src;
-        dispatch(uiloadingStart());
-        services.clearText({comicSrc}).then(({ data }) => {
-            const clearedTextData = data.data;
-            const layerParams = {
-                index: startNumber,
-                cropedImg: clearedTextData.comicTgt,
-                left,
-                top,
-                width,
-                height
-            };
-            const newMaskArrary = [];
-            newMaskArrary.push(layerParams);
-            const combinedLayer = Object.assign({}, maskTextImgs, {[startNumber]: newMaskArrary});
-            dispatch(receivedMaskImg(combinedLayer))
-            dispatch(getORCText());
-            dispatch(uiloadingComplete());
-        }).catch(error => {
-            dispatch(uiloadingComplete());
-            console.error(error);
-        })
+        if(switchAutoClear) {
+            dispatch(uiloadingStart());
+            services.clearText({ comicSrc }).then(({ data }) => {
+                const clearedTextData = data.data;
+                const layerParams = {
+                    index: startNumber,
+                    cropedImg: clearedTextData.comicTgt,
+                    left,
+                    top,
+                    width,
+                    height
+                };
+                const newMaskArrary = [];
+                newMaskArrary.push(layerParams);
+                const combinedLayer = Object.assign({}, maskTextImgs, { [startNumber]: newMaskArrary });
+                dispatch(receivedMaskImg(combinedLayer));
+                if(switchAutoOCR) dispatch(getORCText());
+                dispatch(uiloadingComplete());
+            }).catch(error => {
+                dispatch(uiloadingComplete());
+                console.error(error);
+            })
+        }
     }
 }
 
-export const createOriginMask = (payload)=> {
-    return (dispatch, getState)=> {
+export const createOriginMask = (payload) => {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        let {createdTranslBox = {}} = state.images;
-        createdTranslBox = Object.assign({}, createdTranslBox, {[startNumber]: payload});
+        const { startNumber } = state.ui;
+        let { createdTranslBox = {} } = state.images;
+        createdTranslBox = Object.assign({}, createdTranslBox, { [startNumber]: payload });
         dispatch(createTranslAreaBox(createdTranslBox))
     }
 };
 
-export const getORCText = ()=> {
-    return (dispatch, getState)=> {
+export const getORCText = () => {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        const {resultLayers=[]} = state.images;
+        const { startNumber, switchAutoTranslate = true } = state.ui;
+        const { resultLayers = [] } = state.images;
         const imgBase64 = state.images.cropedImage.src;
         dispatch(uiloadingStart());
-        services.getORC({imgBase64}).then(({data})=> {
+        services.getORC({ imgBase64 }).then(({ data }) => {
             const originTextArray = data.data;
-            if(originTextArray.length) {
-                const originText = originTextArray.map((item)=> {
+            if (originTextArray.length) {
+                const originText = originTextArray.map((item) => {
                     return item.text
                 }).join("");
                 resultLayers.push({
@@ -377,10 +506,10 @@ export const getORCText = ()=> {
                     translText: ""
                 })
                 dispatch(createResultLayer(resultLayers));
-                dispatch(getTranslText(originText));
+                if(switchAutoTranslate) dispatch(getTranslText(originText));
                 dispatch(uiloadingComplete());
             }
-        }).catch(error =>{
+        }).catch(error => {
             console.error(error);
             dispatch(uiloadingComplete());
         });
@@ -388,39 +517,39 @@ export const getORCText = ()=> {
 }
 
 export const getTranslText = (originText) => {
-    return(dispatch, getState) => {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        const {resultLayers=[]} = state.images;
-        services.getTranslResult({srcText: originText, orderNo: 871911160398842}).then(({data})=> {
+        const { startNumber } = state.ui;
+        const { resultLayers = [] } = state.images;
+        services.getTranslResult({ srcText: originText, orderNo: 871911160398842 }).then(({ data }) => {
             const translatedText = data.data.result;
-            if(translatedText) {
+            if (translatedText) {
                 resultLayers.forEach(element => {
-                    if(element.index === startNumber){
+                    if (element.index === startNumber) {
                         element.translText = translatedText;
                     }
                 });
             }
             dispatch(createResultLayer(resultLayers));
-        }).catch(error=> console.error(error));
+        }).catch(error => console.error(error));
     }
 }
 
 export const submitCorrectedText = () => {
-    return(dispatch, getState)=> {
+    return (dispatch, getState) => {
         const state = getState();
-        const {resultLayers} = state.images;
+        const { resultLayers } = state.images;
         dispatch(createResultLayer(resultLayers));
     }
 };
 
 export const completeTranslate = () => {
-    return(dispatch, getState)=> {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        let {resultLayers=[], displayResultBox} = state.images;
+        const { startNumber } = state.ui;
+        let { resultLayers = [], displayResultBox } = state.images;
         dispatch(clearTranslPopUp());
-        displayResultBox = Object.assign({}, displayResultBox, {[startNumber]: {display: true}});
+        displayResultBox = Object.assign({}, displayResultBox, { [startNumber]: { display: true } });
         dispatch(createResultBox(displayResultBox));
         dispatch(setResultBoxStyle());
         dispatch(createResultLayer(resultLayers));
@@ -428,12 +557,12 @@ export const completeTranslate = () => {
 }
 
 export const updateOriginalText = (originalText) => {
-    return(dispatch, getState)=> {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        const {resultLayers=[]} = state.images;
-        resultLayers.forEach((item)=> {
-            if(item.index === startNumber){
+        const { startNumber } = state.ui;
+        const { resultLayers = [] } = state.images;
+        resultLayers.forEach((item) => {
+            if (item.index === startNumber) {
                 item.originalText = originalText;
             }
         })
@@ -442,12 +571,12 @@ export const updateOriginalText = (originalText) => {
 }
 
 export const updateTranslText = (translText) => {
-    return(dispatch, getState)=> {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        const {resultLayers=[]} = state.images;
-        resultLayers.forEach((item)=> {
-            if(item.index === startNumber){
+        const { startNumber } = state.ui;
+        const { resultLayers = [] } = state.images;
+        resultLayers.forEach((item) => {
+            if (item.index === startNumber) {
                 item.translText = translText;
             }
         })
@@ -456,11 +585,11 @@ export const updateTranslText = (translText) => {
 }
 
 
-export const setResultBoxStyle = ()=> {
-    return (dispatch, getState)=> {
+export const setResultBoxStyle = () => {
+    return (dispatch, getState) => {
         const state = getState();
-        const {startNumber} = state.ui;
-        let {resultBoxStyleParams = {}} = state.images;
+        const { startNumber } = state.ui;
+        let { resultBoxStyleParams = {} } = state.images;
         const translResultBoxContainer = document.getElementById("translResultBox-container");
         const payload = {
             left: parseInt(translResultBoxContainer.style.left),
@@ -468,20 +597,25 @@ export const setResultBoxStyle = ()=> {
             width: parseInt(translResultBoxContainer.style.width),
             height: parseInt(translResultBoxContainer.style.height)
         }
-        resultBoxStyleParams = Object.assign({}, resultBoxStyleParams, {[startNumber]: payload})
+        resultBoxStyleParams = Object.assign({}, resultBoxStyleParams, { [startNumber]: payload })
         dispatch(receivedResultBoxStyle(resultBoxStyleParams))
         dispatch(hiddenTranslBox());
     }
 };
 
-export const saveData = (payload)=> {
-    return(dispatch, getState)=> {
+export const saveData = (payload) => {
+    return (dispatch, getState) => {
         const state = getState();
-        const {comicTranslationOrderId} = state.images;
+        const { comicTranslationOrderId } = state.images;
         dispatch(uiloadingStart());
-        services.saveImage({imgBase64: payload.src, comicTranslationOrderId}).then(({data})=> {
-            console.log(data)
+        services.saveImage({ imgBase64: payload.src, comicTranslationOrderId }).then(({data}) => {
+            dispatch(getTranslImages());
+            dispatch(selecteCanvas(comicTranslationOrderId));
             dispatch(uiloadingComplete());
+            if(data.code) {
+                dispatch(receivedErrorMsg(data.msg));
+                setTimeout(()=> dispatch(receivedErrorMsg('')), 1500);
+            }
         }).catch(err => {
             console.error(err);
             dispatch(uiloadingComplete());
@@ -489,5 +623,24 @@ export const saveData = (payload)=> {
     }
 };
 
+export const restoreTranslPic = ()=> {
+    return(dispatch, getState)=> {
+        const state = getState();
+        const {selectedImage} = state.images;
+        dispatch(receivedSelectedTranslImage(selectedImage));
+    }
+};
+
+export const initialTranslPage = ()=> {
+    return(dispatch, getState)=> {
+        const state = getState();
+        const {isBackToTranslPage} = state.ui;
+        if(!isBackToTranslPage) {
+            dispatch(getTranslImages());
+        }
+        dispatch(getFeedBackMessage());
+        dispatch(clearSelectedImage());
+    }
+}
 
 export default imagesReducer;

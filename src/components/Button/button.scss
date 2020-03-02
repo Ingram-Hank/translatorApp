@@ -15,7 +15,19 @@
     border-radius: 3px;
     vertical-align: top;
     box-sizing: border-box;
+    &.disabled {
+        user-select: none;
+        pointer-events: none;
+        opacity: .6;
+        cursor: not-allowed;
+    }
     .glyphicon {
         font-size: 10px;
+    }
+    a {
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
     }
 }

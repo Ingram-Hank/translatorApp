@@ -12,6 +12,7 @@ function Workbench(props) {
         zoomCanvasMinus,
         zoomCanvasValue,
         selectedImage,
+        selectedTranslImage,
         cropedImage,
         fontSettings,
         openModal,
@@ -62,6 +63,7 @@ function Workbench(props) {
     const workbenchMainProps = {
         contentText,
         selectedImage,
+        selectedTranslImage,
         cropedImage,
         fontSettings,
         openModal,

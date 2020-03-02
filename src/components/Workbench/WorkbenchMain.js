@@ -12,6 +12,7 @@ class WorkbenchMain extends React.Component {
         this._drawCanvas = null;
         this.state = {
             selectedImage: props.selectedImage,
+            selectedTranslImage: props.selectedTranslImage,
             elementWidth: 565,
             elementHeight: 800,
             scale: props.scale
@@ -25,7 +26,7 @@ class WorkbenchMain extends React.Component {
         const currentElementWidth = this.state.elementWidth * this.props.scale;
         const currentElementHeight = this.state.elementHeight * this.props.scale;
         const img = new Image();
-        img.src = this.state.selectedImage;
+        img.src = this.props.status ? this.state.selectedTranslImage : this.state.selectedImage;
         img.width = currentElementWidth;
         img.height = currentElementHeight;
         img.onload = () => {
@@ -49,11 +50,18 @@ class WorkbenchMain extends React.Component {
                     upperCanvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
                 }
             });
-            const {displayTranslBox, startNumber, maskTextImgs = {}} = this.props;
+            const {displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox} = this.props;
             if(displayTranslBox && Object.keys(maskTextImgs).length) {
-                const currentMaskImg = maskTextImgs[startNumber];
-                const {left, top, width, height, cropedImg} = currentMaskImg[currentMaskImg.length-1];
+                const currentMaskImg = maskTextImgs[startNumber] || [];
+                let {left, top, width, height, cropedImg} = createdTranslBox[startNumber];
                 const img = new Image();
+                if(currentMaskImg.length) {
+                    left = currentMaskImg[currentMaskImg.length-1].left;
+                    top = currentMaskImg[currentMaskImg.length-1].top;
+                    width = currentMaskImg[currentMaskImg.length-1].width;
+                    height = currentMaskImg[currentMaskImg.length-1].height;
+                    cropedImg = currentMaskImg[currentMaskImg.length-1].cropedImg;
+                }
                 img.src = cropedImg;
                 img.onload = ()=> {
                     ctx_upper.drawImage(img, left, top, width, height);
@@ -72,18 +80,18 @@ class WorkbenchMain extends React.Component {
     componentDidUpdate(prevProps) {
         const {
             selectedImage,
+            selectedTranslImage,
             hasCropBox,
             displayResultBox,
             displayTranslBox,
             selectedImg,
             translatedText,
-            clearPreTranslResult,
-            status,
-            openModal
+            clearPreTranslResult
          } = this.props;
-        if (prevProps.selectedImage !== selectedImage) {
+        if (prevProps.selectedImage !== selectedImage || prevProps.selectedTranslImage !== selectedTranslImage) {
             this.setState({
-                selectedImage: selectedImage
+                selectedImage: selectedImage,
+                selectedTranslImage: selectedTranslImage
             })
         }
         if(((!hasCropBox && displayResultBox) || !displayTranslBox ) && this._drawCanvas) {
@@ -109,9 +117,6 @@ class WorkbenchMain extends React.Component {
                     console.error(error)
                 }
             }
-        }
-        if(prevProps.status !== status && status === 2) {
-            openModal('feedBackMsg')
         }
     }
     
@@ -184,9 +189,7 @@ class WorkbenchMain extends React.Component {
             displayResultBox,
             startNumber,
             setResultBoxStyle,
-            selectedImg,
-            currentTip = [],
-            handlerSelectFeedBackMsg
+            selectedImg
         } = this.props;
         const { elementWidth, elementHeight } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -288,26 +291,6 @@ class WorkbenchMain extends React.Component {
                         <div className="popup-footer text-right">
                             <button type="button" className="btn btn-default" onClick={closeModal}> {contentText.cancel} </button>
                             <button type="button" className="btn btn-default active" onClick={() => { closeModal(); createNewCropArea(displayTranslBox) }}> {contentText.confirm} </button>
-                        </div>
-                    </Modal>
-                }
-                {modalOpen && modalId === "feedBackMsg" &&
-                    <Modal>
-                        <div className="popup-header">
-                            <h5>{contentText.feedMsgTitle}</h5>
-                            <span className="dismissPopUp" onClick={closeModal}>
-                                <span className="glyphicon glyphicon-remove"></span>
-                            </span>
-                        </div>
-                        <div className="popup-content text-left">
-                            {currentTip.length && currentTip.map((item, index)=> {
-                                const {comicTranslationOrderId, tag, content, orderNo} = item;
-                                return (
-                                    <div className="feedMsg-item" key={index} onClick={()=> handlerSelectFeedBackMsg(comicTranslationOrderId, orderNo)}> 
-                                        <div>{tag} {content}</div>
-                                    </div>
-                                )
-                            })}
                         </div>
                     </Modal>
                 }
