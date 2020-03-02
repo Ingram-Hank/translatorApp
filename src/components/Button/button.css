@@ -14,5 +14,14 @@
   border-radius: 3px;
   vertical-align: top;
   box-sizing: border-box; }
+  .button.disabled {
+    user-select: none;
+    pointer-events: none;
+    opacity: .6;
+    cursor: not-allowed; }
   .button .glyphicon {
     font-size: 10px; }
+  .button a {
+    color: #fff; }
+    .button a:hover {
+      color: #fff; }

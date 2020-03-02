@@ -11,7 +11,6 @@ import {
     setStartNumber,
     getFontsettings,
     setStopClearPreResultContainer,
-    toggleFeedBackMsg,
     handlerSelectImage
 } from '../modules/ui';
 import {
@@ -67,6 +66,7 @@ const mapStateToProps = (state) => {
     const { images, ui, brush } = state;
     const {
         selectedImage,
+        selectedTranslImage,
         cropedImage,
         displayTranslPopUp,
         displayTranslBox,
@@ -97,6 +97,7 @@ const mapStateToProps = (state) => {
     const currentDisplayResult = displayResultBox[startNumber] || {};
     return {
         selectedImage,
+        selectedTranslImage,
         cropedImage,
         displayTranslPopUp,
         displayTranslBox,
@@ -191,11 +192,10 @@ const mapDispatchToProps = (dispatch) => {
         },
         handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
             dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
-            dispatch(toggleFeedBackMsg(true));
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
             dispatch(closeModal());
-          },
+        },
         fontSettings: {
             handlerSelectFontFamily: payload => {
                 dispatch(selectFontFamily(payload))

@@ -31,7 +31,7 @@
       .switch .toggle-group .btn-sm {
         padding-right: 1rem;
         padding: .35rem .5rem;
-        font-size: .875rem;
+        font-size: 12px;
         line-height: 1.5; }
       .switch .toggle-group .btn-success {
         color: #fff;

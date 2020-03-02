@@ -1,9 +1,12 @@
 import React from 'react';
-import {Button, ButtonDropDown, Toggle} from '../';
+import classNames from 'classnames';
+import { Link } from "react-router-dom";
+import {Button, ButtonDropDown, Toggle, Notification, Modal} from '../';
 import PreviewTranslResult from './PreviewTranslResult';
 import FeedBackMessage from './FeedBackMessage';
-import './header.css';
 import ImgMerge from './ImgMerge ';
+import './header.css';
+
 
 const buildImgs = (selectedImage, resultData)=> {
     let imgs = [
@@ -33,10 +36,12 @@ const buildImgs = (selectedImage, resultData)=> {
     return imgs;
 };
 
-function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAutoTranslate, language,
-    handlerDropDownItem, handlerPreview, handlerClosePreview, onToggle, selectedImage, resultData, 
-    startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg }){
-    const imgs = buildImgs(selectedImage, resultData);
+function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, switchAutoOCR, 
+    switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, onToggle, 
+    status, selectedImage, selectedTranslImage, resultData, startPreview, handlerSaveData, feedMsg = [], 
+    handlerSelectFeedBackMsg, handlerRestore, notificationMsg, closeModal, handlerAbandonSave }){
+    const buildImg = status ? selectedTranslImage : selectedImage;
+    const imgs = buildImgs(buildImg, resultData);
     const imgMerge = new ImgMerge(imgs);
     let resultImg = new Image();
     imgMerge.then(img => resultImg.src = img);
@@ -55,32 +60,35 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
         handlerDropDownItem,
         action: "switchLanguage"
     };
-    const contrastProps = {
-        attributes: {
-            onClick: ()=> {}
-        }
-    };
+    
     const saveDataProps = {
         attributes: {
-            onClick: ()=> {
-                handlerSaveData(resultImg);
-            }
+            onClick: ()=> handlerSaveData(resultImg),
+            className: classNames('button', {"disabled": imgs.length < 2})
         }
     }
     const previewProps = {
         attributes: {
-            onClick: ()=> handlerPreview()
+            onClick: ()=> handlerPreview(),
+            className: classNames('button', {"disabled": !selectedImage})
         }
     };
     
     const previewTranslResultProps = {
+        contentText,
         img: resultImg,
-        handlerClosePreview
+        handlerClosePreview,
+        handlerRestore
     };
     const feedBackMessageProps = {
         contentText,
         feedMsg,
         handlerSelectFeedBackMsg
+    };
+    const contrastBtnProps = {
+        attributes: {
+            className: classNames('button', {"disabled": !status || !selectedImage})
+        }
     };
     return (
         <div className="header">
@@ -91,8 +99,10 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
             </div>
             <div className="col-md-8 col-xs-8 col-lg-8">
                 <div className="btn-group">
-                    <Button data={contrastProps}>
-                        <span className="fa fa-photo"></span> {contentText.contrast}
+                    <Button data={contrastBtnProps}>
+                        <Link to="/contrast">
+                            <span className="fa fa-photo"></span> {contentText.contrast}
+                        </Link>
                     </Button>
                 </div>
                 <div className="btn-group">
@@ -143,13 +153,28 @@ function Header ({contentText, marquee, switchAutoClear, switchAutoOCR, switchAu
                 <div className="btn-group">
                     <div className="comments dropdown-toggle" data-toggle="dropdown">
                         <span className="fa fa-bell-o"></span>
-                        {feedMsg.length && <span className="badge">{feedMsg.length}</span>}
+                        {feedMsg.length > 0 && <span className="badge">{feedMsg.length}</span>}
                     </div>
                     <FeedBackMessage {...feedBackMessageProps}/>
                 </div>
             </div>
             {startPreview && <PreviewTranslResult {...previewTranslResultProps}/>}
-            
+            {notificationMsg && <Notification type="danger">{notificationMsg}</Notification>}
+            {modalOpen && modalId === "promteSave" && <Modal>
+                <div className="popup-header">
+                    <h5>{contentText.promoteTitle}</h5>
+                    <span className="dismissPopUp" onClick={closeModal}>
+                        <span className="glyphicon glyphicon-remove"></span>
+                    </span>
+                </div>
+                <div className="popup-content text-center">
+                    {contentText.promoteHelpText}
+                </div>
+                <div className="popup-footer text-right">
+                    <button type="button" className="btn btn-default" onClick={handlerAbandonSave}> {contentText.abandon} </button>
+                    <button type="button" className="btn btn-default active" onClick={() => {handlerSaveData(resultImg); closeModal()}}> {contentText.save} </button>
+                </div>
+            </Modal>}
         </div>
     )
 }

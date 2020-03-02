@@ -29,7 +29,7 @@
         }
         p {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
         }
     }
     &-preview {
@@ -65,11 +65,15 @@
         }
         &-body {
             position: relative;
+            margin-top: 10px;
             canvas {
                 position: absolute;
                 left: 20px;
             }
-           
+            &-restore {
+                display: block;
+                width: 94%;
+            }
         }
     }
     &-canvasContainer {

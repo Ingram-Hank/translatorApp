@@ -89,6 +89,8 @@
     "delete": "删除",
     "Delete": "删除",
     "popUpHelpText": "您确定想要删除吗？",
+    "promoteHelpText": "当前有数据未保存，是否保存数据后关闭？",
+    "promoteTitle": "是否保存数据",
     "cancel": "取消",
     "confirm": "确定",
     "cropedImg": "截取的图片",
@@ -104,5 +106,12 @@
     "zoom": "缩放",
     "brush": "画笔",
     "next": "下一步",
-    "feedMsgTitle": "站内消息通知"
+    "feedMsgTitle": "站内消息通知",
+    "untranslated": "未翻译",
+    "translated": "已翻译",
+    "translatedHasProblem": "翻译有问题",
+    "originPic": "原图",
+    "translPic": "译图",
+    "restore": "还原",
+    "abandon": "放弃"
 }

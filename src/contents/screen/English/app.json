@@ -89,6 +89,8 @@
     "delete": "delete",
     "Delete": "Delete",
     "popUpHelpText": "Are you sure you want to delete?",
+    "promoteHelpText": "Please ensure you have saved your process, or you will lose your current process.",
+    "promoteTitle": "Please save your process",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "cropedImg": "cropedImg",
@@ -104,5 +106,12 @@
     "zoom": "Zoom",
     "brush": "Brush",
     "next": "Next",
-    "feedMsgTitle": "Note"
+    "feedMsgTitle": "Note",
+    "untranslated": "not translated",
+    "translated": "translated",
+    "translatedHasProblem": "error translated",
+    "originPic": "Previous Picture",
+    "translPic": "Translated Picture",
+    "restore": "Restore",
+    "abandon": "Abandon"
 }

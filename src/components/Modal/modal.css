@@ -27,7 +27,7 @@
       animation: moving 1.2s infinite; }
     .popup-loading p {
       margin-top: 20px;
-      font-size: 18px; }
+      font-size: 16px; }
   .popup-preview {
     position: relative;
     top: 50%;
@@ -56,10 +56,14 @@
         display: block;
         content: ''; }
     .popup-preview-body {
-      position: relative; }
+      position: relative;
+      margin-top: 10px; }
       .popup-preview-body canvas {
         position: absolute;
         left: 20px; }
+      .popup-preview-body-restore {
+        display: block;
+        width: 94%; }
   .popup-canvasContainer {
     position: relative;
     top: 50%;

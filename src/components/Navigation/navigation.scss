@@ -25,6 +25,12 @@
                 &:hover {
                     font-size: 14px;
                 }
+                &.disabled {
+                    opacity: .4;
+                    user-select: none;
+                    pointer-events: none;
+                    cursor: not-allowed;
+                }
             }
             &-current {
                 margin: 0 10px;
@@ -52,8 +58,28 @@
                 padding: 0;
                 border: 2px solid #fff;
                 transition: border .3s ease-in-out;
-                .item_position {
-                    color: #fff;
+                color: #fff;
+                .item_status {
+                    position: absolute;
+                    left: 10px;
+                    display: inline-block;
+                    text-align: left;
+                    .light {
+                        width: 10px;
+                        height: 10px;
+                        display: inline-block;
+                        border-radius: 50%;
+                        margin-right: 5px;
+                        &.white{
+                            background-color: white;
+                        }
+                        &.green {
+                            background-color: mediumturquoise;
+                        }
+                        &.red {
+                            background-color: #fa7c90;
+                        }
+                    }
                 }
                 &:not(:last-child){
                     margin-bottom: 10px;

@@ -27,11 +27,12 @@
     &.feedMsg {
         left: -74px;
         top: 33px;
-        width: 215px;
+        width: 209px;
         max-height: 96vh;
         overflow-y: auto;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+        
     }
 }
 .feedMsg {
@@ -40,28 +41,34 @@
         padding: 0 15px;
         border-bottom: 1px solid #333a45;
         margin-bottom: 15px;
-        &:before {
-            content: '';
-            // display: block;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-bottom: 8px solid red;
-            border-right: 8px solid transparent;
-            position: absolute;
-            top: -8px;
-            left: 100px;
-            z-index: 1000;
-        }
     }
     &-item {
-        cursor: pointer;
         padding: 0 15px;
-        &:hover {
-            text-decoration: underline;
+        padding-bottom: 15px;
+        &-content {
+            cursor: pointer;
+            white-space: normal;
+            &.shortContent {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        .time {
+            font-style: italic;
+            color: rgba(0, 0, 0, .4);
+            border-bottom: 1px dashed rgba(0, 0, 0, .65);
+            padding-bottom: 15px;
+        }
+        &:first-child {
+            margin-top: 0;
         }
         &:last-child {
-            margin-bottom: 15px;
+            .time {
+                border-bottom: 0;
+            }
         }
     }
 }
