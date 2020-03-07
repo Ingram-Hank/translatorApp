@@ -26,6 +26,8 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { currentTranslationOrderId: action.payload })
         case actions.UI_RECEIVED_ERROR_MESSAGE:
             return Object.assign({}, state, { notificationMsg: action.payload })
+        case actions.UI_RECEIVED_ORDER_NUMBER:
+            return Object.assign({}, state, { orderNo: action.payload })
         case actions.UI_OPEN_MODAL:
             return Object.assign({}, state, { modalOpen: true, modalId: action.payload })
         case actions.UI_CLOSE_MODAL:
@@ -116,6 +118,11 @@ export const openModal = (payload) => ({
 
 export const receivedErrorMsg = (payload) => ({
     type: actions.UI_RECEIVED_ERROR_MESSAGE,
+    payload
+})
+
+export const receivedOrderNo = (payload) => ({
+    type: actions.UI_RECEIVED_ORDER_NUMBER,
     payload
 })
 
