@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-let root = process.env.NODE_ENV === 'development' ? `http://liyao-305623587.picp.io/ht/` : `https://www.hitranslator.com/`;
+let root = process.env.NODE_ENV === 'development' ? `http://liyao-305623587.picp.io/ht/` : `https://www.hitranslator.com/ht`;
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
