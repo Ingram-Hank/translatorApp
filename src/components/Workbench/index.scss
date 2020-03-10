@@ -204,6 +204,8 @@
                 color: #333!important;
                 display: block;
                 text-align: center;
+                cursor: pointer;
+                user-select: none;
                 &:hover {
                     text-decoration: none;
                 }

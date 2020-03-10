@@ -316,7 +316,9 @@ export const getTranslImages = (payload) => {
 
 export const getFeedBackMessage = (id) => {
     return (dispatch, getState) => {
-        services.getFeedBackMsg(id).then(({ data }) => {
+        const state = getState();
+        const {orderNo} = state.ui;
+        services.getFeedBackMsg(id, orderNo).then(({ data }) => {
             dispatch(receivedFeedBackMsg(data.data));
         }).catch(err => console.error(err))
     }
@@ -638,6 +640,7 @@ export const initialTranslPage = () => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('orderNo');
+        // const orderNo = 672002200455577;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages());

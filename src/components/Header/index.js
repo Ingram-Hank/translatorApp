@@ -9,13 +9,24 @@ import './header.css';
 
 
 const buildImgs = (selectedImage, resultData)=> {
+    const img = new Image();
+    img.src = selectedImage;
+    let imgWidth = 565;
+    let imgHeight = 800;
+    const promise = new Promise((resolve)=> {
+        img.onload = resolve;
+    });
+    promise.then(() => {
+        imgWidth = img.naturalWidth;
+        imgHeight = img.naturalHeight;
+    })
     let imgs = [
         {
             url: selectedImage,
             x: 0,
             y: 0,
-            width: 565,
-            height: 800
+            width: imgWidth,
+            height: imgHeight
         }
     ];
     if(Object.keys(resultData).length) {

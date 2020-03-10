@@ -176,7 +176,9 @@
         font-size: 36px;
         color: #333 !important;
         display: block;
-        text-align: center; }
+        text-align: center;
+        cursor: pointer;
+        user-select: none; }
         .workbench-container .canvas-zoom .zoom-btn:hover {
           text-decoration: none; }
       .workbench-container .canvas-zoom .canvas-zoom-scroll {

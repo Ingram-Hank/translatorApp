@@ -14,11 +14,11 @@ export default  {
   getLargeImageData(comicTranslationId){
     return http.get("/comic/getJpg/" + comicTranslationId)
   },
-  getFeedBackMsg(comicTranslationOrderId) {
+  getFeedBackMsg(comicTranslationOrderId, orderNo) {
     if(comicTranslationOrderId) {
-      return http.get("/comic/getFeedbackMsg?comicTranslationOrderId=" + comicTranslationOrderId)
+      return http.post("/comic/getFeedbackMsg", {comicTranslationOrderId, orderNo})
     }else{
-      return http.get("/comic/getFeedbackMsg")
+      return http.post("/comic/getFeedbackMsg", {orderNo})
     }
   },
   saveImage(data) {

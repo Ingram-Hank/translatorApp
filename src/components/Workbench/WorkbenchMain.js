@@ -26,10 +26,15 @@ class WorkbenchMain extends React.Component {
         const currentElementWidth = this.state.elementWidth * this.props.scale;
         const currentElementHeight = this.state.elementHeight * this.props.scale;
         const img = new Image();
-        img.src = this.props.status ? this.state.selectedTranslImage : this.state.selectedImage;
         img.width = currentElementWidth;
         img.height = currentElementHeight;
+        img.src = this.props.status ? this.state.selectedTranslImage : this.state.selectedImage;
         img.onload = () => {
+            this.setState({
+                ...this.state,
+                elementWidth: img.naturalWidth,
+                elementHeight: img.naturalHeight
+            })
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
