@@ -33,6 +33,7 @@ import {
     getTranslText,
     completeTranslate,
     getTranslImages,
+    receivedImgHeight,
     clearSelectedImage
 } from '../modules/images';
 import {
@@ -77,7 +78,8 @@ const mapStateToProps = (state) => {
         displayResultBox = {},
         resultBoxStyleParams = {},
         currentTip,
-        status
+        status,
+        imgHeight
     } = images;
     const {
         zoomCanvasValue = 1,
@@ -120,7 +122,8 @@ const mapStateToProps = (state) => {
         selectedImg,
         clearPreTranslResult,
         currentTip,
-        status
+        status,
+        imgHeight
     }
 }
 
@@ -195,6 +198,9 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
             dispatch(closeModal());
+        },
+        receivedImgHeight: (height) => {
+            dispatch(receivedImgHeight(height))
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {

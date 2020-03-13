@@ -1,6 +1,6 @@
 import {$, getCss} from '../../utilities';
 class drawRect {
-    constructor(canvas, scale, img, componentProps) {
+    constructor(canvas, scale, img, elementWidth, elementHeight, componentProps) {
         this.canvas = canvas;
         this.canvasParentElement = canvas.parentElement;
         this.ctx = canvas.getContext('2d');
@@ -8,8 +8,8 @@ class drawRect {
         this.img = img;
         this.scaleX = img.width / img.naturalWidth;
         this.scaleY = img.height / img.naturalHeight;
-        this.elementWidth = 565 * scale;
-        this.elementHeight = 800 * scale;
+        this.elementWidth = elementWidth * scale;
+        this.elementHeight = elementHeight * scale;
         this.props = componentProps;
     }
     // Initialization variable
