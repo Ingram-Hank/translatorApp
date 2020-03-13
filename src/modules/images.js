@@ -49,6 +49,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { resultLayers: action.payload })
         case actions.IMAGES_RECEIVED_TRANSLATION_ORDERID:
             return Object.assign({}, state, { comicTranslationOrderId: action.payload })
+        case actions.IMAGES_RECEIVED_IMG_HEIGHT:
+            return Object.assign({}, state, { imgHeight: action.payload })
         case actions.IMAGES_DISPLAY_TRANSL_AREA_BOX:
             return Object.assign({}, state, { hasCropBox: true })
         case actions.IMAGES_DISPLAY_TRANSLPOPUP:
@@ -120,6 +122,11 @@ export const receivedMaskImg = (payload) => ({
 
 export const receivedResultBoxStyle = (payload) => ({
     type: actions.IMAGES_RECEIVED_RESULT_BOX_STYLE,
+    payload
+});
+
+export const receivedImgHeight = (payload) => ({
+    type: actions.IMAGES_RECEIVED_IMG_HEIGHT,
     payload
 });
 
@@ -316,7 +323,9 @@ export const getTranslImages = (payload) => {
 
 export const getFeedBackMessage = (id) => {
     return (dispatch, getState) => {
-        services.getFeedBackMsg(id).then(({ data }) => {
+        const state = getState();
+        const {orderNo} = state.ui;
+        services.getFeedBackMsg(id, orderNo).then(({ data }) => {
             dispatch(receivedFeedBackMsg(data.data));
         }).catch(err => console.error(err))
     }
@@ -638,6 +647,7 @@ export const initialTranslPage = () => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('orderNo');
+        // const orderNo = 672003108294696;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages());

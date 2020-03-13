@@ -51,6 +51,8 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgHeight,
+        receivedImgHeight,
         handlerSelectFeedBackMsg
     } = props;
     
@@ -102,6 +104,8 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgHeight,
+        receivedImgHeight,
         handlerSelectFeedBackMsg
     };
 

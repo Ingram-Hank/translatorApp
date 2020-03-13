@@ -182,7 +182,7 @@
         }
         .canvas-zoom {
             position: absolute;
-            left: 50px;
+            left: 20px;
             bottom: 20px;
             width: 40px;
             z-index: 1;
@@ -204,6 +204,8 @@
                 color: #333!important;
                 display: block;
                 text-align: center;
+                cursor: pointer;
+                user-select: none;
                 &:hover {
                     text-decoration: none;
                 }

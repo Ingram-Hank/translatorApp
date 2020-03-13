@@ -13,30 +13,33 @@ class WorkbenchMain extends React.Component {
         this.state = {
             selectedImage: props.selectedImage,
             selectedTranslImage: props.selectedTranslImage,
-            elementWidth: 565,
-            elementHeight: 800,
+            elementWidth: 870,
             scale: props.scale
         };
     }
 
-    drawCanvasBackGround() {
+    drawCanvasBackGround(prevProps) {
         const canvas = this.canvas.current;
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
-        const currentElementWidth = this.state.elementWidth * this.props.scale;
-        const currentElementHeight = this.state.elementHeight * this.props.scale;
+        
         const img = new Image();
         img.src = this.props.status ? this.state.selectedTranslImage : this.state.selectedImage;
-        img.width = currentElementWidth;
-        img.height = currentElementHeight;
         img.onload = () => {
+            const currentElementWidth = this.state.elementWidth * this.props.scale;
+            const elementHeight = img.naturalHeight * (this.state.elementWidth/img.naturalWidth);
+            const currentElementHeight = elementHeight * this.props.scale;
+            img.width = currentElementWidth;
+            img.height = currentElementHeight;
+            if(!this.props.imgHeight){
+                this.props.receivedImgHeight(currentElementHeight);
+            }
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
-
             const marquee = this.props.marquee;
             if(marquee==="rectangular" || !marquee) {
-                this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.props);
+                this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.state.elementWidth, elementHeight, this.props);
             }
             upperCanvas.addEventListener("mouseleave", ()=> {
                 upperCanvas.addEventListener('mousedown', null);
@@ -77,6 +80,21 @@ class WorkbenchMain extends React.Component {
         }
     }
 
+    componentDidMount() {
+        const leftNavigationWidth = 200;
+        const rightTranslateAreaWidth = 215;
+        const processPadding = 40;
+        const minProcessWidth = 870;
+        let currentScreenProcessWidth = window.innerWidth - leftNavigationWidth - rightTranslateAreaWidth - processPadding*2;
+        if(currentScreenProcessWidth < minProcessWidth) {
+            currentScreenProcessWidth = minProcessWidth
+        }
+        this.setState({
+            ...this.state,
+            elementWidth: currentScreenProcessWidth
+        })
+    }
+
     componentDidUpdate(prevProps) {
         const {
             selectedImage,
@@ -99,7 +117,7 @@ class WorkbenchMain extends React.Component {
             this._drawCanvas.clearCropBox();
         }
         if(selectedImg) {
-            this.drawCanvasBackGround();
+            this.drawCanvasBackGround(prevProps);
         }
         if(prevProps.displayResultBox !== displayResultBox && translatedText) {
             this.ResultBox();
@@ -189,14 +207,14 @@ class WorkbenchMain extends React.Component {
             displayResultBox,
             startNumber,
             setResultBoxStyle,
-            selectedImg
+            selectedImg,
+            imgHeight
         } = this.props;
-        const { elementWidth, elementHeight } = this.state;
+        const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
-        const currentElementHeight = elementHeight * scale;
         const canvasContainerStyle = {
             width: `${currentElementWidth}px`,
-            height: `${currentElementHeight}px`,
+            height: `${imgHeight}px`,
             backgroundColor: !selectedImg && "gray"
         };
         const lowercanvasProps = {
@@ -204,14 +222,14 @@ class WorkbenchMain extends React.Component {
             className: "lower-canvas",
             ref: this.canvas,
             width: currentElementWidth,
-            height: currentElementHeight
+            height: `${imgHeight}px`
         };
 
         const uppercanvasProps = {
             id: "upper-canvas",
             className: "upper-canvas",
             width: currentElementWidth,
-            height: currentElementHeight,
+            height: `${imgHeight}px`,
             style: {
                 cursor: (hasCropBox || displayTranslBox) ? "default" : "crosshair"
             }

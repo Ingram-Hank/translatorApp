@@ -156,7 +156,7 @@
             color: #fff; }
     .workbench-container .canvas-zoom {
       position: absolute;
-      left: 50px;
+      left: 20px;
       bottom: 20px;
       width: 40px;
       z-index: 1;
@@ -176,7 +176,9 @@
         font-size: 36px;
         color: #333 !important;
         display: block;
-        text-align: center; }
+        text-align: center;
+        cursor: pointer;
+        user-select: none; }
         .workbench-container .canvas-zoom .zoom-btn:hover {
           text-decoration: none; }
       .workbench-container .canvas-zoom .canvas-zoom-scroll {
