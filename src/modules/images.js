@@ -50,7 +50,7 @@ const imagesReducer = (state = {}, action) => {
         case actions.IMAGES_RECEIVED_TRANSLATION_ORDERID:
             return Object.assign({}, state, { comicTranslationOrderId: action.payload })
         case actions.IMAGES_RECEIVED_IMG_HEIGHT:
-            return Object.assign({}, state, { imgHeight: action.payload })
+            return Object.assign({}, state, { imgWidth: action.width, imgHeight: action.height })
         case actions.IMAGES_DISPLAY_TRANSL_AREA_BOX:
             return Object.assign({}, state, { hasCropBox: true })
         case actions.IMAGES_DISPLAY_TRANSLPOPUP:
@@ -125,9 +125,10 @@ export const receivedResultBoxStyle = (payload) => ({
     payload
 });
 
-export const receivedImgHeight = (payload) => ({
+export const receivedImgHeight = (width, height) => ({
     type: actions.IMAGES_RECEIVED_IMG_HEIGHT,
-    payload
+    width,
+    height
 });
 
 export const receivedTranslationOrderId = payload => ({

@@ -32,7 +32,7 @@ class WorkbenchMain extends React.Component {
             img.width = currentElementWidth;
             img.height = currentElementHeight;
             if(!this.props.imgHeight){
-                this.props.receivedImgHeight(currentElementHeight);
+                this.props.receivedImgSize(currentElementWidth, currentElementHeight);
             }
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;

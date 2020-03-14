@@ -8,18 +8,7 @@ import ImgMerge from './ImgMerge ';
 import './header.css';
 
 
-const buildImgs = (selectedImage, resultData)=> {
-    const img = new Image();
-    img.src = selectedImage;
-    let imgWidth = 565;
-    let imgHeight = 800;
-    const promise = new Promise((resolve)=> {
-        img.onload = resolve;
-    });
-    promise.then(() => {
-        imgWidth = img.naturalWidth;
-        imgHeight = img.naturalHeight;
-    })
+const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, resultData)=> {
     let imgs = [
         {
             url: selectedImage,
@@ -48,11 +37,12 @@ const buildImgs = (selectedImage, resultData)=> {
 };
 
 function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, switchAutoOCR, 
-    switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, onToggle, 
-    status, selectedImage, selectedTranslImage, resultData, startPreview, handlerSaveData, feedMsg = [], 
-    handlerSelectFeedBackMsg, handlerRestore, notificationMsg, closeModal, handlerAbandonSave }){
+    switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, 
+    onToggle, status, imgWidth, imgHeight, selectedImage, selectedTranslImage, resultData, 
+    startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, 
+    notificationMsg, closeModal, handlerAbandonSave }){
     const buildImg = status ? selectedTranslImage : selectedImage;
-    const imgs = buildImgs(buildImg, resultData);
+    const imgs = buildImgs(buildImg, imgWidth, imgHeight, resultData);
     const imgMerge = new ImgMerge(imgs);
     let resultImg = new Image();
     imgMerge.then(img => resultImg.src = img);
