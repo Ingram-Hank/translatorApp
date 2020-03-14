@@ -56,7 +56,8 @@
           position: absolute;
           left: 10px;
           display: inline-block;
-          text-align: left; }
+          text-align: left;
+          font-size: 12px; }
           .navigation-body .list-group-item .item_status .light {
             width: 10px;
             height: 10px;

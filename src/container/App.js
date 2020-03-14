@@ -89,6 +89,8 @@ function App(props) {
     closeModal,
     handlerPreview,
     status,
+    imgWidth,
+    imgHeight,
     selectedImage,
     selectedTranslImage,
     resultData,
@@ -117,6 +119,8 @@ function App(props) {
     onToggle,
     closeModal,
     status,
+    imgWidth,
+    imgHeight,
     selectedImage,
     selectedTranslImage,
     handlerPreview,
@@ -174,7 +178,9 @@ const mapStateToProps = (state) => {
     feedMsg,
     lastChapterDisable,
     nextChapterDisable,
-    status
+    status,
+    imgWidth,
+    imgHeight
   } = state.images;
   const {
     marquee,
@@ -212,6 +218,8 @@ const mapStateToProps = (state) => {
     chapterIds,
     comicChapterId,
     status,
+    imgWidth,
+    imgHeight,
     selectedImage,
     selectedTranslImage,
     maskTextImgs,

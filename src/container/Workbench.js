@@ -199,8 +199,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(clearSelectedImage());
             dispatch(closeModal());
         },
-        receivedImgHeight: (height) => {
-            dispatch(receivedImgHeight(height))
+        receivedImgSize: (width, height) => {
+            dispatch(receivedImgHeight(width, height))
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {

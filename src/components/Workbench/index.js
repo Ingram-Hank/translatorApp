@@ -52,7 +52,7 @@ function Workbench(props) {
         currentTip,
         status,
         imgHeight,
-        receivedImgHeight,
+        receivedImgSize,
         handlerSelectFeedBackMsg
     } = props;
     
@@ -105,7 +105,7 @@ function Workbench(props) {
         currentTip,
         status,
         imgHeight,
-        receivedImgHeight,
+        receivedImgSize,
         handlerSelectFeedBackMsg
     };
 
