@@ -1,5 +1,5 @@
 import * as actions from './actions';
-// import { deepObjectMerge } from '../utilities';
+import emptyState from '../models/emptyState.json';
 
 const fontSettingsReducer = (state = {}, action) => {
     switch (action.type) {
@@ -28,18 +28,7 @@ const fontSettingsReducer = (state = {}, action) => {
         case actions.FONTSETTINGS_CLOSE_POPUP_ABSORB_COLOR:
             return Object.assign({}, state, { popUp: false })
         case actions.FONTSETTINGS_CLEAR_PRE_FONT_SETTINGS:
-            return Object.assign({}, state, {
-                font_family:"Microsoft YaHei",
-                font_size: 12,
-                font_color: "rgb(0, 0, 0, .65)",
-                hasFontItalic: false,
-                hasFontWeight: false,
-                text_align: "center",
-                outline_color: "",
-                shadow_color: "",
-                outline_size: 0,
-                shadow_size: 0
-            })
+            return Object.assign({}, state, emptyState.font)
         default:
             return state
     }

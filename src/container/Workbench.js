@@ -20,7 +20,7 @@ import {
     displayTranslPopUp,
     displayTranslBox,
     hiddenTranslBox,
-    clearPreCropArea,
+    clearPreCropAreaParams,
     setClearText,
     displayTranslAreaBox,
     clearTranslPopUp,
@@ -34,7 +34,10 @@ import {
     completeTranslate,
     getTranslImages,
     receivedImgHeight,
-    clearSelectedImage
+    clearSelectedImage,
+    hiddenResultBox,
+    clearPreMaskLayer,
+    setNotClearPreMaskLayer
 } from '../modules/images';
 import {
     selectFontFamily,
@@ -79,7 +82,8 @@ const mapStateToProps = (state) => {
         resultBoxStyleParams = {},
         currentTip,
         status,
-        imgHeight
+        imgHeight,
+        clearPreMask
     } = images;
     const {
         zoomCanvasValue = 1,
@@ -123,7 +127,8 @@ const mapStateToProps = (state) => {
         clearPreTranslResult,
         currentTip,
         status,
-        imgHeight
+        imgHeight,
+        clearPreMask
     }
 }
 
@@ -155,9 +160,11 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(displayTranslAreaBox());
             dispatch(clearPreFontSettings());
             dispatch(setStopClearPreResultContainer());
+            dispatch(setNotClearPreMaskLayer())
         },
         createNewCropArea: (displayTranslBox) => {
-            dispatch(clearPreCropArea());
+            dispatch(clearPreCropAreaParams());
+            dispatch(clearPreMaskLayer());
             if (!displayTranslBox) {
                 dispatch(resetBrush());
             }
@@ -201,6 +208,15 @@ const mapDispatchToProps = (dispatch) => {
         },
         receivedImgSize: (width, height) => {
             dispatch(receivedImgHeight(width, height))
+        },
+        handlerSelectReProcess: (startNumber)=> {
+            dispatch(setStartNumber(startNumber));
+            dispatch(displayTranslAreaBox());
+            dispatch(hiddenResultBox(startNumber));
+            const _resultContainer = document.getElementById(`${startNumber}_resultContainer`);
+            if(_resultContainer) {
+                _resultContainer.remove();
+            }
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {

@@ -53,10 +53,17 @@ class WorkbenchMain extends React.Component {
                     upperCanvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
                 }
             });
-            const {displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox} = this.props;
+            const {displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox = {}} = this.props;
+            let left, top, width, height, cropedImg;
+            if(createdTranslBox[startNumber]) {
+                left = createdTranslBox[startNumber].left;
+                top = createdTranslBox[startNumber].top;
+                width = createdTranslBox[startNumber].width;
+                height = createdTranslBox[startNumber].height;
+                cropedImg = createdTranslBox[startNumber].cropedImg;
+            }
             if(displayTranslBox && Object.keys(maskTextImgs).length) {
                 const currentMaskImg = maskTextImgs[startNumber] || [];
-                let {left, top, width, height, cropedImg} = createdTranslBox[startNumber];
                 const img = new Image();
                 if(currentMaskImg.length) {
                     left = currentMaskImg[currentMaskImg.length-1].left;
@@ -69,6 +76,10 @@ class WorkbenchMain extends React.Component {
                 img.onload = ()=> {
                     ctx_upper.drawImage(img, left, top, width, height);
                 }
+            }
+            if(this.props.clearPreMask){
+                ctx_upper.clearRect(left, top, width, height);
+                delete createdTranslBox[startNumber];
             }
 
             if(this.props.clearPreTranslResult) {
@@ -119,7 +130,7 @@ class WorkbenchMain extends React.Component {
         if(selectedImg) {
             this.drawCanvasBackGround(prevProps);
         }
-        if(prevProps.displayResultBox !== displayResultBox && translatedText) {
+        if(prevProps.displayResultBox !== displayResultBox && displayResultBox && translatedText) {
             this.ResultBox();
         }
         if(clearPreTranslResult) {
@@ -141,8 +152,8 @@ class WorkbenchMain extends React.Component {
     ResultBox() {
         const {startNumber, resultBoxStyleParams, translatedText, font} = this.props;
         const {
-            font_family = "Microsoft YaHei",
-            font_size = 12,
+            font_family = "CCWildWords",
+            font_size = 16,
             font_color = "rgb(0, 0, 0, .65)",
             hasFontItalic,
             hasFontWeight,
@@ -222,14 +233,14 @@ class WorkbenchMain extends React.Component {
             className: "lower-canvas",
             ref: this.canvas,
             width: currentElementWidth,
-            height: `${imgHeight}px`
+            height: imgHeight
         };
 
         const uppercanvasProps = {
             id: "upper-canvas",
             className: "upper-canvas",
             width: currentElementWidth,
-            height: `${imgHeight}px`,
+            height: imgHeight,
             style: {
                 cursor: (hasCropBox || displayTranslBox) ? "default" : "crosshair"
             }

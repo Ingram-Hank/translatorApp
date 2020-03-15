@@ -1,6 +1,6 @@
 import React from 'react';
 
-function RightMenu({ contentText, resultLayers}) {
+function RightMenu({ contentText, resultLayers, handlerSelectReProcess}) {
     return (
         <div className="trans-result-right-menu bg-color-white  col-sm-2 col-xs-12">
             <div className="result-header">
@@ -28,11 +28,11 @@ function RightMenu({ contentText, resultLayers}) {
                                         <span className="result-index">
                                             #{index}
                                         </span>
-                                        <div className="origin-image-area">
+                                        <div className="origin-image-area" onClick={()=> handlerSelectReProcess(index)}>
                                             <p className="result-origin-text">{originalText}</p>
                                         </div>
                                         <div className="result-translate-btn-area"></div>
-                                        <div className="result-text">{translText}</div>
+                                        <div className="result-text" onClick={()=> handlerSelectReProcess(index)}>{translText}</div>
                                     </div>
                                 </div>
                             )
