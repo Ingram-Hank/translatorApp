@@ -212,7 +212,9 @@ class drawRect {
     }
 
     clearCropBox() {
-        if (this.odiv) this.odiv.remove();
+        if (this.odiv) {
+            delete this.odiv
+        }
     }
 
     mousedown(e) {

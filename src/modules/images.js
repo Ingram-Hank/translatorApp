@@ -622,7 +622,7 @@ export const updateTranslText = (translText) => {
 export const clearPreCropAreaParams = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const {maskTextImgs, resultLayers, displayResultBox, resultBoxStyleParams} = state.images;
+        const {maskTextImgs = {}, resultLayers = [], displayResultBox = {}, resultBoxStyleParams = {}} = state.images;
         const {startNumber} = state.ui;
         delete maskTextImgs[startNumber];
         delete displayResultBox[startNumber];
@@ -688,7 +688,7 @@ export const initialTranslPage = () => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('orderNo');
-        // const orderNo = 672003108294696;
+        // const orderNo = 672003129386570;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({isSaveData: false}));

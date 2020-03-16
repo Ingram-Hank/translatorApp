@@ -441,8 +441,6 @@
           top: -1px;
           height: 7px;
           cursor: pointer; }
-          .translAreaBox .inpaint-box .box-operation .brush-range-area .paint-size:hover {
-            background-color: rgba(255, 255, 255, 0.2); }
       .translAreaBox .inpaint-box .box-operation .brush-btn-area {
         margin-top: 25px;
         display: flex;
@@ -771,7 +769,71 @@
       .translContainer .translate-area .translate-attribute-box .stroke-width label {
         margin: 0 4px; }
       .translContainer .translate-area .translate-attribute-box .stroke-width-input {
-        width: 75%; }
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        width: 120px;
+        margin-top: 12px;
+        height: 4px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        appearance: none;
+        outline: none;
+        /* 公用滑条样式 */
+        /* 公用滑块样式 */ }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-ms-track {
+          height: 4px;
+          border-radius: 2px;
+          appearance: none;
+          border-color: transparent;
+          color: transparent;
+          padding: 10px 0;
+          background-color: #fff; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-webkit-slider-runnable-track {
+          height: 4px;
+          border-radius: 2px;
+          appearance: none; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::moz-range-track {
+          height: 4px;
+          border-radius: 2px;
+          appearance: none;
+          outline: none;
+          background-color: #fff; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-moz-range-progress {
+          outline: none;
+          height: 6px;
+          background: linear-gradient(to right, #a100ff, #a100ff 100%, #f0f0f0);
+          border-radius: 3px; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-ms-thumb {
+          box-shadow: 0 .125em .125em #666666;
+          display: block;
+          width: 6px;
+          height: 14px;
+          background-color: #fff;
+          box-sizing: border-box;
+          appearance: none;
+          border: 1px solid grey;
+          margin-top: -8px; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-moz-range-thumb {
+          box-shadow: 0 .125em .125em #666666;
+          display: block;
+          width: 6px;
+          height: 14px;
+          background-color: #fff;
+          box-sizing: border-box;
+          appearance: none;
+          margin-top: -5px; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-webkit-slider-thumb {
+          box-shadow: 0 .125em .125em #666666;
+          display: block;
+          width: 6px;
+          height: 14px;
+          background-color: #fff;
+          box-sizing: border-box;
+          appearance: none;
+          margin-top: -5px; }
+        .translContainer .translate-area .translate-attribute-box .stroke-width-input::-moz-focus-outer {
+          border: 0; }
       .translContainer .translate-area .translate-attribute-box .circle {
         position: absolute;
         top: 4px;
