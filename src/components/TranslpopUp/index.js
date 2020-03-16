@@ -10,8 +10,8 @@ import ColorAbsorb from './ColorAbsorb.js';
 function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, hasCorrect = false,
     originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText, handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText }) {
     const {
-        font_family = "Microsoft YaHei",
-        font_size = 12,
+        font_family = "CCWildWords",
+        font_size = 16,
         font_color = "rgb(0, 0, 0, .65)",
         hasFontItalic,
         hasFontWeight,

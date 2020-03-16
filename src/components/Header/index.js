@@ -8,7 +8,7 @@ import ImgMerge from './ImgMerge ';
 import './header.css';
 
 
-const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, resultData)=> {
+const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, scale, resultData)=> {
     let imgs = [
         {
             url: selectedImage,
@@ -24,10 +24,10 @@ const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, resultData)=>
             const {left, top, width, height, cropedImg} = mask;
             imgs.push({
                 url: cropedImg,
-                x: left,
-                y: top,
-                width,
-                height,
+                x: left/scale,
+                y: top/scale,
+                width: width/scale,
+                height: height/scale,
                 font,
                 text: translText
             })
@@ -40,11 +40,12 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, 
     onToggle, status, imgWidth, imgHeight, selectedImage, selectedTranslImage, resultData, 
     startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, 
-    notificationMsg, closeModal, handlerAbandonSave }){
+    notificationMsg, scale, closeModal, handlerAbandonSave }){
     const buildImg = status ? selectedTranslImage : selectedImage;
-    const imgs = buildImgs(buildImg, imgWidth, imgHeight, resultData);
+    const imgs = buildImgs(buildImg, imgWidth, imgHeight, scale, resultData);
     const imgMerge = new ImgMerge(imgs);
-    let resultImg = new Image();
+    const resultImg = new Image();
+    resultImg.src = buildImg;
     imgMerge.then(img => resultImg.src = img);
     const switchMouseProps = {
         defaultText: contentText.marquee,
@@ -78,6 +79,8 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     const previewTranslResultProps = {
         contentText,
         img: resultImg,
+        imgWidth,
+        imgHeight,
         handlerClosePreview,
         handlerRestore
     };

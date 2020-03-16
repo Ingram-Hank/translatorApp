@@ -35,8 +35,8 @@
     transform: translate(-50%, -50%);
     background-color: white;
     color: rgba(0, 0, 0, 0.65);
-    max-width: 620px;
-    height: 96vh;
+    min-width: 870px;
+    max-height: 96vh;
     overflow-y: auto;
     transition: width .3s ease-out; }
     .popup-preview-header {
@@ -59,11 +59,10 @@
       position: relative;
       margin-top: 10px; }
       .popup-preview-body canvas {
-        position: absolute;
-        left: 20px; }
+        position: absolute; }
       .popup-preview-body-restore {
         display: block;
-        width: 94%; }
+        width: 96%; }
   .popup-canvasContainer {
     position: relative;
     top: 50%;

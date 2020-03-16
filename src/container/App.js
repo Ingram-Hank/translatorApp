@@ -12,7 +12,6 @@ import {
   getTranslImages,
   handlerToLastChapter,
   handlerToNextChapter,
-  setClearCropox,
   saveData,
   clearSelectedImage,
   initialTranslPage,
@@ -26,7 +25,6 @@ import {
   handlerToggleAutoOCR,
   handlerToggleAutoTranslate,
   handlerSelectImage,
-  setStartNumber,
   openPreviewMoal,
   closePreviewModal,
   setClearPreTranslResult,
@@ -41,8 +39,8 @@ import '../scss/global.css';
 const buildGroupData = (parms) => {
   const { resultBoxStyleParams = {}, maskTextImgs = {}, resultLayersMap = {}, font = {} } = parms;
   const defaultFont = {
-    font_family: "Microsoft YaHei",
-    font_size: 12,
+    font_family: "CCWildWords",
+    font_size: 16,
     font_color: "rgb(0, 0, 0, .65)",
     hasFontItalic: false,
     hasFontWeight: false,
@@ -103,7 +101,8 @@ function App(props) {
     handlerRestore,
     lastChapterDisable,
     nextChapterDisable,
-    notificationMsg
+    notificationMsg,
+    zoomCanvasValue
   } = props;
 
   const headerProps = {
@@ -132,7 +131,8 @@ function App(props) {
     feedMsg,
     handlerSelectFeedBackMsg,
     handlerRestore,
-    notificationMsg
+    notificationMsg,
+    scale: zoomCanvasValue
   };
   const navigationProps = {
     contentText,
@@ -193,7 +193,8 @@ const mapStateToProps = (state) => {
     loading = false,
     font = {},
     startPreview,
-    notificationMsg
+    notificationMsg,
+    zoomCanvasValue = 1
   } = state.ui;
   const resultData = buildGroupData({
     resultBoxStyleParams,
@@ -230,7 +231,8 @@ const mapStateToProps = (state) => {
     feedMsg,
     lastChapterDisable,
     nextChapterDisable,
-    notificationMsg
+    notificationMsg,
+    zoomCanvasValue
   }
 };
 
@@ -286,12 +288,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     handlerSaveData: (data) => {
       dispatch(saveData(data));
-      dispatch(setStartNumber(0));
-      dispatch(setClearCropox());
-      dispatch(setClearPreTranslResult());
     },
     handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo) => {
-      dispatch(getTranslImages({ comicTranslationOrderId, orderNo }));
+      dispatch(getTranslImages({ comicTranslationOrderId, orderNo, isSaveData: false }));
       dispatch(handlerSelectImage(null));
       dispatch(clearSelectedImage());
       dispatch(setClearPreTranslResult());

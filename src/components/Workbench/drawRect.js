@@ -1,4 +1,4 @@
-import {$, getCss} from '../../utilities';
+import { $, getCss } from '../../utilities';
 class drawRect {
     constructor(canvas, scale, img, elementWidth, elementHeight, componentProps) {
         this.canvas = canvas;
@@ -184,23 +184,23 @@ class drawRect {
     }
 
     fixPosition(position) {
-        if(position.x1>position.x2){
-            let x=position.x1;
-            position.x1=position.x2;
-            position.x2=x;
+        if (position.x1 > position.x2) {
+            let x = position.x1;
+            position.x1 = position.x2;
+            position.x2 = x;
         }
-        if(position.y1>position.y2){
-            let y=position.y1;
-            position.y1=position.y2;
-            position.y2=y;
+        if (position.y1 > position.y2) {
+            let y = position.y1;
+            position.y1 = position.y2;
+            position.y2 = y;
         }
-        position.width=position.x2-position.x1
-        position.height=position.y2-position.y1
-        if(position.width<50||position.height<50){
-            position.width=60;
-            position.height=60;
-            position.x2+=position.x1+60;
-            position.y2+=position.y1+60;
+        position.width = position.x2 - position.x1
+        position.height = position.y2 - position.y1
+        if (position.width < 50 || position.height < 50) {
+            position.width = 60;
+            position.height = 60;
+            position.x2 += position.x1 + 60;
+            position.y2 += position.y1 + 60;
         }
         return position
     }
@@ -212,14 +212,16 @@ class drawRect {
     }
 
     clearCropBox() {
-        if (this.odiv) this.odiv.remove();
+        if (this.odiv) {
+            delete this.odiv
+        }
     }
 
     mousedown(e) {
         e.stopPropagation();
-        this.startx = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
-        this.starty = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
-        if(this.props.hasCropBox || this.props.displayTranslBox) return false
+        this.startx = e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft + $("workbenchMain").scrollLeft;
+        this.starty = e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop;
+        if (this.props.hasCropBox || this.props.displayTranslBox) return false
         this.currentR = this.isPointInRetc(this.startx, this.starty);
         if (this.currentR) {
             this.leftDistance = this.startx - this.currentR.x1;
@@ -235,9 +237,9 @@ class drawRect {
     }
 
     mousemove(e) {
-        this.x = (e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft) / this.scale;
-        this.y = (e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop) / this.scale;
-        if(this.props.hasCropBox || this.props.displayTranslBox) return false
+        this.x = e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft + $("workbenchMain").scrollLeft;
+        this.y = e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop;
+        if (this.props.hasCropBox || this.props.displayTranslBox) return false
         this.ctx.setLineDash([10]);
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         if (this.flag && this.op === 1) {
@@ -259,14 +261,14 @@ class drawRect {
             this.posY = this.y;
             this.cropH = this.starty - this.y;
         }
-        
+
         if (this.op === 1) {
             this.layers.push(this.fixPosition({
                 x1: this.startx,
                 y1: this.starty,
                 x2: this.x,
                 y2: this.y,
-                strokeStyle:'transparent',
+                strokeStyle: 'transparent',
                 type: this.type
             }))
             if (this.cropW < 50) {
@@ -326,30 +328,32 @@ class drawRect {
                 this.clearCropBox();
             })
             $("cropBoxConfirm").addEventListener("click", () => {
-                if(this.cropW < 50 && this.cropH < 50) {
+                if (this.cropW < 50 && this.cropH < 50) {
                     this.cropW = 60;
                     this.cropH = 60;
                 }
                 const cropedImg = this.cropImage(
                     this.img,
                     this.posX / this.scaleX,
-                    this.posY / this.scaleY, 
+                    this.posY / this.scaleY,
                     parseInt(this.cropW) / this.scaleX,
                     parseInt(this.cropH) / this.scaleY
                 );
                 const setCropImgParams = {
                     left: this.posX,
-                    top: this.posY, 
+                    top: this.posY,
                     width: this.cropW,
                     height: this.cropH,
                     cropedImg
                 };
                 this.clearLayers();
                 this.clearCropBox();
-                this.props.createStartNumber(this.props.startNumber + 1)
+                const createdTranslBox = this.props.createdTranslBox || {};
+                const createdTranslBoxNumber = Object.keys(createdTranslBox).length || 0;
+                this.props.createStartNumber(createdTranslBoxNumber + 1)
                 this.props.setCropImg(setCropImgParams);
             })
-        }else if(this.op >= 3){
+        } else if (this.op >= 3) {
             this.fixPosition(this.currentR)
         }
         this.clearLayers();

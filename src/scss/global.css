@@ -1,3 +1,18 @@
+@font-face {
+  font-family: 'CCWildWords'; 
+  src: url('../font/CCWildWords-Roman.ttf');
+}
+
+@font-face {
+  font-family: 'Waffle Regular'; 
+  src: url('../font/Waffle Regular.otf');
+}
+
+@font-face {
+  font-family: 'RopaSans-Italic'; 
+  src: url('../font/RopaSans-Italic(7)(1)(1)(1)(3)(1)(2)(1)(1).ttf');
+}
+
 body {
   margin: 0;
   color: rgba(0,0,0,.65);

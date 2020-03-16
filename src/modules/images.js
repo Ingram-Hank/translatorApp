@@ -53,6 +53,10 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { imgWidth: action.width, imgHeight: action.height })
         case actions.IMAGES_DISPLAY_TRANSL_AREA_BOX:
             return Object.assign({}, state, { hasCropBox: true })
+        case actions.IMAGES_CLEAR_PRE_MASK_LAYER:
+            return Object.assign({}, state, { clearPreMask: true })
+        case actions.IMAGES_NOT_CLEAR_PRE_MASK_LAYER:
+            return Object.assign({}, state, { clearPreMask: false })
         case actions.IMAGES_DISPLAY_TRANSLPOPUP:
             return Object.assign({}, state, { displayTranslPopUp: true })
         case actions.IMAGES_DISPLAY_TRANSLBOX:
@@ -65,6 +69,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { displayTranslPopUp: false })
         case actions.IMAGES_CLEAR_SELECTED_IMAGE:
             return Object.assign({}, state, { selectedImage: "" })
+        case actions.IMAGES_CLEAR_CREATED_TRANSL_BOX:
+            return Object.assign({}, state, { createdTranslBox: {} })
         case actions.IMAGES_CREATE_RESULT_BOX:
             return Object.assign({}, state, { displayResultBox: action.payload })
         case actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE:
@@ -84,7 +90,6 @@ const imagesReducer = (state = {}, action) => {
                 hasCropBox: false,
                 displayTranslBox: false,
                 displayTranslPopUp: false,
-                createdTranslBox: {},
                 maskTextImgs: {},
                 resultLayers: [],
                 displayResultBox: {},
@@ -140,6 +145,10 @@ export const displayTranslPopUp = () => ({
     type: actions.IMAGES_DISPLAY_TRANSLPOPUP
 });
 
+export const clearCreatedTranslBox = () => ({
+    type: actions.IMAGES_CLEAR_CREATED_TRANSL_BOX
+});
+
 export const displayTranslBox = () => ({
     type: actions.IMAGES_DISPLAY_TRANSLBOX
 });
@@ -158,6 +167,14 @@ export const clearCropBox = () => ({
 
 export const displayTranslAreaBox = () => ({
     type: actions.IMAGES_DISPLAY_TRANSL_AREA_BOX
+});
+
+export const clearPreMaskLayer = () => ({
+    type: actions.IMAGES_CLEAR_PRE_MASK_LAYER
+});
+
+export const setNotClearPreMaskLayer = () => ({
+    type: actions.IMAGES_NOT_CLEAR_PRE_MASK_LAYER
 });
 
 export const clearTranslPopUp = () => ({
@@ -313,6 +330,11 @@ export const getTranslImages = (payload) => {
             }));
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
+            if(payload.isSaveData) {
+                dispatch(setStartNumber(0));
+                dispatch(setClearCropox());
+                dispatch(setClearPreTranslResult());
+            }
             dispatch(uiloadingComplete())
         }).catch(err => {
             dispatch(uiloadingComplete())
@@ -354,6 +376,7 @@ export const selecteCanvas = (id) => {
 
 export const setClearCropox = () => {
     return (dispatch, getState) => {
+        dispatch(clearCreatedTranslBox());
         dispatch(clearPreCropArea());
     }
 };
@@ -444,7 +467,7 @@ export const plusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) + 1];
-        dispatch(getTranslImages({ chapterId }))
+        dispatch(getTranslImages({ chapterId, isSaveData: false }))
     }
 };
 export const minusChapter = () => {
@@ -452,7 +475,7 @@ export const minusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) - 1];
-        dispatch(getTranslImages({ chapterId }))
+        dispatch(getTranslImages({ chapterId, isSaveData: false }))
     }
 };
 
@@ -495,7 +518,7 @@ export const createOriginMask = (payload) => {
         const { startNumber } = state.ui;
         let { createdTranslBox = {} } = state.images;
         createdTranslBox = Object.assign({}, createdTranslBox, { [startNumber]: payload });
-        dispatch(createTranslAreaBox(createdTranslBox))
+        dispatch(createTranslAreaBox(createdTranslBox));
     }
 };
 
@@ -596,6 +619,24 @@ export const updateTranslText = (translText) => {
     }
 }
 
+export const clearPreCropAreaParams = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {maskTextImgs = {}, resultLayers = [], displayResultBox = {}, resultBoxStyleParams = {}} = state.images;
+        const {startNumber} = state.ui;
+        delete maskTextImgs[startNumber];
+        delete displayResultBox[startNumber];
+        delete resultBoxStyleParams[startNumber];
+        resultLayers.forEach((item, key, arr)=> {
+            if(item.index === startNumber) {
+                arr.splice(key, 1);
+            }
+        });
+        dispatch(clearCropBox());
+        dispatch(hiddenTranslBox());
+        dispatch(clearTranslPopUp());
+    }
+};
 
 export const setResultBoxStyle = () => {
     return (dispatch, getState) => {
@@ -621,9 +662,8 @@ export const saveData = (payload) => {
         const { comicTranslationOrderId } = state.images;
         dispatch(uiloadingStart());
         services.saveImage({ imgBase64: payload.src, comicTranslationOrderId }).then(({ data }) => {
-            dispatch(getTranslImages());
+            dispatch(getTranslImages({isSaveData: true}));
             dispatch(selecteCanvas(comicTranslationOrderId));
-            dispatch(uiloadingComplete());
             if (data.code) {
                 dispatch(receivedErrorMsg(data.msg));
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
@@ -648,14 +688,23 @@ export const initialTranslPage = () => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('orderNo');
-        // const orderNo = 672003108294696;
+        // const orderNo = 672003129386570;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
-            dispatch(getTranslImages());
+            dispatch(getTranslImages({isSaveData: false}));
         }
         dispatch(getFeedBackMessage());
         dispatch(clearSelectedImage());
     }
 }
+
+export const hiddenResultBox = (startNumber)=> {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {displayResultBox = {}} = state.images;
+        displayResultBox[startNumber].display = false;
+        dispatch(createResultBox(displayResultBox));
+    }
+};
 
 export default imagesReducer;

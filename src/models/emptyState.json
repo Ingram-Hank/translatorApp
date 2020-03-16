@@ -1,15 +1,14 @@
 {
-    
     "font": {
-        "font_family": "Microsoft YaHei",
-        "font_size": "12",
-        "font_color": "rgba(0,0,0,.65)",
+        "font_family":"CCWildWords",
+        "font_size": 16,
+        "font_color": "rgb(0, 0, 0, .65)",
         "hasFontItalic": false,
         "hasFontWeight": false,
         "text_align": "center",
         "outline_color": "",
         "shadow_color": "",
-        "outline_size": "0",
-        "shadow_size": "0"
+        "outline_size": 0,
+        "shadow_size": 0
     }
 }

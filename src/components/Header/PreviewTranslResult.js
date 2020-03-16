@@ -4,11 +4,13 @@ class PreviewTranslResult extends React.Component {
     drawBackground() {
         const canvas = document.getElementById("previewCanvas");
         const ctx = canvas.getContext("2d");
-        const {img} = this.props;
-        img.onload=()=> {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0)
+        const {img, imgWidth, imgHeight} = this.props;
+        const previewImg = new Image();
+        previewImg.src = img.src;
+        previewImg.onload=()=> {
+            canvas.width = imgWidth;
+            canvas.height = imgHeight;
+            ctx.drawImage(img, 0, 0, imgWidth, imgHeight)
         }
     }
     componentDidMount() {
@@ -19,10 +21,10 @@ class PreviewTranslResult extends React.Component {
     }
 
     render () {
-        const {handlerClosePreview, handlerRestore, contentText} = this.props;
+        const {handlerClosePreview, handlerRestore, contentText, imgWidth, imgHeight} = this.props;
         return (
             <div className="popup">
-                <div className="popup-preview">
+                <div className="popup-preview" style={{width: imgWidth, height: imgHeight}}>
                     <div className="popup-preview-header">
                         <h5 className="modal-title">
                             {contentText.preview}

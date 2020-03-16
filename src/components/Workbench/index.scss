@@ -504,9 +504,6 @@
                     top: -1px;
                     height: 7px;
                     cursor: pointer;
-                    &:hover {
-                        background-color: rgba(255, 255, 255, .2);
-                    }
                 }
             }
             .brush-btn-area {
@@ -924,10 +921,74 @@
                 label {
                     margin: 0 4px;
                 }
+                &-input {
+                    display: inline-block;
+                    margin: 0;
+                    padding: 0;
+                    width: 120px;
+                    margin-top: 12px;
+                    height: 4px;
+                    background-color: #f0f0f0;
+                    cursor: pointer;
+                    appearance: none;
+                    outline: none;
+                    /* 公用滑条样式 */
+                    @mixin track-style {
+                        height: 4px;
+                        border-radius: 2px;
+                        appearance: none;  //去除自带的滑条样式
+                    }
+                    /* 公用滑块样式 */
+                    @mixin thumb-style {
+                        box-shadow: 0 .125em .125em #666666;
+                        display: block;
+                        width: 6px;
+                        height: 14px;
+                        background-color: #fff;
+                        box-sizing: border-box;
+                        appearance: none; //去除自带的滑块样式
+                    }
+                    &::-ms-track { //ie滑条
+                        @include track-style;
+                        border-color: transparent; //去除原有边框
+                        color: transparent; //去除轨道内的竖线
+                        padding: 10px 0;
+                        background-color: #fff;
+                    }
+                    &::-webkit-slider-runnable-track { //chrome滑条
+                        @include track-style;
+                    }
+                    &::moz-range-track {//firefox滑条
+                        @include track-style;
+                        outline: none;
+                        background-color: #fff;
+                    }
+                
+                    &::-moz-range-progress {//firefox滑条渐变
+                        outline: none;
+                        height: 6px;
+                        background: linear-gradient(to right, #a100ff, #a100ff 100%, #f0f0f0);
+                        border-radius: 3px;
+                    }
+                    &::-ms-thumb {//ie滑块
+                        @include thumb-style;
+                        border: 1px solid grey;
+                        margin-top: -8px;
+                    }
+                    &::-moz-range-thumb {//firefox滑块
+                        @include thumb-style;
+                        margin-top: -5px;
+                    }
+                    &::-webkit-slider-thumb {//chrome滑块
+                        @include thumb-style;
+                        margin-top: -5px;
+                    }
+                    &::-moz-focus-outer { //firefox去input range 的outline
+                        border: 0;
+                    }
+                }
             }
-            .stroke-width-input {
-                width: 75%;
-            }
+            
             .circle {
                 position: absolute;
                 top: 4px;
