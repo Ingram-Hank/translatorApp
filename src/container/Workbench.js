@@ -211,11 +211,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         handlerSelectReProcess: (startNumber)=> {
             dispatch(setStartNumber(startNumber));
-            dispatch(displayTranslAreaBox());
+            dispatch(displayTranslBox());
+            dispatch(displayTranslPopUp());
             dispatch(hiddenResultBox(startNumber));
             const _resultContainer = document.getElementById(`${startNumber}_resultContainer`);
             if(_resultContainer) {
-                _resultContainer.remove();
+                _resultContainer.parentNode.removeChild(_resultContainer);
             }
         },
         fontSettings: {

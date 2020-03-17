@@ -144,6 +144,7 @@ class TranslResultBox extends React.Component {
             id: "translMove",
             className: "move",
             suppressContentEditableWarning: "true",
+            contentEditable: "true",
             onClick: (e) => this.handlerTextEdit(e),
             style: {
                 fontFamily: font_family,

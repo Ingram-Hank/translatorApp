@@ -205,6 +205,13 @@ class drawRect {
         return position
     }
 
+    removeElement(_element){
+        const _parentElement = _element.parentNode;
+        if(_parentElement){
+            _parentElement.removeChild(_element);
+        }
+    }
+
     clearLayers() {
         this.layers.pop();
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
@@ -213,7 +220,7 @@ class drawRect {
 
     clearCropBox() {
         if (this.odiv) {
-            delete this.odiv
+            this.removeElement(this.odiv)
         }
     }
 

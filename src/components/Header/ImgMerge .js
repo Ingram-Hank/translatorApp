@@ -61,11 +61,12 @@ class ImgMerge {
 
     }
 
-    drawTextOn(t, x, y, w, font) {
+    drawTextOn(t, position, w, font) {
         const chr = t.split("");
         let temp = "";
         let row = [];
-
+        const x = position.left;
+        const y = position.top;
         const {
             font_family = "Microsoft YaHei",
             font_size = 12,
@@ -128,7 +129,7 @@ class ImgMerge {
 
             this.ctx.drawImage(...drawPara);
             if (this.imgs[i_1].text) {
-                this.drawTextOn(this.imgs[i_1].text, this.imgs[i_1].x, this.imgs[i_1].y, this.imgs[i_1].width, this.imgs[i_1].font);
+                this.drawTextOn(this.imgs[i_1].text, this.imgs[i_1].position, this.imgs[i_1].width, this.imgs[i_1].font);
             }
 
         });
