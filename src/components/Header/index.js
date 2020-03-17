@@ -20,7 +20,7 @@ const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, scale, result
     ];
     if(Object.keys(resultData).length) {
         Object.values(resultData).forEach(item => {
-            const {mask, translText, font} = item;
+            const {mask, position, translText, font} = item;
             const {left, top, width, height, cropedImg} = mask;
             imgs.push({
                 url: cropedImg,
@@ -29,6 +29,7 @@ const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, scale, result
                 width: width/scale,
                 height: height/scale,
                 font,
+                position,
                 text: translText
             })
         })

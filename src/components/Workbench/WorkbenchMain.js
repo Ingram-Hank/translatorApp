@@ -170,8 +170,8 @@ class WorkbenchMain extends React.Component {
         resultContainer.setAttribute("id", `${startNumber}_resultContainer`);
         resultContainer.setAttribute("class", "resultContainer");
         canvasContainer.appendChild(resultContainer);
-        resultContainer.style.left = `${left + 3}px`;
-        resultContainer.style.top = `${top + 3}px`;
+        resultContainer.style.left = `${left}px`;
+        resultContainer.style.top = `${top}px`;
         resultContainer.style.width = `${width}px`;
         resultContainer.style.height = `${height}px`;
         resultContainer.style.fontFamily = font_family;
