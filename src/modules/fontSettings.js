@@ -19,6 +19,8 @@ const fontSettingsReducer = (state = {}, action) => {
             return Object.assign({}, state, { outline_size: action.payload })
         case actions.FONTSETTINGS_SELECT_FONT_SHADOW_SIZE:
             return Object.assign({}, state, { shadow_size: action.payload })
+        case actions.FONTSETTINGS_SELECT_LINE_HEIGHT:
+            return Object.assign({}, state, { lineHeight: action.payload })
         case actions.FONTSETTINGS_SELECT_FONT_STYLE:
             return Object.assign({}, state, { hasFontItalic: !action.payload })
         case actions.FONTSETTINGS_SELECT_FONT_WEIGHT:
@@ -81,6 +83,11 @@ export const selectFontOutlineSize = (payload) => ({
 
 export const selectFontShadowSize = (payload) => ({
     type: actions.FONTSETTINGS_SELECT_FONT_SHADOW_SIZE,
+    payload
+});
+
+export const selectLineHeight = (payload) => ({
+    type: actions.FONTSETTINGS_SELECT_LINE_HEIGHT,
     payload
 });
 

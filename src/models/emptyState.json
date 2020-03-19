@@ -9,6 +9,7 @@
         "outline_color": "",
         "shadow_color": "",
         "outline_size": 0,
+        "lineHeight": 1.16,
         "shadow_size": 0
     }
 }

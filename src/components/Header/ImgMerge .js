@@ -71,6 +71,7 @@ class ImgMerge {
             font_family = "Microsoft YaHei",
             font_size = 12,
             font_color = "rgb(0, 0, 0, .65)",
+            lineHeight = 1.16,
             hasFontItalic,
             hasFontWeight,
             text_align = "center",
@@ -100,11 +101,11 @@ class ImgMerge {
         row.push(temp);
 
         for (let b = 0; b < row.length; b++) {
-            this.ctx.fillText(row[b], x+(w/2), y + (b + 1) * (font_size+3));
+            this.ctx.fillText(row[b], x+(w/2), y + (b + 1) * lineHeight);
             if (outline_size && outline_color) {
                 this.ctx.strokeStyle = outline_color;
                 this.ctx.lineWidth = outline_size;
-                this.ctx.strokeText(row[b], x+(w/2), y + (b + 1) * (font_size+3))
+                this.ctx.strokeText(row[b], x+(w/2), y + (b + 1) * lineHeight)
             }
         }
     }

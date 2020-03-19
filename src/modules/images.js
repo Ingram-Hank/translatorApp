@@ -330,11 +330,6 @@ export const getTranslImages = (payload) => {
             }));
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
-            if(payload.isSaveData) {
-                dispatch(setStartNumber(0));
-                dispatch(setClearCropox());
-                dispatch(setClearPreTranslResult());
-            }
             dispatch(uiloadingComplete())
         }).catch(err => {
             dispatch(uiloadingComplete())
@@ -467,7 +462,7 @@ export const plusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) + 1];
-        dispatch(getTranslImages({ chapterId, isSaveData: false }))
+        dispatch(getTranslImages({ chapterId}))
     }
 };
 export const minusChapter = () => {
@@ -475,7 +470,7 @@ export const minusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) - 1];
-        dispatch(getTranslImages({ chapterId, isSaveData: false }))
+        dispatch(getTranslImages({ chapterId}))
     }
 };
 
@@ -662,15 +657,16 @@ export const saveData = (payload) => {
         const { comicTranslationOrderId } = state.images;
         dispatch(uiloadingStart());
         services.saveImage({ imgBase64: payload.src, comicTranslationOrderId }).then(({ data }) => {
-            dispatch(getTranslImages({isSaveData: true}));
-            dispatch(selecteCanvas(comicTranslationOrderId));
+            dispatch(setStartNumber(0));
+            dispatch(setClearCropox());
             if (data.code) {
                 dispatch(receivedErrorMsg(data.msg));
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
             }
+            dispatch(uiloadingComplete());
         }).catch(err => {
             console.error(err);
-            dispatch(uiloadingComplete());
+            
         })
     }
 };
@@ -687,8 +683,8 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        const orderNo = getURLParamsString('orderNo');
-        // const orderNo = 672003129386570;
+        // const orderNo = getURLParamsString('orderNo');
+        const orderNo = 672003129386570;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({isSaveData: false}));

@@ -835,6 +835,9 @@
           margin-top: -5px; }
         .translContainer .translate-area .translate-attribute-box .stroke-width-input::-moz-focus-outer {
           border: 0; }
+      .translContainer .translate-area .translate-attribute-box .line-height {
+        margin-top: 10px;
+        color: white; }
       .translContainer .translate-area .translate-attribute-box .circle {
         position: absolute;
         top: 4px;

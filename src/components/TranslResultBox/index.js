@@ -134,6 +134,7 @@ class TranslResultBox extends React.Component {
             font_color = "rgb(0, 0, 0, .65)",
             hasFontItalic,
             hasFontWeight,
+            lineHeight = 1.16,
             text_align = "center",
             outline_color,
             shadow_color,
@@ -152,6 +153,7 @@ class TranslResultBox extends React.Component {
                 color: font_color,
                 fontStyle: hasFontItalic && "italic",
                 fontWeight: hasFontWeight && "bold",
+                lineHeight,
                 textAlign: text_align,
                 WebkitTextStroke: `${outline_size}px ${outline_color}`,
                 textShadow: `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`
