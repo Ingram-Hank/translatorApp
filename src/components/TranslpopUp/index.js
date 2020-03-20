@@ -256,7 +256,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                             <div className="btn-group btn-group-sm line-height">
                                 <span className="text-white">{contentText.lineHeight}</span>
                             </div>
-                            <div className="btn-group btn-group-sm stroke-width" style={{"margin-top": "10px"}}>
+                            <div className="btn-group btn-group-sm stroke-width" style={{marginTop: "10px"}}>
                                 <label className="btn btn-default mb-0 mx-1">
                                     <span className="js-line-height-num">
                                         {lineHeight}

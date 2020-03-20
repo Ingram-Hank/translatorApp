@@ -174,19 +174,19 @@ class WorkbenchMain extends React.Component {
         resultContainer.setAttribute("class", "resultContainer");
         docFrag.appendChild(resultContainer);
         resultContainer.style.cssText = `
-        left: ${left}px;
-        top: ${top}px;
-        width: ${width}px;
-        height: ${height}px;
-        font-family: ${font_family};
-        font-size: ${font_size}px;
-        line-height：${lineHeight};
-        color: ${font_color};
-        font-style: ${hasFontItalic && "italic"};
-        font-weight: ${hasFontWeight && "bold"};
-        text-align: ${text_align};
-        -webkit-text-stroke: ${outline_size}px ${outline_color};
-        text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
+            left: ${left}px;
+            top: ${top}px;
+            width: ${width}px;
+            height: ${height}px;
+            font-family: ${font_family};
+            font-size: ${font_size}px;
+            line-height：${lineHeight};
+            color: ${font_color};
+            font-style: ${hasFontItalic && "italic"};
+            font-weight: ${hasFontWeight && "bold"};
+            text-align: ${text_align};
+            -webkit-text-stroke: ${outline_size}px ${outline_color};
+            text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
         `;
         resultContainer.innerHTML = translatedText;
     }
@@ -225,7 +225,7 @@ class WorkbenchMain extends React.Component {
             startNumber,
             setResultBoxStyle,
             selectedImg,
-            imgHeight
+            imgHeight = "950"
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;

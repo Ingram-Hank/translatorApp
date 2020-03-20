@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
+import html2canvas from 'html2canvas';
 import { Link } from "react-router-dom";
 import {Button, ButtonDropDown, Toggle, Notification, Modal} from '../';
 import PreviewTranslResult from './PreviewTranslResult';
 import FeedBackMessage from './FeedBackMessage';
-import ImgMerge from './ImgMerge ';
 import './header.css';
 
 
@@ -41,13 +41,9 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, 
     onToggle, status, imgWidth, imgHeight, selectedImage, selectedTranslImage, resultData, 
     startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, 
-    notificationMsg, scale, closeModal, handlerAbandonSave }){
+    notificationMsg, scale, closeModal, handlerAbandonSave, getCropedImgURL, resultImgURL }){
     const buildImg = status ? selectedTranslImage : selectedImage;
     const imgs = buildImgs(buildImg, imgWidth, imgHeight, scale, resultData);
-    const imgMerge = new ImgMerge(imgs);
-    const resultImg = new Image();
-    resultImg.src = buildImg;
-    imgMerge.then(img => resultImg.src = img);
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],
@@ -66,20 +62,33 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     
     const saveDataProps = {
         attributes: {
-            onClick: ()=> handlerSaveData(resultImg),
+            onClick: ()=> {
+                const canvasContainer = document.getElementById('canvasContainer');
+                html2canvas(canvasContainer).then((canvas)=> {
+                    const imgURL = canvas.toDataURL();
+                    handlerSaveData(imgURL)
+                })
+            },
             className: classNames('button', {"disabled": imgs.length < 2})
         }
     }
     const previewProps = {
         attributes: {
-            onClick: ()=> handlerPreview(),
+            onClick: ()=> {
+                const canvasContainer = document.getElementById('canvasContainer');
+                html2canvas(canvasContainer).then((canvas)=> {
+                    const imgURL = canvas.toDataURL();
+                    handlerPreview();
+                    getCropedImgURL(imgURL);
+                })
+            },
             className: classNames('button', {"disabled": !selectedImage})
         }
     };
     
     const previewTranslResultProps = {
         contentText,
-        img: resultImg,
+        img: resultImgURL,
         imgWidth,
         imgHeight,
         handlerClosePreview,
@@ -177,7 +186,14 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                 </div>
                 <div className="popup-footer text-right">
                     <button type="button" className="btn btn-default" onClick={handlerAbandonSave}> {contentText.abandon} </button>
-                    <button type="button" className="btn btn-default active" onClick={() => {handlerSaveData(resultImg); closeModal()}}> {contentText.save} </button>
+                    <button type="button" className="btn btn-default active" onClick={() => {
+                        const canvasContainer = document.getElementById('canvasContainer');
+                        html2canvas(canvasContainer).then((canvas)=> {
+                            const imgURL = canvas.toDataURL();
+                            handlerSaveData(imgURL);
+                        });
+                        closeModal();
+                    }}> {contentText.save} </button>
                 </div>
             </Modal>}
         </div>

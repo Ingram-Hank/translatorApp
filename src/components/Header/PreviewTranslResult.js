@@ -6,11 +6,11 @@ class PreviewTranslResult extends React.Component {
         const ctx = canvas.getContext("2d");
         const {img, imgWidth, imgHeight} = this.props;
         const previewImg = new Image();
-        previewImg.src = img.src;
+        previewImg.src = img;
         previewImg.onload=()=> {
             canvas.width = imgWidth;
             canvas.height = imgHeight;
-            ctx.drawImage(img, 0, 0, imgWidth, imgHeight)
+            ctx.drawImage(previewImg, 0, 0, imgWidth, imgHeight)
         }
     }
     componentDidMount() {

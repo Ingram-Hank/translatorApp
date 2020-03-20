@@ -292,6 +292,14 @@
   padding: 5px;
   cursor: move; }
 
+.dragRotateContainer {
+  position: absolute;
+  width: 1px;
+  height: 30px;
+  background: #ff4f81;
+  top: -30px;
+  left: 50%; }
+
 .drag {
   position: absolute;
   width: 10px;
@@ -301,6 +309,10 @@
   background: white;
   overflow: hidden;
   z-index: 2; }
+
+.rotate {
+  left: -5px;
+  cursor: crosshair; }
 
 .nw-resize {
   left: -4px;
