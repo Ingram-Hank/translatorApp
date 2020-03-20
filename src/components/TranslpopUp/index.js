@@ -20,6 +20,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
         shadow_color,
         outline_size = 0,
         shadow_size = 0,
+        lineHeight = 1.16,
         popUp
     } = font;
     
@@ -35,7 +36,8 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
         handlerSelectFontShadowSize,
         handlerSelectFontShadowColor,
         handerColorAbsorb,
-        handerColorAbsorbComplete
+        handerColorAbsorbComplete,
+        handlerSelectLineHeight
     } = fontSettings;
     const fontSizeCollection = getfontSizeArray();
     const dragProps = {
@@ -230,6 +232,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                             </div>
                         </div>
                         {/* outline settings end */}
+                        {/* shadow settings start */}
                         <div className='func-title'>{contentText.shadow}</div>
                         <div className='nd-btn-group'>
                             <div className="btn-group btn-group-sm stroke-style">
@@ -245,6 +248,21 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                                     <span className="">{shadow_size}px</span>
                                 </label>
                                 <input className="stroke-width-input" type="range" step="1" min="0" max="10" value={shadow_size} onChange={(e) => handlerSelectFontShadowSize(e)} />
+                            </div>
+                        </div>
+                        {/* shadow settings end */}
+
+                        <div className="nd-btn-group">
+                            <div className="btn-group btn-group-sm line-height">
+                                <span className="text-white">{contentText.lineHeight}</span>
+                            </div>
+                            <div className="btn-group btn-group-sm stroke-width" style={{marginTop: "10px"}}>
+                                <label className="btn btn-default mb-0 mx-1">
+                                    <span className="js-line-height-num">
+                                        {lineHeight}
+                                    </span>
+                                </label>
+                                <input className="stroke-width-input" type="range" step="0.1" min="0" max="5" value={lineHeight} onChange={(e) => handlerSelectLineHeight(e)}/>
                             </div>
                         </div>
                     </div>

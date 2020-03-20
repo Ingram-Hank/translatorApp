@@ -43,6 +43,10 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { maskTextImgs: action.payload })
         case actions.IMAGES_RECEIVED_RESULT_BOX_STYLE:
             return Object.assign({}, state, { resultBoxStyleParams: action.payload })
+        case actions.IMAGES_RECEIVED_IMG_STATUS:
+            return Object.assign({}, state, { status: action.payload })
+        case actions.IMAGES_RECEIVED_IMAGES_COLLECTIONS:
+            return Object.assign({}, state, { imagesCollection: action.payload })
         case actions.IMAGES_CREATE_TRANSLAREA_BOX:
             return Object.assign({}, state, { createdTranslBox: action.payload })
         case actions.IMAGES_CREATE_RESULT_LAYER:
@@ -71,10 +75,14 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { selectedImage: "" })
         case actions.IMAGES_CLEAR_CREATED_TRANSL_BOX:
             return Object.assign({}, state, { createdTranslBox: {} })
+        case actions.IMAGES_CLEAR_MASK_TEXT_IMGS:
+            return Object.assign({}, state, { maskTextImgs: {} })
         case actions.IMAGES_CREATE_RESULT_BOX:
             return Object.assign({}, state, { displayResultBox: action.payload })
         case actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE:
             return Object.assign({}, state, { selectedTranslImage: action.payload })
+        case actions.IMGAGES_RECEIVED_RESULT_IMGURL:
+            return Object.assign({}, state, { resultImgURL: action.payload })
         case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
             return Object.assign({}, state, { feedMsg: action.payload })
         case actions.IMAGES_DISABLED_SWITCH_CHAPTER:
@@ -90,7 +98,6 @@ const imagesReducer = (state = {}, action) => {
                 hasCropBox: false,
                 displayTranslBox: false,
                 displayTranslPopUp: false,
-                maskTextImgs: {},
                 resultLayers: [],
                 displayResultBox: {},
                 resultBoxStyleParams: {}
@@ -130,6 +137,16 @@ export const receivedResultBoxStyle = (payload) => ({
     payload
 });
 
+export const receiveImgStatus = (payload) => ({
+    type: actions.IMAGES_RECEIVED_IMG_STATUS,
+    payload
+});
+
+export const receivedImagesCollection = (payload) => ({
+    type: actions.IMAGES_RECEIVED_IMAGES_COLLECTIONS,
+    payload
+});
+
 export const receivedImgHeight = (width, height) => ({
     type: actions.IMAGES_RECEIVED_IMG_HEIGHT,
     width,
@@ -147,6 +164,10 @@ export const displayTranslPopUp = () => ({
 
 export const clearCreatedTranslBox = () => ({
     type: actions.IMAGES_CLEAR_CREATED_TRANSL_BOX
+});
+
+export const clearMaskTextImgs = () => ({
+    type: actions.IMAGES_CLEAR_MASK_TEXT_IMGS
 });
 
 export const displayTranslBox = () => ({
@@ -203,7 +224,12 @@ export const createResultBox = (payload) => ({
 export const receivedSelectedTranslImage = (payload) => ({
     type: actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE,
     payload
-})
+});
+
+export const receivedResultImgURL = (payload) => ({
+    type: actions.IMGAGES_RECEIVED_RESULT_IMGURL,
+    payload
+});
 
 export const disabledSwitchChapter = () => ({
     type: actions.IMAGES_DISABLED_SWITCH_CHAPTER
@@ -257,6 +283,7 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
         } else {
             dispatch(handlerSelectImage(selectedImg));
             dispatch(selecteCanvas(translationOrderId));
+            dispatch(setClearPreTranslResult());
         }
     }
 };
@@ -330,11 +357,6 @@ export const getTranslImages = (payload) => {
             }));
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
-            if(payload.isSaveData) {
-                dispatch(setStartNumber(0));
-                dispatch(setClearCropox());
-                dispatch(setClearPreTranslResult());
-            }
             dispatch(uiloadingComplete())
         }).catch(err => {
             dispatch(uiloadingComplete())
@@ -377,6 +399,7 @@ export const selecteCanvas = (id) => {
 export const setClearCropox = () => {
     return (dispatch, getState) => {
         dispatch(clearCreatedTranslBox());
+        dispatch(clearMaskTextImgs());
         dispatch(clearPreCropArea());
     }
 };
@@ -443,6 +466,7 @@ export const handlerToLastChapter = () => {
             dispatch(minusChapter());
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
+            dispatch(setClearPreTranslResult());
         }
     }
 }
@@ -458,6 +482,7 @@ export const handlerToNextChapter = () => {
             dispatch(plusChapter());
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
+            dispatch(setClearPreTranslResult());
         }
     }
 }
@@ -467,7 +492,7 @@ export const plusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) + 1];
-        dispatch(getTranslImages({ chapterId, isSaveData: false }))
+        dispatch(getTranslImages({ chapterId}))
     }
 };
 export const minusChapter = () => {
@@ -475,7 +500,7 @@ export const minusChapter = () => {
         const state = getState();
         const { chapterIds = [], comicChapterId } = state.images;
         const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) - 1];
-        dispatch(getTranslImages({ chapterId, isSaveData: false }))
+        dispatch(getTranslImages({ chapterId}))
     }
 };
 
@@ -659,18 +684,27 @@ export const setResultBoxStyle = () => {
 export const saveData = (payload) => {
     return (dispatch, getState) => {
         const state = getState();
-        const { comicTranslationOrderId } = state.images;
+        const { imagesCollection = [], comicTranslationOrderId } = state.images;
         dispatch(uiloadingStart());
-        services.saveImage({ imgBase64: payload.src, comicTranslationOrderId }).then(({ data }) => {
-            dispatch(getTranslImages({isSaveData: true}));
-            dispatch(selecteCanvas(comicTranslationOrderId));
+        services.saveImage({ imgBase64: payload, comicTranslationOrderId }).then(({ data }) => {
+            dispatch(clearPreCropArea());
             if (data.code) {
                 dispatch(receivedErrorMsg(data.msg));
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
             }
+            if(data.data.status) {
+                dispatch(receiveImgStatus(data.data.status));
+                imagesCollection.forEach(item => {
+                    if(item.comicTranslationOrderId === comicTranslationOrderId) {
+                        item.status = data.data.status
+                    }
+                });
+                dispatch(receivedImagesCollection(imagesCollection));
+            }
+            dispatch(uiloadingComplete());
         }).catch(err => {
             console.error(err);
-            dispatch(uiloadingComplete());
+            
         })
     }
 };
@@ -680,6 +714,8 @@ export const restoreTranslPic = () => {
         const state = getState();
         const { selectedImage } = state.images;
         dispatch(receivedSelectedTranslImage(selectedImage));
+        dispatch(receivedResultImgURL(selectedImage));
+
     }
 };
 

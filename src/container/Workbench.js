@@ -52,7 +52,8 @@ import {
     selectFontShadowSize,
     openPopupAbsorbColor,
     closePopupAbsorbColor,
-    clearPreFontSettings
+    clearPreFontSettings,
+    selectLineHeight
 } from '../modules/fontSettings';
 import {
     settingBrushWidth
@@ -266,6 +267,10 @@ const mapDispatchToProps = (dispatch) => {
             },
             handlerSelectFontShadowSize: e => {
                 dispatch(selectFontShadowSize(e.target.value))
+                dispatch(getFontsettings())
+            },
+            handlerSelectLineHeight: e=> {
+                dispatch(selectLineHeight(e.target.value));
                 dispatch(getFontsettings())
             }
         },

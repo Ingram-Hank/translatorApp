@@ -131,7 +131,10 @@ class WorkbenchMain extends React.Component {
             this.drawCanvasBackGround(prevProps);
         }
         if(prevProps.displayResultBox !== displayResultBox && displayResultBox && translatedText) {
-            this.ResultBox();
+            const canvasContainer = document.getElementById('canvasContainer');
+            const docFrag = document.createDocumentFragment();
+            this.ResultBox(docFrag);
+            canvasContainer.appendChild(docFrag);
         }
         if(clearPreTranslResult) {
             const _resultContainers = document.getElementsByClassName("resultContainer");
@@ -149,12 +152,13 @@ class WorkbenchMain extends React.Component {
         }
     }
     
-    ResultBox() {
+    ResultBox(docFrag) {
         const {startNumber, resultBoxStyleParams, translatedText, font} = this.props;
         const {
             font_family = "CCWildWords",
             font_size = 16,
             font_color = "rgb(0, 0, 0, .65)",
+            lineHeight = 1.16,
             hasFontItalic,
             hasFontWeight,
             text_align = "center",
@@ -166,22 +170,24 @@ class WorkbenchMain extends React.Component {
         const currentResultBoxStyleParams = resultBoxStyleParams[startNumber] || {};
         const {left, top, width, height} = currentResultBoxStyleParams;
         const resultContainer = document.createElement('div');
-        const canvasContainer = document.getElementById('canvasContainer');
         resultContainer.setAttribute("id", `${startNumber}_resultContainer`);
         resultContainer.setAttribute("class", "resultContainer");
-        canvasContainer.appendChild(resultContainer);
-        resultContainer.style.left = `${left}px`;
-        resultContainer.style.top = `${top}px`;
-        resultContainer.style.width = `${width}px`;
-        resultContainer.style.height = `${height}px`;
-        resultContainer.style.fontFamily = font_family;
-        resultContainer.style.fontSize = `${font_size}px`;
-        resultContainer.style.color = font_color;
-        resultContainer.style.fontStyle = hasFontItalic && "italic";
-        resultContainer.style.fontWeight = hasFontWeight && "bold";
-        resultContainer.style.textAlign = text_align;
-        resultContainer.style.WebkitTextStroke = `${outline_size}px ${outline_color}`;
-        resultContainer.style.textShadow =  `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`;
+        docFrag.appendChild(resultContainer);
+        resultContainer.style.cssText = `
+            left: ${left}px;
+            top: ${top}px;
+            width: ${width}px;
+            height: ${height}px;
+            font-family: ${font_family};
+            font-size: ${font_size}px;
+            line-height：${lineHeight};
+            color: ${font_color};
+            font-style: ${hasFontItalic && "italic"};
+            font-weight: ${hasFontWeight && "bold"};
+            text-align: ${text_align};
+            -webkit-text-stroke: ${outline_size}px ${outline_color};
+            text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
+        `;
         resultContainer.innerHTML = translatedText;
     }
 
@@ -219,7 +225,7 @@ class WorkbenchMain extends React.Component {
             startNumber,
             setResultBoxStyle,
             selectedImg,
-            imgHeight
+            imgHeight = "950"
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;

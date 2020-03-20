@@ -17,7 +17,8 @@ import {
   initialTranslPage,
   restoreTranslPic,
   handlerSelectItem,
-  abandonSaveAction
+  abandonSaveAction,
+  receivedResultImgURL
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -95,6 +96,7 @@ function App(props) {
     startPreview,
     handlerClosePreview,
     handlerSaveData,
+    getCropedImgURL,
     handlerAbandonSave,
     feedMsg,
     handlerSelectFeedBackMsg,
@@ -102,7 +104,8 @@ function App(props) {
     lastChapterDisable,
     nextChapterDisable,
     notificationMsg,
-    zoomCanvasValue
+    zoomCanvasValue,
+    resultImgURL
   } = props;
 
   const headerProps = {
@@ -127,11 +130,13 @@ function App(props) {
     resultData,
     startPreview,
     handlerSaveData,
+    getCropedImgURL,
     handlerAbandonSave,
     feedMsg,
     handlerSelectFeedBackMsg,
     handlerRestore,
     notificationMsg,
+    resultImgURL,
     scale: zoomCanvasValue
   };
   const navigationProps = {
@@ -180,7 +185,8 @@ const mapStateToProps = (state) => {
     nextChapterDisable,
     status,
     imgWidth,
-    imgHeight
+    imgHeight,
+    resultImgURL
   } = state.images;
   const {
     marquee,
@@ -232,7 +238,8 @@ const mapStateToProps = (state) => {
     lastChapterDisable,
     nextChapterDisable,
     notificationMsg,
-    zoomCanvasValue
+    zoomCanvasValue,
+    resultImgURL
   }
 };
 
@@ -289,8 +296,11 @@ const mapDispatchToProps = (dispatch) => {
     handlerSaveData: (data) => {
       dispatch(saveData(data));
     },
+    getCropedImgURL: (imgURL)=> {
+      dispatch(receivedResultImgURL(imgURL))
+    },
     handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo) => {
-      dispatch(getTranslImages({ comicTranslationOrderId, orderNo, isSaveData: false }));
+      dispatch(getTranslImages({ comicTranslationOrderId, orderNo}));
       dispatch(handlerSelectImage(null));
       dispatch(clearSelectedImage());
       dispatch(setClearPreTranslResult());

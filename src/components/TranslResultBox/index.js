@@ -27,10 +27,44 @@ class TranslResultBox extends React.Component {
         this.startDrag($("dragLeftBot"), $("translResultBox-container"), "sw");
         this.startDrag($("dragRightTop"), $("translResultBox-container"), "ne");
         this.startDrag($("dragRightBot"), $("translResultBox-container"), "se");
-        this.startDrag($("dragTopCenter"), $("translResultBox-container"), "n");
         this.startDrag($("dragBotCenter"), $("translResultBox-container"), "s");
         this.startDrag($("dragRightCenter"), $("translResultBox-container"), "e");
         this.startDrag($("dragLeftCenter"), $("translResultBox-container"), "w");
+        this.startRotate()
+    }
+
+    startRotate() {
+        let isRotate = false;
+        $("rotate").addEventListener("mousedown", (event) => {
+            isRotate = true;
+            const element = $('translResultBox-container');
+            const rect = element.getBoundingClientRect();
+            element.dataset.centerX = rect.left + rect.width / 2;
+            element.dataset.centerY = rect.top + rect.height / 2;
+            element.dataset.angle = getDragAngle(event);
+        });
+        document.addEventListener("mousemove", (event) => {
+            if (isRotate) {
+                const angle = getDragAngle(event);
+                $('translResultBox-container').style.transform = 'rotate(' + angle + 'rad)';
+              }
+        });
+        document.addEventListener("mouseup", (event) => {
+            if (isRotate) {
+                isRotate = false;
+            　　$('translResultBox-container').dataset.angle = getDragAngle(event);
+        　　 }
+        });
+        const getDragAngle = (event)=> {
+            const element = $('translResultBox-container');
+            const startAngle = parseFloat(element.dataset.angle) || 0;
+            const center = {
+                x: parseFloat(element.dataset.centerX) || 0,
+                y: parseFloat(element.dataset.centerY) || 0,
+            };
+            const angle = Math.atan2(center.y - event.clientY, center.x - event.clientX);
+            return angle - startAngle;
+        }
     }
     
     startDrag(point, target, kind) {
@@ -134,6 +168,7 @@ class TranslResultBox extends React.Component {
             font_color = "rgb(0, 0, 0, .65)",
             hasFontItalic,
             hasFontWeight,
+            lineHeight = 1.16,
             text_align = "center",
             outline_color,
             shadow_color,
@@ -152,6 +187,7 @@ class TranslResultBox extends React.Component {
                 color: font_color,
                 fontStyle: hasFontItalic && "italic",
                 fontWeight: hasFontWeight && "bold",
+                lineHeight,
                 textAlign: text_align,
                 WebkitTextStroke: `${outline_size}px ${outline_color}`,
                 textShadow: `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`
@@ -171,7 +207,9 @@ class TranslResultBox extends React.Component {
                 <div id="dragLeftBot" className="drag sw-resize"></div>
                 <div id="dragRightTop" className="drag ne-resize"></div>
                 <div id="dragRightBot" className="drag se-resize"></div>
-                <div id="dragTopCenter" className="drag n-resize"></div>
+                <div id="dragRotate" className="dragRotateContainer">
+                    <div id="rotate" className="drag rotate"></div>
+                </div>
                 <div id="dragBotCenter" className="drag s-resize"></div>
                 <div id="dragRightCenter" className="drag e-resize"></div>
                 <div id="dragLeftCenter" className="drag w-resize"></div>
