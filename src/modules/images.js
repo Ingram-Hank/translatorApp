@@ -21,13 +21,14 @@ import {getURLParamsString} from '../utilities';
 const imagesReducer = (state = {}, action) => {
     switch (action.type) {
         case actions.RECEIVED_IMAGES:
-            const { images, chapterPc, jpgPc, chapterIds, comicChapterId } = action.payload;
+            const { images, chapterPc, jpgPc, chapterIds, comicChapterId, targetLang } = action.payload;
             return Object.assign({}, state, {
                 imagesCollection: images,
                 chapterPc: chapterPc,
                 jpgPc: jpgPc,
                 chapterIds: chapterIds,
-                comicChapterId: comicChapterId
+                comicChapterId: comicChapterId,
+                targetLang: targetLang
             })
         case actions.RECEIVED_SELECTED_IMG:
             const { selectedImage, selectedTranslImage, feedbackMsg, status } = action.payload;
@@ -347,12 +348,13 @@ export const getTranslImages = (payload) => {
         }
         services.getImageData(params).then(({ data }) => {
             const imgData = data.data;
-            const { chapterIds = [], comicJpgs = [], chapterPc = "", jpgPc = "", comicChapterId } = imgData;
+            const { chapterIds = [], comicJpgs = [], chapterPc = "", jpgPc = "", comicChapterId, targetLang = '' } = imgData;
             dispatch(receivedImages({
                 images: comicJpgs,
                 chapterPc,
                 jpgPc,
                 chapterIds,
+                targetLang,
                 comicChapterId
             }));
             dispatch(initialChapter());
@@ -673,7 +675,8 @@ export const setResultBoxStyle = () => {
             left: parseInt(translResultBoxContainer.style.left),
             top: parseInt(translResultBoxContainer.style.top),
             width: parseInt(translResultBoxContainer.style.width),
-            height: parseInt(translResultBoxContainer.style.height)
+            height: parseInt(translResultBoxContainer.style.height),
+            transform: translResultBoxContainer.style.transform
         }
         resultBoxStyleParams = Object.assign({}, resultBoxStyleParams, { [startNumber]: payload })
         dispatch(receivedResultBoxStyle(resultBoxStyleParams))
@@ -723,11 +726,11 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        const orderNo = getURLParamsString('orderNo');
-        // const orderNo = 672003129386570;
+        // const orderNo = getURLParamsString('orderNo');
+        const orderNo = 672003129386570;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
-            dispatch(getTranslImages({isSaveData: false}));
+            dispatch(getTranslImages());
         }
         dispatch(getFeedBackMessage());
         dispatch(clearSelectedImage());

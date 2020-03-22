@@ -168,7 +168,7 @@ class WorkbenchMain extends React.Component {
             shadow_size
         } = font;
         const currentResultBoxStyleParams = resultBoxStyleParams[startNumber] || {};
-        const {left, top, width, height} = currentResultBoxStyleParams;
+        const {left, top, width, height, transform} = currentResultBoxStyleParams;
         const resultContainer = document.createElement('div');
         resultContainer.setAttribute("id", `${startNumber}_resultContainer`);
         resultContainer.setAttribute("class", "resultContainer");
@@ -178,9 +178,10 @@ class WorkbenchMain extends React.Component {
             top: ${top}px;
             width: ${width}px;
             height: ${height}px;
+            padding: 5px;
+            transform: ${transform};
             font-family: ${font_family};
             font-size: ${font_size}px;
-            line-height：${lineHeight};
             color: ${font_color};
             font-style: ${hasFontItalic && "italic"};
             font-weight: ${hasFontWeight && "bold"};
@@ -188,6 +189,7 @@ class WorkbenchMain extends React.Component {
             -webkit-text-stroke: ${outline_size}px ${outline_color};
             text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
         `;
+        resultContainer.style.lineHeight = lineHeight;
         resultContainer.innerHTML = translatedText;
     }
 
@@ -203,6 +205,7 @@ class WorkbenchMain extends React.Component {
             fontSettings,
             hasCropBox,
             createdTranslBox = {},
+            resultBoxStyleParams = {},
             tabToTranslate,
             brushEvents,
             tabToClearText,
@@ -225,7 +228,8 @@ class WorkbenchMain extends React.Component {
             startNumber,
             setResultBoxStyle,
             selectedImg,
-            imgHeight = "950"
+            imgHeight = "950",
+            wholeFontSize
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -266,7 +270,8 @@ class WorkbenchMain extends React.Component {
             hanlerChangeORCText,
             handlerChangeTranslatedText,
             handerTranslText,
-            handlerCompleteTranslate
+            handlerCompleteTranslate,
+            wholeFontSize
         };
         const translAreaBoxProps = {
             contentText,
@@ -283,14 +288,15 @@ class WorkbenchMain extends React.Component {
         };
 
         const translResultBoxProps = {
-            data: createdTranslBox[startNumber],
+            data: resultBoxStyleParams[startNumber] || createdTranslBox[startNumber],
             setResultBoxStyle,
             translatedText,
             displayResultBox,
             font,
             startNumber,
             openModal,
-            contentText
+            contentText,
+            wholeFontSize
         };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">

@@ -11,7 +11,8 @@ import {
     setStartNumber,
     getFontsettings,
     setStopClearPreResultContainer,
-    handlerSelectImage
+    handlerSelectImage,
+    setWholeFontSize
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -84,7 +85,8 @@ const mapStateToProps = (state) => {
         currentTip,
         status,
         imgHeight,
-        clearPreMask
+        clearPreMask,
+        targetLang
     } = images;
     const {
         zoomCanvasValue = 1,
@@ -95,7 +97,8 @@ const mapStateToProps = (state) => {
         startNumber = 0,
         font = {},
         selectedImg,
-        clearPreTranslResult
+        clearPreTranslResult,
+        wholeFontSize
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -129,7 +132,9 @@ const mapStateToProps = (state) => {
         currentTip,
         status,
         imgHeight,
-        clearPreMask
+        clearPreMask,
+        targetLang,
+        wholeFontSize
     }
 }
 
@@ -222,67 +227,68 @@ const mapDispatchToProps = (dispatch) => {
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {
-                dispatch(selectFontFamily(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontFamily(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontSize: payload => {
-                dispatch(selectFontSize(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontSize(payload));
+                dispatch(setWholeFontSize(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontColor: payload => {
-                dispatch(selectFontColor(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontColor(payload));
+                dispatch(getFontsettings());
             },
             handerColorAbsorb: () => {
-                dispatch(openPopupAbsorbColor())
-                dispatch(getFontsettings())
+                dispatch(openPopupAbsorbColor());
+                dispatch(getFontsettings());
             },
             handerColorAbsorbComplete: () => {
-                dispatch(closePopupAbsorbColor())
-                dispatch(getFontsettings())
+                dispatch(closePopupAbsorbColor());
+                dispatch(getFontsettings());
             },
             handlerSelectFontStyle: (payload) => {
-                dispatch(selectFontStyle(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontStyle(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontWeight: (payload) => {
-                dispatch(selectFontWeight(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontWeight(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontTextAlign: payload => {
-                dispatch(selectFontTextAlign(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontTextAlign(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontOutlineColor: payload => {
-                dispatch(selectFontOutlineColor(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontOutlineColor(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontShadowColor: payload => {
-                dispatch(selectFontShadowColor(payload))
-                dispatch(getFontsettings())
+                dispatch(selectFontShadowColor(payload));
+                dispatch(getFontsettings());
             },
             handlerSelectFontOutlineSize: e => {
-                dispatch(selectFontOutlineSize(e.target.value))
-                dispatch(getFontsettings())
+                dispatch(selectFontOutlineSize(e.target.value));
+                dispatch(getFontsettings());
             },
             handlerSelectFontShadowSize: e => {
-                dispatch(selectFontShadowSize(e.target.value))
-                dispatch(getFontsettings())
+                dispatch(selectFontShadowSize(e.target.value));
+                dispatch(getFontsettings());
             },
             handlerSelectLineHeight: e=> {
                 dispatch(selectLineHeight(e.target.value));
-                dispatch(getFontsettings())
+                dispatch(getFontsettings());
             }
         },
         brushEvents: {
             handlerBrushWidth: e => {
-                dispatch(settingBrushWidth(e.target.value))
+                dispatch(settingBrushWidth(e.target.value));
             },
             handlerResetBrush: () => {
                 dispatch(resetBrush());
             },
             handlerUndoBrush: () => {
-                dispatch(undoBrush())
+                dispatch(undoBrush());
             }
         }
 

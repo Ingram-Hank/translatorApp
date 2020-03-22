@@ -1,6 +1,6 @@
 import React from 'react';
 
-function RightMenu({ contentText, resultLayers, handlerSelectReProcess}) {
+function RightMenu({ contentText, resultLayers, handlerSelectReProcess, targetLang}) {
     return (
         <div className="trans-result-right-menu bg-color-white  col-sm-2 col-xs-12">
             <div className="result-header">
@@ -11,7 +11,7 @@ function RightMenu({ contentText, resultLayers, handlerSelectReProcess}) {
                     <div className="result-select">
                         <div className="btn-group">
                             <button type="button" className="potato-btn">
-                                {contentText.English}
+                                {contentText.targetLangText[targetLang]}
                             </button>
                         </div>
                     </div>

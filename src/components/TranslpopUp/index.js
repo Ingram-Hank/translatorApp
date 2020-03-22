@@ -7,11 +7,12 @@ import dragPopUp from './dragPopUP.js';
 import ColorPicker from './ColorPicker.js';
 import ColorAbsorb from './ColorAbsorb.js';
 
-function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, hasCorrect = false,
-    originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText, handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText }) {
+function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, 
+    hasCorrect = false, originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText,
+    handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText, wholeFontSize }) {
     const {
         font_family = "CCWildWords",
-        font_size = 16,
+        font_size = wholeFontSize || 16,
         font_color = "rgb(0, 0, 0, .65)",
         hasFontItalic,
         hasFontWeight,
@@ -226,7 +227,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                             </div>
                             <div className="btn-group btn-group-sm stroke-width">
                                 <label className="btn btn-default">
-                                    <span className="">{outline_size}px</span>
+                                    <input className="w-10" type="text" value={outline_size} onChange={(e)=> handlerSelectFontOutlineSize(e)}/> px
                                 </label>
                                 <input className="stroke-width-input" type="range" step="1" min="0" max="10" value={outline_size} onChange={(e) => handlerSelectFontOutlineSize(e) } />
                             </div>
@@ -245,7 +246,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                             </div>
                             <div className="btn-group btn-group-sm stroke-width">
                                 <label className="btn btn-default">
-                                    <span className="">{shadow_size}px</span>
+                                    <input className="w-10" type="text" value={shadow_size} onChange={(e)=> handlerSelectFontShadowSize(e)} /> px
                                 </label>
                                 <input className="stroke-width-input" type="range" step="1" min="0" max="10" value={shadow_size} onChange={(e) => handlerSelectFontShadowSize(e)} />
                             </div>
@@ -259,7 +260,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                             <div className="btn-group btn-group-sm stroke-width" style={{marginTop: "10px"}}>
                                 <label className="btn btn-default mb-0 mx-1">
                                     <span className="js-line-height-num">
-                                        {lineHeight}
+                                        <input className="w-28" type="text" value={lineHeight} onChange={(e)=> handlerSelectLineHeight(e)} />
                                     </span>
                                 </label>
                                 <input className="stroke-width-input" type="range" step="0.1" min="0" max="5" value={lineHeight} onChange={(e) => handlerSelectLineHeight(e)}/>

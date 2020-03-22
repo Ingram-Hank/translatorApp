@@ -154,17 +154,18 @@ class TranslResultBox extends React.Component {
     }
 
     render() {
-        const { data = {}, translatedText, font = {}, contentText, openModal } = this.props;
-        const { left, top, width, height } = data;
+        const { data = {}, translatedText, font = {}, contentText, openModal, wholeFontSize } = this.props;
+        const { left, top, width, height, transform} = data;
         const translResultBoxContainerStyle = {
             left: `${left}px`,
             top: `${top}px`,
             width: `${width}px`,
-            height: `${height}px`
+            height: `${height}px`,
+            transform
         };
         const {
             font_family = "CCWildWords",
-            font_size = 16,
+            font_size = wholeFontSize || 16,
             font_color = "rgb(0, 0, 0, .65)",
             hasFontItalic,
             hasFontWeight,

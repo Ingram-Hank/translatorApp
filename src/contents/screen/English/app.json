@@ -98,6 +98,9 @@
     "cropBoxHelpText": "Create the text frame",
     "target": "Target",
     "English": "English",
+    "targetLangText": {
+        "en": "English"
+    },
     "noContent": "No Content",
     "contrast": "Contrast",
     "clearText": "Clear Text",
