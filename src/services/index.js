@@ -14,6 +14,9 @@ export default  {
   getLargeImageData(comicTranslationId){
     return http.get("/comic/getJpg/" + comicTranslationId)
   },
+  saveTranslation(payload) {
+    return http.post("/comic/saveTranslation/", payload)
+  },
   getFeedBackMsg(comicTranslationOrderId, orderNo) {
     if(comicTranslationOrderId) {
       return http.post("/comic/getFeedbackMsg", {comicTranslationOrderId, orderNo})

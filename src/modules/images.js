@@ -613,10 +613,32 @@ export const completeTranslate = () => {
         dispatch(clearTranslPopUp());
         displayResultBox = Object.assign({}, displayResultBox, { [startNumber]: { display: true } });
         dispatch(createResultBox(displayResultBox));
+        dispatch(saveOriginAndTransl());
         dispatch(setResultBoxStyle());
         dispatch(createResultLayer(resultLayers));
     }
 }
+export const saveOriginAndTransl = () => {
+    return (dispatch, getState)=> {
+        const state = getState();
+        const {startNumber, orderNo} = state.ui;
+        const {resultLayers = []} = state.images;
+        let source = '';
+        let target = '';
+        resultLayers.forEach((item)=> {
+            if(item.index === startNumber) {
+                source = item.originalText;
+                target = item.translText;
+            }
+        })
+        const payload = {
+            orderNo,
+            source,
+            target
+        };
+        services.saveTranslation(payload);
+    }
+};
 
 export const updateOriginalText = (originalText) => {
     return (dispatch, getState) => {
@@ -726,11 +748,12 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        const orderNo = getURLParamsString('orderNo');
-        // const orderNo = 672003240248782;
+        const orderNo = getURLParamsString('o');
+        const comicTranslationOrderId = getURLParamsString('t');
+        // const orderNo = 672003237783858;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
-            dispatch(getTranslImages());
+            dispatch(getTranslImages({comicTranslationOrderId}));
         }
         dispatch(getFeedBackMessage());
         dispatch(clearSelectedImage());
