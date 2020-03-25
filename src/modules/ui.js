@@ -12,6 +12,14 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { switchAutoTranslate: !action.payload })
         case actions.UI_SELECT_IMAGE:
             return Object.assign({}, state, { selectedImg: action.payload })
+        case actions.UI_SET_WHOLE_FONT_SIZE:
+            return Object.assign({}, state, { wholeFontSize: action.payload })
+        case actions.UI_SET_WHOLE_FONT_COLOR:
+            return Object.assign({}, state, { wholeFontColor: action.payload })
+        case actions.UI_SET_WHOLE_FONT_TEXT_ALIGN:
+            return Object.assign({}, state, { wholeFontTextAlign: action.payload })
+        case actions.UI_SET_WHOLE_FONT_LINEHEIGHT:
+            return Object.assign({}, state, { wholeFontLineHeight: action.payload })
         case actions.UI_SET_CORRECT_TRANSL_RESULT:
             return Object.assign({}, state, { hasCorrect: !action.payload })
         case actions.UI_ZOOM_CANVAS_BECH:
@@ -79,6 +87,26 @@ export const handlerToggleAutoTranslate = (payload) => ({
 
 export const handlerSelectImage = (payload) => ({
     type: actions.UI_SELECT_IMAGE,
+    payload
+});
+
+export const setWholeFontSize = (payload) => ({
+    type: actions.UI_SET_WHOLE_FONT_SIZE,
+    payload
+});
+
+export const setWholeFontColor = (payload) => ({
+    type: actions.UI_SET_WHOLE_FONT_COLOR,
+    payload
+});
+
+export const setWholeFontTextAlign = (payload) => ({
+    type: actions.UI_SET_WHOLE_FONT_TEXT_ALIGN,
+    payload
+});
+
+export const setWholeFontLineHeight = (payload) => ({
+    type: actions.UI_SET_WHOLE_FONT_LINEHEIGHT,
     payload
 });
 

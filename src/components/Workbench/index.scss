@@ -843,7 +843,7 @@
                 }
                 &>.btn-group>.btn {
                     height: 27px;
-                    min-width: 30px;
+                    min-width: 28px;
                     line-height: 20px;
                     padding: 3px;
                     text-align: center;
@@ -851,6 +851,23 @@
                         padding-left: 5px;
                         padding-right: 5px;
                         z-index: 2;
+                    }
+                    .w-10 {
+                        display: inline-block;
+                        width: 14px;
+                        background: transparent;
+                        border: none;
+                        text-align: center;
+                        outline: none;
+                    }
+                    .w-28 {
+                        display: inline-block;
+                        min-width: 28px;
+                        width: 30px;
+                        background: transparent;
+                        border: none;
+                        text-align: center;
+                        outline: none;
                     }
                 }
                 .color-picker {
