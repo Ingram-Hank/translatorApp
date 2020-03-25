@@ -726,8 +726,8 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        // const orderNo = getURLParamsString('orderNo');
-        const orderNo = 672003129386570;
+        const orderNo = getURLParamsString('orderNo');
+        // const orderNo = 672003240248782;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages());

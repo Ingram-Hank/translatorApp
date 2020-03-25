@@ -7,43 +7,11 @@ import PreviewTranslResult from './PreviewTranslResult';
 import FeedBackMessage from './FeedBackMessage';
 import './header.css';
 
-
-const buildImgs = (selectedImage, imgWidth = 565, imgHeight = 800, scale, resultData)=> {
-    let imgs = [
-        {
-            url: selectedImage,
-            x: 0,
-            y: 0,
-            width: imgWidth,
-            height: imgHeight
-        }
-    ];
-    if(Object.keys(resultData).length) {
-        Object.values(resultData).forEach(item => {
-            const {mask, position, translText, font} = item;
-            const {left, top, width, height, cropedImg} = mask;
-            imgs.push({
-                url: cropedImg,
-                x: left/scale,
-                y: top/scale,
-                width: width/scale,
-                height: height/scale,
-                font,
-                position,
-                text: translText
-            })
-        })
-    }
-    return imgs;
-};
-
 function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, switchAutoOCR, 
     switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, 
-    onToggle, status, imgWidth, imgHeight, selectedImage, selectedTranslImage, resultData, 
-    startPreview, handlerSaveData, feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, 
-    notificationMsg, scale, closeModal, handlerAbandonSave, getCropedImgURL, resultImgURL }){
-    const buildImg = status ? selectedTranslImage : selectedImage;
-    const imgs = buildImgs(buildImg, imgWidth, imgHeight, scale, resultData);
+    onToggle, status, imgWidth, imgHeight, selectedImage, startPreview, handlerSaveData, 
+    feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, notificationMsg, closeModal, 
+    handlerAbandonSave, getCropedImgURL, resultImgURL }){
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],
@@ -68,8 +36,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                     const imgURL = canvas.toDataURL();
                     handlerSaveData(imgURL)
                 })
-            },
-            className: classNames('button', {"disabled": imgs.length < 2})
+            }
         }
     }
     const previewProps = {

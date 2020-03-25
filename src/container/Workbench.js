@@ -12,7 +12,10 @@ import {
     getFontsettings,
     setStopClearPreResultContainer,
     handlerSelectImage,
-    setWholeFontSize
+    setWholeFontSize,
+    setWholeFontColor,
+    setWholeFontTextAlign,
+    setWholeFontLineHeight
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -98,7 +101,10 @@ const mapStateToProps = (state) => {
         font = {},
         selectedImg,
         clearPreTranslResult,
-        wholeFontSize
+        wholeFontSize,
+        wholeFontColor,
+        wholeFontTextAlign,
+        wholeFontLineHeight
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -134,7 +140,10 @@ const mapStateToProps = (state) => {
         imgHeight,
         clearPreMask,
         targetLang,
-        wholeFontSize
+        wholeFontSize,
+        wholeFontColor,
+        wholeFontTextAlign,
+        wholeFontLineHeight
     }
 }
 
@@ -237,6 +246,7 @@ const mapDispatchToProps = (dispatch) => {
             },
             handlerSelectFontColor: payload => {
                 dispatch(selectFontColor(payload));
+                dispatch(setWholeFontColor(payload));
                 dispatch(getFontsettings());
             },
             handerColorAbsorb: () => {
@@ -257,6 +267,7 @@ const mapDispatchToProps = (dispatch) => {
             },
             handlerSelectFontTextAlign: payload => {
                 dispatch(selectFontTextAlign(payload));
+                dispatch(setWholeFontTextAlign(payload));
                 dispatch(getFontsettings());
             },
             handlerSelectFontOutlineColor: payload => {
@@ -277,6 +288,7 @@ const mapDispatchToProps = (dispatch) => {
             },
             handlerSelectLineHeight: e=> {
                 dispatch(selectLineHeight(e.target.value));
+                dispatch(setWholeFontLineHeight(e.target.value));
                 dispatch(getFontsettings());
             }
         },

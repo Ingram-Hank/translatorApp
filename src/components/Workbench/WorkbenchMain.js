@@ -153,15 +153,24 @@ class WorkbenchMain extends React.Component {
     }
     
     ResultBox(docFrag) {
-        const {startNumber, resultBoxStyleParams, translatedText, font} = this.props;
+        const {
+            startNumber, 
+            resultBoxStyleParams, 
+            translatedText, 
+            font, 
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight
+        } = this.props;
         const {
             font_family = "CCWildWords",
-            font_size = 16,
-            font_color = "rgb(0, 0, 0, .65)",
-            lineHeight = 1.16,
+            font_size = wholeFontSize || 16,
+            font_color = wholeFontColor || "rgb(0, 0, 0, .65)",
+            lineHeight = wholeFontLineHeight || 1.16,
             hasFontItalic,
             hasFontWeight,
-            text_align = "center",
+            text_align = wholeFontTextAlign || "center",
             outline_color,
             shadow_color,
             outline_size,
@@ -229,7 +238,10 @@ class WorkbenchMain extends React.Component {
             setResultBoxStyle,
             selectedImg,
             imgHeight = "950",
-            wholeFontSize
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -271,7 +283,10 @@ class WorkbenchMain extends React.Component {
             handlerChangeTranslatedText,
             handerTranslText,
             handlerCompleteTranslate,
-            wholeFontSize
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight
         };
         const translAreaBoxProps = {
             contentText,
@@ -296,7 +311,10 @@ class WorkbenchMain extends React.Component {
             startNumber,
             openModal,
             contentText,
-            wholeFontSize
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight
         };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">

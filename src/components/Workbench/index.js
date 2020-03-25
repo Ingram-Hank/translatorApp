@@ -57,7 +57,10 @@ function Workbench(props) {
         handlerSelectReProcess,
         clearPreMask,
         targetLang,
-        wholeFontSize
+        wholeFontSize,
+        wholeFontColor,
+        wholeFontTextAlign,
+        wholeFontLineHeight
     } = props;
     
     const canvasZoomProps = {
@@ -112,7 +115,10 @@ function Workbench(props) {
         receivedImgSize,
         handlerSelectFeedBackMsg,
         clearPreMask,
-        wholeFontSize
+        wholeFontSize,
+        wholeFontColor,
+        wholeFontTextAlign,
+        wholeFontLineHeight
     };
 
     const rightMenuProps = {
