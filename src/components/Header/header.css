@@ -42,8 +42,15 @@
     cursor: pointer;
     white-space: normal; }
     .feedMsg-item-content.shortContent {
-      white-space: nowrap;
-      text-overflow: ellipsis; }
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      max-height: 40px;
+      line-height: 20px;
+      -webkit-box-orient: vertical; }
     .feedMsg-item-content:hover {
       text-decoration: underline; }
   .feedMsg-item .time {

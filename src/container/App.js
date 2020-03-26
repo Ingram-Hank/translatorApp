@@ -42,7 +42,7 @@ const buildGroupData = (parms) => {
   const defaultFont = {
     font_family: "CCWildWords",
     font_size: 16,
-    font_color: "rgb(0, 0, 0, .65)",
+    font_color: "black",
     hasFontItalic: false,
     hasFontWeight: false,
     text_align: "center"

@@ -12,6 +12,7 @@ import {
     getFontsettings,
     setStopClearPreResultContainer,
     handlerSelectImage,
+    setGlobalFontFamily,
     setWholeFontSize,
     setWholeFontColor,
     setWholeFontTextAlign,
@@ -56,7 +57,6 @@ import {
     selectFontShadowSize,
     openPopupAbsorbColor,
     closePopupAbsorbColor,
-    clearPreFontSettings,
     selectLineHeight
 } from '../modules/fontSettings';
 import {
@@ -101,6 +101,7 @@ const mapStateToProps = (state) => {
         font = {},
         selectedImg,
         clearPreTranslResult,
+        wholeFonFamily,
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
@@ -111,6 +112,29 @@ const mapStateToProps = (state) => {
     const originORCText = currentLayer.originalText;
     const translatedText = currentLayer.translText;
     const currentDisplayResult = displayResultBox[startNumber] || {};
+    let targetLanguage = 'en';
+    let defaultFontFamily = 'CCWildWords';
+    switch (targetLang) {
+        case 'vi':
+            targetLanguage = targetLang;
+            defaultFontFamily = 'OOOCAPTAINCOMIC-regular';
+            break;
+        case 'th':
+            targetLanguage = targetLang;
+            defaultFontFamily = 'Waffle Regular';
+            break;
+        case 'zh':
+            targetLanguage = targetLang;
+            defaultFontFamily = 'Microsoft YaHei';
+            break;
+        default:
+            targetLanguage = 'en';
+            defaultFontFamily = 'CCWildWords';
+    }
+    const currentFont = font[startNumber] || {};
+    if(!currentFont.font_family) {
+        currentFont.font_family = wholeFonFamily || defaultFontFamily;
+    }
     return {
         selectedImage,
         selectedTranslImage,
@@ -123,7 +147,7 @@ const mapStateToProps = (state) => {
         modalOpen,
         modalId,
         marquee,
-        font: font[startNumber] || {},
+        font: currentFont,
         brush,
         maskTextImgs,
         hasCorrect,
@@ -139,7 +163,7 @@ const mapStateToProps = (state) => {
         status,
         imgHeight,
         clearPreMask,
-        targetLang,
+        targetLang: targetLanguage,
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
@@ -173,7 +197,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(createOriginMask(data));
             dispatch(createTranslArea());
             dispatch(displayTranslAreaBox());
-            dispatch(clearPreFontSettings());
             dispatch(setStopClearPreResultContainer());
             dispatch(setNotClearPreMaskLayer())
         },
@@ -237,6 +260,7 @@ const mapDispatchToProps = (dispatch) => {
         fontSettings: {
             handlerSelectFontFamily: payload => {
                 dispatch(selectFontFamily(payload));
+                dispatch(setGlobalFontFamily(payload));
                 dispatch(getFontsettings());
             },
             handlerSelectFontSize: payload => {

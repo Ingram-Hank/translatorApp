@@ -14,7 +14,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
     const {
         font_family = "CCWildWords",
         font_size = wholeFontSize || 16,
-        font_color = wholeFontColor || "rgb(0, 0, 0, .65)",
+        font_color = wholeFontColor || "black",
         hasFontItalic,
         hasFontWeight,
         text_align = wholeFontTextAlign || "center",

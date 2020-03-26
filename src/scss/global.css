@@ -13,6 +13,13 @@
   src: url('../font/RopaSans-Italic(7)(1)(1)(1)(3)(1)(2)(1)(1).ttf');
 }
 
+@font-face {
+  font-family: 'OOOCAPTAINCOMIC-regular'; 
+  src: url('../font/000CAPTAINCOMIC-REGULAR.OTF');
+}
+OOOCAPTAINCOMIC-regular
+
+
 body {
   margin: 0;
   color: rgba(0,0,0,.65);

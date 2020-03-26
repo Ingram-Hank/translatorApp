@@ -12,6 +12,8 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { switchAutoTranslate: !action.payload })
         case actions.UI_SELECT_IMAGE:
             return Object.assign({}, state, { selectedImg: action.payload })
+        case actions.UI_SET_WHOLE_FONT_FAMILY:
+            return Object.assign({}, state, { wholeFonFamily: action.payload })
         case actions.UI_SET_WHOLE_FONT_SIZE:
             return Object.assign({}, state, { wholeFontSize: action.payload })
         case actions.UI_SET_WHOLE_FONT_COLOR:
@@ -87,6 +89,11 @@ export const handlerToggleAutoTranslate = (payload) => ({
 
 export const handlerSelectImage = (payload) => ({
     type: actions.UI_SELECT_IMAGE,
+    payload
+});
+
+export const setGlobalFontFamily = (payload) => ({
+    type: actions.UI_SET_WHOLE_FONT_FAMILY,
     payload
 });
 

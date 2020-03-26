@@ -74,8 +74,8 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     return (
         <div className="header">
             <div className="col-md-2 col-xs-2 col-lg-2">
-                <Button>
-                    &lt; {contentText.back}
+                <Button data={saveDataProps}>
+                    <span className="glyphicon glyphicon-floppy-save"></span> {contentText.save} 
                 </Button>
             </div>
             <div className="col-md-8 col-xs-8 col-lg-8">
@@ -89,9 +89,6 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                 <div className="btn-group">
                     <Button data={previewProps}>
                         <span className="glyphicon glyphicon-eye-open"></span> {contentText.preview} 
-                    </Button>
-                    <Button data={saveDataProps}>
-                        <span className="glyphicon glyphicon-floppy-save"></span> {contentText.save} 
                     </Button>
                 </div>
                 <div className="btn-group">

@@ -99,7 +99,10 @@
     "target": "Target",
     "English": "English",
     "targetLangText": {
-        "en": "English"
+        "en": "English",
+        "vi": "Vietnamese",
+        "th": "Thai",
+        "zh": "Chinese"
     },
     "noContent": "No Content",
     "contrast": "Contrast",
