@@ -57,7 +57,6 @@ import {
     selectFontShadowSize,
     openPopupAbsorbColor,
     closePopupAbsorbColor,
-    clearPreFontSettings,
     selectLineHeight
 } from '../modules/fontSettings';
 import {
@@ -114,7 +113,7 @@ const mapStateToProps = (state) => {
     const translatedText = currentLayer.translText;
     const currentDisplayResult = displayResultBox[startNumber] || {};
     let targetLanguage = 'en';
-    let defaultFontFamily = 'CCWILDWORDS-Italic';
+    let defaultFontFamily = 'CCWildWords';
     switch (targetLang) {
         case 'vi':
             targetLanguage = targetLang;
@@ -130,7 +129,7 @@ const mapStateToProps = (state) => {
             break;
         default:
             targetLanguage = 'en';
-            defaultFontFamily = 'CCWILDWORDS-Italic';
+            defaultFontFamily = 'CCWildWords';
     }
     const currentFont = font[startNumber] || {};
     if(!currentFont.font_family) {
@@ -198,7 +197,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(createOriginMask(data));
             dispatch(createTranslArea());
             dispatch(displayTranslAreaBox());
-            dispatch(clearPreFontSettings());
             dispatch(setStopClearPreResultContainer());
             dispatch(setNotClearPreMaskLayer())
         },
