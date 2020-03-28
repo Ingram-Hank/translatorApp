@@ -12,13 +12,13 @@ import {
   getTranslImages,
   handlerToLastChapter,
   handlerToNextChapter,
-  saveData,
+  setSaveData,
   clearSelectedImage,
   initialTranslPage,
   restoreTranslPic,
   handlerSelectItem,
   abandonSaveAction,
-  receivedResultImgURL
+  setResultImgURL
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -31,37 +31,11 @@ import {
   setClearPreTranslResult,
   closeModal
 } from '../modules/ui';
-import { mapToObject } from '../utilities';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 import '../scss/global.css';
 
-const buildGroupData = (parms) => {
-  const { resultBoxStyleParams = {}, maskTextImgs = {}, resultLayersMap = {}, font = {} } = parms;
-  const defaultFont = {
-    font_family: "CCWildWords",
-    font_size: 16,
-    font_color: "black",
-    hasFontItalic: false,
-    hasFontWeight: false,
-    text_align: "center"
-  };
-  const obj = {};
-  if (Object.keys(resultBoxStyleParams).length && Object.keys(maskTextImgs).length) {
-    Object.keys(resultBoxStyleParams).forEach(key => {
-      if (resultLayersMap[key] && maskTextImgs[key]) {
-        obj[key] = {
-          mask: maskTextImgs[key][maskTextImgs[key].length - 1],
-          position: resultBoxStyleParams[key],
-          translText: resultLayersMap[key].translText,
-          font: font[key] || defaultFont
-        }
-      }
-    })
-  }
-  return obj;
-}
 
 function App(props) {
   const {
@@ -92,7 +66,6 @@ function App(props) {
     imgHeight,
     selectedImage,
     selectedTranslImage,
-    resultData,
     startPreview,
     handlerClosePreview,
     handlerSaveData,
@@ -127,7 +100,6 @@ function App(props) {
     selectedTranslImage,
     handlerPreview,
     handlerClosePreview,
-    resultData,
     startPreview,
     handlerSaveData,
     getCropedImgURL,
@@ -179,7 +151,6 @@ const mapStateToProps = (state) => {
     comicChapterId,
     maskTextImgs = {},
     resultBoxStyleParams = {},
-    resultLayers = [],
     feedMsg,
     lastChapterDisable,
     nextChapterDisable,
@@ -197,17 +168,11 @@ const mapStateToProps = (state) => {
     switchAutoTranslate = true,
     selectedImg = 0,
     loading = false,
-    font = {},
     startPreview,
     notificationMsg,
     zoomCanvasValue = 1
   } = state.ui;
-  const resultData = buildGroupData({
-    resultBoxStyleParams,
-    maskTextImgs,
-    resultLayersMap: mapToObject(resultLayers, "index"),
-    font
-  });
+  
 
   return {
     language,
@@ -232,7 +197,6 @@ const mapStateToProps = (state) => {
     maskTextImgs,
     resultBoxStyleParams,
     contentText,
-    resultData,
     startPreview,
     feedMsg,
     lastChapterDisable,
@@ -293,11 +257,11 @@ const mapDispatchToProps = (dispatch) => {
     handlerAbandonSave: () => {
       dispatch(abandonSaveAction());
     },
-    handlerSaveData: (data) => {
-      dispatch(saveData(data));
+    handlerSaveData: () => {
+      dispatch(setSaveData());
     },
-    getCropedImgURL: (imgURL)=> {
-      dispatch(receivedResultImgURL(imgURL))
+    getCropedImgURL: ()=> {
+      dispatch(setResultImgURL());
     },
     handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo) => {
       dispatch(getTranslImages({ comicTranslationOrderId, orderNo}));

@@ -60,7 +60,11 @@ function Workbench(props) {
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
-        wholeFontLineHeight
+        wholeFontLineHeight,
+        globalHasFontItalic,
+        globalHasFontWeight,
+        globalFontDirection,
+        globalFontTextCase
     } = props;
     
     const canvasZoomProps = {
@@ -118,7 +122,11 @@ function Workbench(props) {
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
-        wholeFontLineHeight
+        wholeFontLineHeight,
+        globalHasFontItalic,
+        globalHasFontWeight,
+        globalFontDirection,
+        globalFontTextCase
     };
 
     const rightMenuProps = {

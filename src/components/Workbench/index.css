@@ -510,7 +510,7 @@
   position: fixed;
   top: 50px;
   right: 0;
-  width: 250px;
+  width: 280px;
   z-index: 10000;
   box-shadow: 0 0 52px -5px rgba(0, 0, 0, 0.7);
   border: 1px solid #000;
@@ -690,6 +690,8 @@
         font-size: .875rem;
         line-height: 1.5;
         border-radius: .2rem; }
+        .translContainer .translate-area .translate-attribute-box .btn-group-sm > .btn .textCase {
+          font-size: 16px; }
       .translContainer .translate-area .translate-attribute-box .font-family button {
         width: 173px;
         overflow-x: hidden; }
@@ -776,6 +778,10 @@
           right: 0;
           bottom: 0;
           opacity: 1; }
+      .translContainer .translate-area .translate-attribute-box .font-layout .vertical {
+        transform: rotate(90deg); }
+      .translContainer .translate-area .translate-attribute-box .text-case {
+        font-size: 16px; }
       .translContainer .translate-area .translate-attribute-box .font-weight-style input[type=checkbox] {
         display: none; }
       .translContainer .translate-area .translate-attribute-box .font-weight-style .glyphicon {

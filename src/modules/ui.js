@@ -22,6 +22,14 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { wholeFontTextAlign: action.payload })
         case actions.UI_SET_WHOLE_FONT_LINEHEIGHT:
             return Object.assign({}, state, { wholeFontLineHeight: action.payload })
+        case actions.UI_SET_GLOBAL_FONT_STYLE:
+            return Object.assign({}, state, { globalHasFontItalic: !action.payload })
+        case actions.UI_SET_GLOBAL_FONT_WEIGHT:
+            return Object.assign({}, state, { globalHasFontWeight: !action.payload })
+        case actions.UI_SET_GLOBAL_FONT_DIRECTION:
+            return Object.assign({}, state, { globalFontDirection: action.payload })
+        case actions.UI_SET_GLOBAL_FONT_TEXT_CASE:
+            return Object.assign({}, state, { globalFontTextCase: action.payload })
         case actions.UI_SET_CORRECT_TRANSL_RESULT:
             return Object.assign({}, state, { hasCorrect: !action.payload })
         case actions.UI_ZOOM_CANVAS_BECH:
@@ -114,6 +122,26 @@ export const setWholeFontTextAlign = (payload) => ({
 
 export const setWholeFontLineHeight = (payload) => ({
     type: actions.UI_SET_WHOLE_FONT_LINEHEIGHT,
+    payload
+});
+
+export const setGlobalFontStyle = (payload) => ({
+    type: actions.UI_SET_GLOBAL_FONT_STYLE,
+    payload
+});
+
+export const setGlobalFontWeight = (payload) => ({
+    type: actions.UI_SET_GLOBAL_FONT_WEIGHT,
+    payload
+});
+
+export const setGlobalFontDirection = (payload) => ({
+    type: actions.UI_SET_GLOBAL_FONT_DIRECTION,
+    payload
+});
+
+export const setGlobalFontTextCase = (payload) => ({
+    type: actions.UI_SET_GLOBAL_FONT_TEXT_CASE,
     payload
 });
 

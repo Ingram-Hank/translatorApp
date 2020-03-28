@@ -22,9 +22,12 @@ class WorkbenchMain extends React.Component {
         const canvas = this.canvas.current;
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
-        
         const img = new Image();
-        img.src = this.props.status ? this.state.selectedTranslImage : this.state.selectedImage;
+        let imgSrc = this.state.selectedImage;
+        if(this.props.status && this.state.selectedTranslImage) {
+            imgSrc = this.state.selectedTranslImage;
+        }
+        img.src = imgSrc;
         img.onload = () => {
             const currentElementWidth = this.state.elementWidth * this.props.scale;
             const elementHeight = img.naturalHeight * (this.state.elementWidth/img.naturalWidth);
@@ -161,16 +164,22 @@ class WorkbenchMain extends React.Component {
             wholeFontSize,
             wholeFontColor,
             wholeFontTextAlign,
-            wholeFontLineHeight
+            wholeFontLineHeight,
+            globalHasFontItalic,
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase
         } = this.props;
         const {
             font_family = "CCWildWords",
-            font_size = wholeFontSize || 16,
+            font_size = wholeFontSize || 40,
             font_color = wholeFontColor || "black",
-            lineHeight = wholeFontLineHeight || 1.16,
-            hasFontItalic,
-            hasFontWeight,
+            lineHeight = wholeFontLineHeight || 1.5,
+            hasFontItalic = globalHasFontItalic,
+            hasFontWeight = globalHasFontWeight,
             text_align = wholeFontTextAlign || "center",
+            text_case = globalFontTextCase || "uppercase",
+            font_direction = globalFontDirection || "horizontal",
             outline_color,
             shadow_color,
             outline_size,
@@ -189,16 +198,18 @@ class WorkbenchMain extends React.Component {
             height: ${height}px;
             padding: 5px;
             transform: ${transform};
+            text-transform: ${text_case};
             font-family: ${font_family};
             font-size: ${font_size}px;
             color: ${font_color};
             font-style: ${hasFontItalic && "italic"};
             font-weight: ${hasFontWeight && "bold"};
+            line-height: ${lineHeight};
+            writing-mode: ${font_direction === "horizontal" ? "horizontal-tb" : "vertical-lr"};
             text-align: ${text_align};
             -webkit-text-stroke: ${outline_size}px ${outline_color};
             text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
         `;
-        resultContainer.style.lineHeight = lineHeight;
         resultContainer.innerHTML = translatedText;
     }
 
@@ -241,7 +252,11 @@ class WorkbenchMain extends React.Component {
             wholeFontSize,
             wholeFontColor,
             wholeFontTextAlign,
-            wholeFontLineHeight
+            wholeFontLineHeight,
+            globalHasFontItalic,
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -286,7 +301,11 @@ class WorkbenchMain extends React.Component {
             wholeFontSize,
             wholeFontColor,
             wholeFontTextAlign,
-            wholeFontLineHeight
+            wholeFontLineHeight,
+            globalHasFontItalic,
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase
         };
         const translAreaBoxProps = {
             contentText,
@@ -314,7 +333,11 @@ class WorkbenchMain extends React.Component {
             wholeFontSize,
             wholeFontColor,
             wholeFontTextAlign,
-            wholeFontLineHeight
+            wholeFontLineHeight,
+            globalHasFontItalic,
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase
         };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">

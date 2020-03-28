@@ -16,7 +16,11 @@ import {
     setWholeFontSize,
     setWholeFontColor,
     setWholeFontTextAlign,
-    setWholeFontLineHeight
+    setWholeFontLineHeight,
+    setGlobalFontStyle,
+    setGlobalFontWeight,
+    setGlobalFontDirection,
+    setGlobalFontTextCase
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -57,7 +61,9 @@ import {
     selectFontShadowSize,
     openPopupAbsorbColor,
     closePopupAbsorbColor,
-    selectLineHeight
+    selectLineHeight,
+    selectFontDirection,
+    selectFontTextCase
 } from '../modules/fontSettings';
 import {
     settingBrushWidth
@@ -105,7 +111,11 @@ const mapStateToProps = (state) => {
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
-        wholeFontLineHeight
+        wholeFontLineHeight,
+        globalHasFontItalic,
+        globalHasFontWeight,
+        globalFontDirection,
+        globalFontTextCase
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -167,7 +177,11 @@ const mapStateToProps = (state) => {
         wholeFontSize,
         wholeFontColor,
         wholeFontTextAlign,
-        wholeFontLineHeight
+        wholeFontLineHeight,
+        globalHasFontItalic,
+        globalHasFontWeight,
+        globalFontDirection,
+        globalFontTextCase
     }
 }
 
@@ -283,10 +297,12 @@ const mapDispatchToProps = (dispatch) => {
             },
             handlerSelectFontStyle: (payload) => {
                 dispatch(selectFontStyle(payload));
+                dispatch(setGlobalFontStyle(payload));
                 dispatch(getFontsettings());
             },
             handlerSelectFontWeight: (payload) => {
                 dispatch(selectFontWeight(payload));
+                dispatch(setGlobalFontWeight(payload));
                 dispatch(getFontsettings());
             },
             handlerSelectFontTextAlign: payload => {
@@ -313,6 +329,16 @@ const mapDispatchToProps = (dispatch) => {
             handlerSelectLineHeight: e=> {
                 dispatch(selectLineHeight(e.target.value));
                 dispatch(setWholeFontLineHeight(e.target.value));
+                dispatch(getFontsettings());
+            },
+            handlerSelectFontDirection: direction => {
+                dispatch(selectFontDirection(direction));
+                dispatch(setGlobalFontDirection(direction));
+                dispatch(getFontsettings());
+            },
+            handlerSelectFontTextCase: payload => {
+                dispatch(selectFontTextCase(payload));
+                dispatch(setGlobalFontTextCase(payload));
                 dispatch(getFontsettings());
             }
         },
