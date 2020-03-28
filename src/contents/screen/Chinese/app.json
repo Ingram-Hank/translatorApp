@@ -120,5 +120,7 @@
     "originPic": "原图",
     "translPic": "译图",
     "restore": "还原为原图",
-    "abandon": "放弃"
+    "abandon": "放弃",
+    "horizontal": "横向",
+    "vertical": "竖向"
 }

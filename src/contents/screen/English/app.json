@@ -120,5 +120,7 @@
     "originPic": "Previous Picture",
     "translPic": "Translated Picture",
     "restore": "Restore",
-    "abandon": "Abandon"
+    "abandon": "Abandon",
+    "horizontal": "horizontal",
+    "vertical": "vertical"
 }

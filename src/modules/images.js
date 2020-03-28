@@ -1,4 +1,5 @@
 import * as actions from './actions';
+import html2canvas from 'html2canvas';
 import {
     uiloadingStart,
     uiloadingComplete,
@@ -16,7 +17,7 @@ import {
     receivedOrderNo
 } from './ui';
 import services from '../services';
-import {getURLParamsString} from '../utilities';
+import {getURLParamsString, mapToObject} from '../utilities';
 
 const imagesReducer = (state = {}, action) => {
     switch (action.type) {
@@ -99,6 +100,7 @@ const imagesReducer = (state = {}, action) => {
                 hasCropBox: false,
                 displayTranslBox: false,
                 displayTranslPopUp: false,
+                createdTranslBox: {},
                 resultLayers: [],
                 displayResultBox: {},
                 resultBoxStyleParams: {}
@@ -248,6 +250,19 @@ export const enableSwitchChapter = () => ({
     type: actions.IMAGES_ENABLE_SWITCH_CHAPTER
 });
 
+export const setResultImgURL = () => {
+    return (dispatch, getState) => {
+        dispatch(uiloadingStart());
+        const canvasContainer = document.getElementById('canvasContainer');
+        html2canvas(canvasContainer).then((canvas)=> {
+            const imgURL = canvas.toDataURL("image/jpeg");
+            dispatch(receivedResultImgURL(imgURL));
+            dispatch(uiloadingComplete());
+        });
+        
+    }
+};
+
 export const abandonSaveAction = () => {
     return (dispatch, getState) => {
         const state = getState();
@@ -357,12 +372,13 @@ export const getTranslImages = (payload) => {
                 targetLang,
                 comicChapterId
             }));
+            const defaultTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
-            dispatch(uiloadingComplete())
+            dispatch(handlerSelectItem(1, defaultTranslationOrderId));
         }).catch(err => {
-            dispatch(uiloadingComplete())
-            console.error(err)
+            dispatch(uiloadingComplete());
+            console.error(err);
         })
 
     }
@@ -385,7 +401,7 @@ export const selecteCanvas = (id) => {
         services.getLargeImageData(id).then(({ data }) => {
             const { imgSrc, feedbackMsg, status, imgTgt } = data.data;
             dispatch(receiveSelectedImg({
-                selectedImage: imgSrc,
+                selectedImage: imgSrc || imgTgt,
                 selectedTranslImage: imgTgt,
                 feedbackMsg,
                 status
@@ -645,11 +661,21 @@ export const updateOriginalText = (originalText) => {
         const state = getState();
         const { startNumber } = state.ui;
         const { resultLayers = [] } = state.images;
-        resultLayers.forEach((item) => {
-            if (item.index === startNumber) {
-                item.originalText = originalText;
-            }
-        })
+        const resultLayersToObject = mapToObject(resultLayers, 'index');
+        const currentLayer = resultLayersToObject[startNumber] || {};
+        if(Object.keys(currentLayer).length){
+            resultLayers.forEach((item)=> {
+                if(item.index === startNumber){
+                    item.originalText = originalText
+                }
+            })
+        }else {
+            resultLayers.push({
+                index: startNumber,
+                originalText: originalText,
+                translText: ""
+            })
+        }
         dispatch(createResultLayer(resultLayers));
     }
 }
@@ -659,11 +685,35 @@ export const updateTranslText = (translText) => {
         const state = getState();
         const { startNumber } = state.ui;
         const { resultLayers = [] } = state.images;
-        resultLayers.forEach((item) => {
-            if (item.index === startNumber) {
-                item.translText = translText;
-            }
-        })
+        const resultLayersToObject = mapToObject(resultLayers, 'index');
+        const currentLayer = resultLayersToObject[startNumber] || {};
+        if(Object.keys(currentLayer).length){
+            resultLayers.forEach((item)=> {
+                if(item.index === startNumber){
+                    item.translText = translText
+                }
+            })
+        }else {
+            resultLayers.push({
+                index: startNumber,
+                originalText: "",
+                translText: translText
+            })
+        }
+        if(resultLayers.length) {
+            resultLayers.forEach((item) => {
+                if (item.index === startNumber) {
+                    item.translText = translText;
+                }
+            })
+        }else {
+            resultLayers.push({
+                index: startNumber,
+                originalText: "",
+                translText: translText
+            })
+        }
+        
         dispatch(createResultLayer(resultLayers));
     }
 }
@@ -706,13 +756,24 @@ export const setResultBoxStyle = () => {
     }
 };
 
-export const saveData = (payload) => {
+export const setSaveData = () => {
+    return (dispatch, getState) => {
+        dispatch(uiloadingStart());
+        const canvasContainer = document.getElementById('canvasContainer');
+        html2canvas(canvasContainer).then((canvas)=> {
+            const imgURL = canvas.toDataURL("image/jpeg");
+            dispatch(receivedResultImgURL(imgURL));
+            dispatch(saveData())
+         });
+    }
+};
+
+export const saveData = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const { imagesCollection = [], comicTranslationOrderId } = state.images;
-        dispatch(uiloadingStart());
-        services.saveImage({ imgBase64: payload, comicTranslationOrderId }).then(({ data }) => {
-            dispatch(clearPreCropArea());
+        const { imagesCollection = [], comicTranslationOrderId, resultImgURL } = state.images;
+        services.saveImage({ imgBase64: resultImgURL, comicTranslationOrderId }).then(({ data }) => {
+            dispatch(setClearCropox());
             if (data.code) {
                 dispatch(receivedErrorMsg(data.msg));
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
@@ -728,8 +789,8 @@ export const saveData = (payload) => {
             }
             dispatch(uiloadingComplete());
         }).catch(err => {
+            dispatch(uiloadingComplete());
             console.error(err);
-            
         })
     }
 };
@@ -740,7 +801,6 @@ export const restoreTranslPic = () => {
         const { selectedImage } = state.images;
         dispatch(receivedSelectedTranslImage(selectedImage));
         dispatch(receivedResultImgURL(selectedImage));
-
     }
 };
 
@@ -750,7 +810,7 @@ export const initialTranslPage = () => {
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        // const orderNo = 672003233994541;
+        // const orderNo = 672003198744550;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({comicTranslationOrderId}));

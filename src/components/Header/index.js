@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import html2canvas from 'html2canvas';
 import { Link } from "react-router-dom";
 import {Button, ButtonDropDown, Toggle, Notification, Modal} from '../';
 import PreviewTranslResult from './PreviewTranslResult';
@@ -30,24 +29,15 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     
     const saveDataProps = {
         attributes: {
-            onClick: ()=> {
-                const canvasContainer = document.getElementById('canvasContainer');
-                html2canvas(canvasContainer).then((canvas)=> {
-                    const imgURL = canvas.toDataURL();
-                    handlerSaveData(imgURL)
-                })
-            }
+            onClick: ()=> handlerSaveData()
         }
     }
     const previewProps = {
         attributes: {
             onClick: ()=> {
-                const canvasContainer = document.getElementById('canvasContainer');
-                html2canvas(canvasContainer).then((canvas)=> {
-                    const imgURL = canvas.toDataURL();
-                    handlerPreview();
-                    getCropedImgURL(imgURL);
-                })
+                handlerPreview();
+                getCropedImgURL();
+                
             },
             className: classNames('button', {"disabled": !selectedImage})
         }
@@ -151,11 +141,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                 <div className="popup-footer text-right">
                     <button type="button" className="btn btn-default" onClick={handlerAbandonSave}> {contentText.abandon} </button>
                     <button type="button" className="btn btn-default active" onClick={() => {
-                        const canvasContainer = document.getElementById('canvasContainer');
-                        html2canvas(canvasContainer).then((canvas)=> {
-                            const imgURL = canvas.toDataURL();
-                            handlerSaveData(imgURL);
-                        });
+                        handlerSaveData()
                         closeModal();
                     }}> {contentText.save} </button>
                 </div>

@@ -10,19 +10,22 @@ import ColorAbsorb from './ColorAbsorb.js';
 function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, 
     hasCorrect = false, originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText,
     handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText, wholeFontSize, 
-    wholeFontColor, wholeFontTextAlign, wholeFontLineHeight }) {
+    wholeFontColor, wholeFontTextAlign, wholeFontLineHeight, globalHasFontItalic, globalHasFontWeight, 
+    globalFontDirection, globalFontTextCase }) {
     const {
         font_family = "CCWildWords",
-        font_size = wholeFontSize || 16,
+        font_size = wholeFontSize || 40,
         font_color = wholeFontColor || "black",
-        hasFontItalic,
-        hasFontWeight,
+        hasFontItalic = globalHasFontItalic,
+        hasFontWeight = globalHasFontWeight,
         text_align = wholeFontTextAlign || "center",
+        text_case = globalFontTextCase || "uppercase",
+        font_direction = globalFontDirection || "horizontal",
         outline_color,
         shadow_color,
         outline_size = 0,
         shadow_size = 0,
-        lineHeight = wholeFontLineHeight || 1.16,
+        lineHeight = wholeFontLineHeight || 1.5,
         popUp
     } = font;
     
@@ -39,7 +42,9 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
         handlerSelectFontShadowColor,
         handerColorAbsorb,
         handerColorAbsorbComplete,
-        handlerSelectLineHeight
+        handlerSelectLineHeight,
+        handlerSelectFontDirection,
+        handlerSelectFontTextCase
     } = fontSettings;
     const fontSizeCollection = getfontSizeArray();
     const dragProps = {
@@ -79,6 +84,11 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
     const outlineColor_black = classNames("btn btn-default", {"active": outline_color === 'black'});
     const shadowColor_white = classNames("btn btn-default", {"active": shadow_color === 'white'});
     const shadowColor_black = classNames("btn btn-default", {"active": shadow_color === 'black'});
+    const fontDirectionHorizontalClassName = classNames("btn btn-default", {"active": font_direction === 'horizontal'});
+    const fontDirectionVerticalClassName = classNames("btn btn-default", {"active": font_direction === 'vertical'});
+    const textCaseClassName_uppercase = classNames("btn btn-default", {"active": text_case === 'uppercase'});
+    const textCaseClassName_lowercase = classNames("btn btn-default", {"active": text_case === 'lowercase'});
+    const textCaseClassName_capitalize = classNames("btn btn-default", {"active": text_case === 'capitalize'});
     return (
         <div className="translContainer" id="translContainer">
             <div className='translate-box'>
@@ -179,6 +189,16 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                                     <ColorPicker updateColor={handlerSelectFontColor} color={font_color} />
                                 </div>
                             </div>
+                            {/* font layout settings start */}
+                            <div className="btn-group btn-group-sm font-layout">
+                                <label className={fontDirectionHorizontalClassName} title={contentText.horizontal} onClick={()=> handlerSelectFontDirection('horizontal')}>
+                                    <span className="fa fa-bars"></span>
+                                </label>
+                                <label className={fontDirectionVerticalClassName} title={contentText.vertical} onClick={()=> handlerSelectFontDirection('vertical')}>
+                                    <span className="fa fa-bars vertical"></span>
+                                </label>
+                            </div>
+                            {/* font layout settings end */}
                             {/* font color settings end */}
                             <div className="btn-group btn-group-sm">
                                 {popUp && <ColorAbsorb {...ColorAbsorbProps} />}
@@ -201,6 +221,19 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
                                 </label>
                             </div>
                             {/* style settings end*/}
+                            {/* font Text Case settings start*/}
+                            <div className="btn-group btn-group-sm text-case">
+                                <label className={textCaseClassName_uppercase}  title={contentText.uppercase} onClick={()=> handlerSelectFontTextCase('uppercase')}>
+                                    <span className="textCase">A</span>
+                                </label>
+                                <label className={textCaseClassName_lowercase} title={contentText.lowercase} onClick={()=> handlerSelectFontTextCase('lowercase')}>
+                                    <span className="textCase">a</span>
+                                </label>
+                                <label className={textCaseClassName_capitalize}  title={contentText.capitalize} onClick={()=> handlerSelectFontTextCase('capitalize')}>
+                                    <span className="textCase">C</span>
+                                </label>
+                            </div>
+                            {/* font Text Case settings end*/}
                             {/* text-align settings */}
                             <div className="btn-group btn-group-sm text-align">
                                 <label className={textAlignClassName_left}  title={contentText.leftAlign} onClick={()=> handlerSelectFontTextAlign('left')}>

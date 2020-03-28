@@ -154,7 +154,21 @@ class TranslResultBox extends React.Component {
     }
 
     render() {
-        const { data = {}, translatedText, font = {}, contentText, openModal, wholeFontSize, wholeFontColor, wholeFontTextAlign, wholeFontLineHeight } = this.props;
+        const {
+            data = {},
+            translatedText,
+            font = {},
+            contentText,
+            openModal,
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight,
+            globalHasFontItalic, 
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase
+        } = this.props;
         const { left, top, width, height, transform} = data;
         const translResultBoxContainerStyle = {
             left: `${left}px`,
@@ -165,12 +179,14 @@ class TranslResultBox extends React.Component {
         };
         const {
             font_family = "CCWildWords",
-            font_size = wholeFontSize || 16,
+            font_size = wholeFontSize || 40,
             font_color = wholeFontColor || "black",
-            hasFontItalic,
-            hasFontWeight,
-            lineHeight = wholeFontLineHeight || 1.16,
+            hasFontItalic = globalHasFontItalic,
+            hasFontWeight = globalHasFontWeight,
+            lineHeight = wholeFontLineHeight || 1.5,
             text_align = wholeFontTextAlign || "center",
+            text_case = globalFontTextCase || "uppercase",
+            font_direction = globalFontDirection || "horizontal",
             outline_color,
             shadow_color,
             outline_size,
@@ -190,6 +206,8 @@ class TranslResultBox extends React.Component {
                 fontWeight: hasFontWeight && "bold",
                 lineHeight,
                 textAlign: text_align,
+                textTransform: text_case,
+                writingMode: font_direction === 'horizontal' ? "horizontal-tb" : "vertical-lr",
                 WebkitTextStroke: `${outline_size}px ${outline_color}`,
                 textShadow: `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`
             }
