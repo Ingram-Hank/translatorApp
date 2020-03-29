@@ -122,5 +122,16 @@
     "restore": "还原为原图",
     "abandon": "放弃",
     "horizontal": "横向",
-    "vertical": "竖向"
+    "vertical": "竖向",
+    "glossary": "术语表",
+    "remark": "翻译说明",
+    "glossaryTitle": "术语处理",
+    "originText": "原文",
+    "translText": "译文",
+    "originTextPlaceholder": "请输入原文",
+    "translTextPlaceholder": "请输入译文",
+    "add": "添加",
+    "search": "查询",
+    "remarkTitle": "翻译说明",
+    "translTo": "译为："
 }

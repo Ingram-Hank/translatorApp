@@ -23,6 +23,7 @@ class WorkbenchMain extends React.Component {
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
         const img = new Image();
+        img.crossOrigin = 'anonymous';
         let imgSrc = this.state.selectedImage;
         if(this.props.status && this.state.selectedTranslImage) {
             imgSrc = this.state.selectedTranslImage;

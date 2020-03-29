@@ -122,5 +122,16 @@
     "restore": "Restore",
     "abandon": "Abandon",
     "horizontal": "horizontal",
-    "vertical": "vertical"
+    "vertical": "vertical",
+    "glossary": "Glossary",
+    "remark": "Remark",
+    "glossaryTitle": "Glossary Processing",
+    "originText": "origin text",
+    "translText": "translated text",
+    "originTextPlaceholder": "Please input origin text",
+    "translTextPlaceholder": "Please input translated text",
+    "add": "Add",
+    "search": "Search",
+    "remarkTitle": "Remark Order",
+    "translTo": "Translate To:"
 }

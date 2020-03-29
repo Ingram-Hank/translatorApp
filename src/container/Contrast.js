@@ -22,15 +22,16 @@ const ContrastContainer = ({contentText, selectedImage, selectedTranslImage, sta
         handlerSelectFeedBackMsg,
         history
     };
+    const backProps = {
+        attributes: {
+            onClick: handlerbacktoTranslPage
+        }
+    }
     return (
             <div className="main">
                 <div className="header">
                     <div className="col-md-2 col-xs-2 col-lg-2">
-                        <Button>
-                            <Link to="/" onClick={handlerbacktoTranslPage}>
-                                &lt; {contentText.back}
-                            </Link>
-                        </Button>
+                        <Button data={backProps}>&lt; {contentText.back}</Button>
                     </div>
                 </div>
                 <Content>
@@ -61,6 +62,7 @@ const mapStateToProps =(state)=> {
 const mapDispatchToProps = (dispatch)=> {
     return {
         handlerbacktoTranslPage: ()=> {
+            window.history.back();
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
         },

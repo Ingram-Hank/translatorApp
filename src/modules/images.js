@@ -22,14 +22,16 @@ import {getURLParamsString, mapToObject} from '../utilities';
 const imagesReducer = (state = {}, action) => {
     switch (action.type) {
         case actions.RECEIVED_IMAGES:
-            const { images, chapterPc, jpgPc, chapterIds, comicChapterId, targetLang } = action.payload;
+            const { images, chapterPc, jpgPc, chapterIds, comicChapterId, targetLang, comicListId, remark } = action.payload;
             return Object.assign({}, state, {
                 imagesCollection: images,
-                chapterPc: chapterPc,
-                jpgPc: jpgPc,
-                chapterIds: chapterIds,
-                comicChapterId: comicChapterId,
-                targetLang: targetLang
+                chapterPc,
+                jpgPc,
+                chapterIds,
+                comicChapterId,
+                targetLang,
+                comicListId,
+                remark
             })
         case actions.RECEIVED_SELECTED_IMG:
             const { selectedImage, selectedTranslImage, feedbackMsg, status } = action.payload;
@@ -254,12 +256,13 @@ export const setResultImgURL = () => {
     return (dispatch, getState) => {
         dispatch(uiloadingStart());
         const canvasContainer = document.getElementById('canvasContainer');
-        html2canvas(canvasContainer).then((canvas)=> {
-            const imgURL = canvas.toDataURL("image/jpeg");
-            dispatch(receivedResultImgURL(imgURL));
-            dispatch(uiloadingComplete());
-        });
-        
+        setTimeout(()=> {
+            html2canvas(canvasContainer, {useCORS: true}).then((canvas)=> {
+                const imgURL = canvas.toDataURL("image/jpeg");
+                dispatch(receivedResultImgURL(imgURL));
+                dispatch(uiloadingComplete());
+            });
+        }, 500);
     }
 };
 
@@ -363,14 +366,25 @@ export const getTranslImages = (payload) => {
         }
         services.getImageData(params).then(({ data }) => {
             const imgData = data.data;
-            const { chapterIds = [], comicJpgs = [], chapterPc = "", jpgPc = "", comicChapterId, targetLang = '' } = imgData;
+            const { 
+                chapterIds = [], 
+                comicJpgs = [], 
+                chapterPc = "", 
+                jpgPc = "", 
+                comicChapterId, 
+                targetLang = '', 
+                comicListId,
+                remark = ''
+             } = imgData;
             dispatch(receivedImages({
                 images: comicJpgs,
                 chapterPc,
                 jpgPc,
                 chapterIds,
                 targetLang,
-                comicChapterId
+                comicListId,
+                comicChapterId,
+                remark
             }));
             const defaultTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
             dispatch(initialChapter());
@@ -760,11 +774,13 @@ export const setSaveData = () => {
     return (dispatch, getState) => {
         dispatch(uiloadingStart());
         const canvasContainer = document.getElementById('canvasContainer');
-        html2canvas(canvasContainer).then((canvas)=> {
-            const imgURL = canvas.toDataURL("image/jpeg");
-            dispatch(receivedResultImgURL(imgURL));
-            dispatch(saveData())
-         });
+        setTimeout(()=> {
+            html2canvas(canvasContainer, {useCORS: true}).then((canvas)=> {
+                const imgURL = canvas.toDataURL("image/jpeg");
+                dispatch(receivedResultImgURL(imgURL));
+                dispatch(saveData())
+            });
+        }, 500);
     }
 };
 
@@ -808,9 +824,9 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        const orderNo = getURLParamsString('o');
+        // const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        // const orderNo = 672003198744550;
+        const orderNo = 672003108294696;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({comicTranslationOrderId}));
