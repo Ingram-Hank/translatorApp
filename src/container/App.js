@@ -29,8 +29,16 @@ import {
   openPreviewMoal,
   closePreviewModal,
   setClearPreTranslResult,
-  closeModal
+  closeModal,
+  openModal
 } from '../modules/ui';
+import { 
+  getGlossaryData,
+  receivedOriginText,
+  receivedTranslText,
+  addGlossaryData,
+  deleteGlossary
+} from '../modules/glossary';
 import strings from '../contents';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
@@ -78,7 +86,16 @@ function App(props) {
     nextChapterDisable,
     notificationMsg,
     zoomCanvasValue,
-    resultImgURL
+    resultImgURL,
+    remark,
+    handlerOpenGlossary,
+    handlerOpenRemarkModal,
+    glossaryData,
+    handlerOriginTextChange,
+    handlerTranslTextChange,
+    handlerAddGlossary, 
+    handlerQueryGlossary,
+    handlerdeleteGlossary
   } = props;
 
   const headerProps = {
@@ -109,6 +126,15 @@ function App(props) {
     handlerRestore,
     notificationMsg,
     resultImgURL,
+    remark,
+    handlerOpenGlossary,
+    handlerOpenRemarkModal,
+    glossaryData,
+    handlerOriginTextChange,
+    handlerTranslTextChange,
+    handlerAddGlossary, 
+    handlerQueryGlossary,
+    handlerdeleteGlossary,
     scale: zoomCanvasValue
   };
   const navigationProps = {
@@ -142,6 +168,7 @@ const mapStateToProps = (state) => {
   const language = state.languageMoudels.language || "Chinese";
   const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
+  const {glossaryData} = state.glossary;
   const {
     selectedImage,
     selectedTranslImage,
@@ -157,7 +184,8 @@ const mapStateToProps = (state) => {
     status,
     imgWidth,
     imgHeight,
-    resultImgURL
+    resultImgURL,
+    remark
   } = state.images;
   const {
     marquee,
@@ -203,7 +231,9 @@ const mapStateToProps = (state) => {
     nextChapterDisable,
     notificationMsg,
     zoomCanvasValue,
-    resultImgURL
+    resultImgURL,
+    remark,
+    glossaryData
   }
 };
 
@@ -254,6 +284,13 @@ const mapDispatchToProps = (dispatch) => {
     handlerClosePreview: () => {
       dispatch(closePreviewModal());
     },
+    handlerOpenGlossary: () => {
+      dispatch(openModal("glossary"));
+      dispatch(getGlossaryData());
+    },
+    handlerOpenRemarkModal: () => {
+      dispatch(openModal("remark"));
+    },
     handlerAbandonSave: () => {
       dispatch(abandonSaveAction());
     },
@@ -271,6 +308,21 @@ const mapDispatchToProps = (dispatch) => {
     },
     handlerRestore: () => {
       dispatch(restoreTranslPic())
+    },
+    handlerOriginTextChange: (e) => {
+      dispatch(receivedOriginText(e.target.value))
+    },
+    handlerTranslTextChange: (e) => {
+      dispatch(receivedTranslText(e.target.value))
+    },
+    handlerAddGlossary: () => {
+      dispatch(addGlossaryData());
+    },
+    handlerQueryGlossary: () => {
+      dispatch(getGlossaryData('search'))
+    },
+    handlerdeleteGlossary: (comicListId, orderNo, comicTermId) => {
+      dispatch(deleteGlossary(comicListId, orderNo, comicTermId))
     }
   }
 };

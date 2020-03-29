@@ -6,6 +6,26 @@
     width: 100%;
     height: 100%;
     z-index: 1050;
+    &-remark {
+        position: relative;
+        top: 50%;
+        left:50%;
+        max-width: 600px;
+        border: 1px solid rgba(0,0,0,.2);
+        border-radius: 5px;
+        background-color: white;
+        transform: translate(-50%, -50%);
+    }
+    &-glossary {
+        position: relative;
+        top: 50%;
+        left:50%;
+        max-width: 600px;
+        border: 1px solid rgba(0,0,0,.2);
+        border-radius: 5px;
+        background-color: white;
+        transform: translate(-50%, -50%);
+    }
     &-body {
         position: relative;
         top: 50%;
@@ -103,15 +123,62 @@
         }
     }
     &-content {
-        padding: 15px 0;
+        padding: 15px;
         border-top: 1px solid #e9ecef;
         border-bottom: 1px solid #e9ecef;
+        input {
+            margin-right: 15px;
+        }
+        button {
+            margin-right: 15px;
+            padding: 6px 15px;
+            border: 1px solid #ccc;
+        }
+        .glossary_body {
+            margin-top: 20px;
+            .glossaryList {
+                padding: 0;
+               .glossary-item {
+                   list-style: none;
+                   margin-bottom: 10px;
+                   .orginText {
+                    float: left;
+                    border-bottom: 1px dashed #ccc;
+                    padding: 6px 10px;
+                    width: 150px;
+                    border-radius: 5px;
+                   }
+                   .translTo {
+                    float: left;
+                    padding: 6px 15px;
+                   }
+                   .translText {
+                    float: left;
+                    border-bottom: 1px dashed #ccc;
+                    padding: 6px 10px;
+                    width: 240px;
+                    border-radius: 5px;
+                   }
+                   .deleteAction{
+                    float: right;
+                    margin-right: 33px;
+                    padding: 6px;
+                   }
+                   &::after {
+                       content: "";
+                       display: block;
+                       clear: both;
+                   }
+               }
+            }
+        }
     }
     &-footer {
         padding: 15px;
         margin-bottom: 15px;
         button {
             margin-left: 15px;
+            padding: 6px 15px;
             border: 1px solid #ccc;
         }
     }

@@ -35,5 +35,14 @@ export default  {
   },
   getTranslResult(data){
     return http.post("ai/tm", data)
+  },
+  queryGlossary(data) {
+    return http.post("/comic/term/queryTerm", data)
+  },
+  addGlossary(data) {
+    return http.post("/comic/term/saveTerm", data)
+  },
+  deleteGlossary(data) {
+    return http.post("/comic/term/deleteTerm", data)
   }
 }

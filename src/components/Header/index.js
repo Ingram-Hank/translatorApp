@@ -4,13 +4,17 @@ import { Link } from "react-router-dom";
 import {Button, ButtonDropDown, Toggle, Notification, Modal} from '../';
 import PreviewTranslResult from './PreviewTranslResult';
 import FeedBackMessage from './FeedBackMessage';
+import GlossaryModal from './GlossaryModal';
+import RemarkModal from './RemarkModal';
 import './header.css';
 
 function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, switchAutoOCR, 
     switchAutoTranslate, language, handlerDropDownItem, handlerPreview, handlerClosePreview, 
     onToggle, status, imgWidth, imgHeight, selectedImage, startPreview, handlerSaveData, 
     feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, notificationMsg, closeModal, 
-    handlerAbandonSave, getCropedImgURL, resultImgURL }){
+    handlerAbandonSave, getCropedImgURL, resultImgURL, remark, handlerOpenGlossary, glossaryData,
+    handlerOriginTextChange, handlerTranslTextChange, handlerAddGlossary, handlerQueryGlossary,
+    handlerOpenRemarkModal, handlerdeleteGlossary }){
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],
@@ -37,7 +41,6 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
             onClick: ()=> {
                 handlerPreview();
                 getCropedImgURL();
-                
             },
             className: classNames('button', {"disabled": !selectedImage})
         }
@@ -61,6 +64,39 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
             className: classNames('button', {"disabled": !status || !selectedImage})
         }
     };
+    const glossaryProps = {
+        attributes: {
+            onClick: ()=> {
+                handlerOpenGlossary()
+            }
+        }
+    };
+    const remarkProps = {
+        attributes: {
+            onClick: ()=> {
+                handlerOpenRemarkModal()
+            }
+        }
+    };
+    const glossaryModalProps = {
+        contentText,
+        modalId,
+        modalOpen,
+        closeModal,
+        glossaryData,
+        handlerOriginTextChange,
+        handlerTranslTextChange,
+        handlerAddGlossary, 
+        handlerQueryGlossary,
+        handlerdeleteGlossary
+    };
+    const remarkModalProps = {
+        contentText,
+        modalId,
+        modalOpen,
+        closeModal,
+        remark
+    };
     return (
         <div className="header">
             <div className="col-md-2 col-xs-2 col-lg-2">
@@ -75,8 +111,6 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                             <span className="fa fa-photo"></span> {contentText.contrast}
                         </Link>
                     </Button>
-                </div>
-                <div className="btn-group">
                     <Button data={previewProps}>
                         <span className="glyphicon glyphicon-eye-open"></span> {contentText.preview} 
                     </Button>
@@ -113,6 +147,14 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                         )
                     })}
                 </div>
+                <div className="btn-group">
+                    <Button data={glossaryProps}>
+                        <span className="fa fa-navicon"></span> {contentText.glossary} 
+                    </Button>
+                    <Button data={remarkProps}>
+                        <span className="fa fa-book"></span> {contentText.remark} 
+                    </Button>
+                </div>
             </div>
             <div className="col-md-2 col-xs-2 col-lg-2">
                 <div className="btn-group">
@@ -128,6 +170,8 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
             </div>
             {startPreview && <PreviewTranslResult {...previewTranslResultProps}/>}
             {notificationMsg && <Notification type="danger">{notificationMsg}</Notification>}
+            <GlossaryModal {...glossaryModalProps}/>
+            <RemarkModal {...remarkModalProps} />
             {modalOpen && modalId === "promteSave" && <Modal>
                 <div className="popup-header">
                     <h5>{contentText.promoteTitle}</h5>

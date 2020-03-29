@@ -1,5 +1,7 @@
 .switch {
   margin-left: 5px; }
+  .switch:last-child {
+    margin-right: 5px; }
   .switch .toggle {
     position: relative;
     overflow: hidden;
