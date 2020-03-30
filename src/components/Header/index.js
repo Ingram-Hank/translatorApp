@@ -14,7 +14,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     feedMsg = [], handlerSelectFeedBackMsg, handlerRestore, notificationMsg, closeModal, 
     handlerAbandonSave, getCropedImgURL, resultImgURL, remark, handlerOpenGlossary, glossaryData,
     handlerOriginTextChange, handlerTranslTextChange, handlerAddGlossary, handlerQueryGlossary,
-    handlerOpenRemarkModal, handlerdeleteGlossary }){
+    handlerOpenRemarkModal, handlerdeleteGlossary, expandRemarkModal, expandGlossaryModal }){
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],
@@ -66,23 +66,63 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     };
     const glossaryProps = {
         attributes: {
-            onClick: ()=> {
-                handlerOpenGlossary()
+            id: "glossaryBtn",
+            onClick: (e)=> {
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                handlerOpenGlossary(expandGlossaryModal);
+                document.body.addEventListener('click', (event)=> {
+                    if(event.target && (event.target === document.querySelector('#glossaryBtn')
+                    || event.target.id === "glossaryModal"
+                    || event.target.id === "glossaryModal-header"
+                    || event.target.id === "glossaryModal-content"
+                    || event.target.id === "glossaryModal-form"
+                    || event.target.id === "orginText"
+                    || event.target.id === "translText"
+                    || event.target.id === "add"
+                    || event.target.id === "delete"
+                    || event.target.className === "form-group"
+                    || event.target.className === "btn-group"
+                    || event.target.className === "glossary-item"
+                    || event.target.id === "glossary-orginText"
+                    || event.target.id === "glossary-translTo"
+                    || event.target.id === "glossary-translText"
+                    || event.target.id === "glossary-deleteAction"
+                    || event.target.id === "glossary-deleteAction-icon"
+                    || event.target.id === "noContent"
+                    )) {
+                        return
+                    }else {
+                        handlerOpenGlossary(true)
+                    }
+                }, false)
             }
         }
     };
     const remarkProps = {
         attributes: {
-            onClick: ()=> {
-                handlerOpenRemarkModal()
+            id: "remarkBtn",
+            onClick: (e)=> {
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                handlerOpenRemarkModal(expandRemarkModal);
+                document.body.addEventListener('click', (event)=> {
+                    if(event.target && (event.target === document.querySelector('#remark')
+                    || event.target === document.querySelector('#remarkBtn')
+                    || event.target === document.querySelector('#remarkHeader')
+                    || event.target === document.querySelector('#remarkContainer')
+                    )) {
+                        return
+                    }else {
+                        handlerOpenRemarkModal(true)
+                    }
+                }, false)
             }
         }
     };
     const glossaryModalProps = {
         contentText,
-        modalId,
-        modalOpen,
-        closeModal,
+        expandGlossaryModal,
         glossaryData,
         handlerOriginTextChange,
         handlerTranslTextChange,
@@ -92,9 +132,8 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     };
     const remarkModalProps = {
         contentText,
-        modalId,
-        modalOpen,
-        closeModal,
+        expandRemarkModal,
+        handlerOpenRemarkModal,
         remark
     };
     return (
@@ -151,11 +190,13 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                     <Button data={glossaryProps}>
                         <span className="fa fa-navicon"></span> {contentText.glossary} 
                     </Button>
+                    <GlossaryModal {...glossaryModalProps}/>
                 </div>
                 <div className="btn-group">
                     <Button data={remarkProps}>
                         <span className="fa fa-book"></span> {contentText.remark} 
                     </Button>
+                    <RemarkModal {...remarkModalProps} />
                 </div>
             </div>
             <div className="col-md-2 col-xs-2 col-lg-2">
@@ -172,8 +213,6 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
             </div>
             {startPreview && <PreviewTranslResult {...previewTranslResultProps}/>}
             {notificationMsg && <Notification type="danger">{notificationMsg}</Notification>}
-            <GlossaryModal {...glossaryModalProps}/>
-            <RemarkModal {...remarkModalProps} />
             {modalOpen && modalId === "promteSave" && <Modal>
                 <div className="popup-header">
                     <h5>{contentText.promoteTitle}</h5>

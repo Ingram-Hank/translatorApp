@@ -44,10 +44,8 @@ export const getGlossaryData = (action)=> {
             payload.sourceText = originText;
             payload.targetText = translText;
         }
-        dispatch(uiloadingStart());
         services.queryGlossary(payload).then(({data})=> {
             dispatch(receivedGlossaryData(data.data));
-            dispatch(uiloadingComplete());
         })
     }
 }

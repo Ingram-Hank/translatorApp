@@ -107,42 +107,6 @@
     padding: 15px;
     border-top: 1px solid #e9ecef;
     border-bottom: 1px solid #e9ecef; }
-    .popup-content input {
-      margin-right: 15px; }
-    .popup-content button {
-      margin-right: 15px;
-      padding: 6px 15px;
-      border: 1px solid #ccc; }
-    .popup-content .glossary_body {
-      margin-top: 20px; }
-      .popup-content .glossary_body .glossaryList {
-        padding: 0; }
-        .popup-content .glossary_body .glossaryList .glossary-item {
-          list-style: none;
-          margin-bottom: 10px; }
-          .popup-content .glossary_body .glossaryList .glossary-item .orginText {
-            float: left;
-            border-bottom: 1px dashed #ccc;
-            padding: 6px 10px;
-            width: 150px;
-            border-radius: 5px; }
-          .popup-content .glossary_body .glossaryList .glossary-item .translTo {
-            float: left;
-            padding: 6px 15px; }
-          .popup-content .glossary_body .glossaryList .glossary-item .translText {
-            float: left;
-            border-bottom: 1px dashed #ccc;
-            padding: 6px 10px;
-            width: 240px;
-            border-radius: 5px; }
-          .popup-content .glossary_body .glossaryList .glossary-item .deleteAction {
-            float: right;
-            margin-right: 33px;
-            padding: 6px; }
-          .popup-content .glossary_body .glossaryList .glossary-item::after {
-            content: "";
-            display: block;
-            clear: both; }
   .popup-footer {
     padding: 15px;
     margin-bottom: 15px; }

@@ -30,7 +30,8 @@ import {
   closePreviewModal,
   setClearPreTranslResult,
   closeModal,
-  openModal
+  toggleRemarkModal,
+  toggleGlossaryModal
 } from '../modules/ui';
 import { 
   getGlossaryData,
@@ -85,6 +86,8 @@ function App(props) {
     lastChapterDisable,
     nextChapterDisable,
     notificationMsg,
+    expandRemarkModal,
+    expandGlossaryModal,
     zoomCanvasValue,
     resultImgURL,
     remark,
@@ -125,6 +128,8 @@ function App(props) {
     handlerSelectFeedBackMsg,
     handlerRestore,
     notificationMsg,
+    expandRemarkModal,
+    expandGlossaryModal,
     resultImgURL,
     remark,
     handlerOpenGlossary,
@@ -198,6 +203,8 @@ const mapStateToProps = (state) => {
     loading = false,
     startPreview,
     notificationMsg,
+    expandRemarkModal,
+    expandGlossaryModal,
     zoomCanvasValue = 1
   } = state.ui;
   
@@ -230,6 +237,8 @@ const mapStateToProps = (state) => {
     lastChapterDisable,
     nextChapterDisable,
     notificationMsg,
+    expandRemarkModal,
+    expandGlossaryModal,
     zoomCanvasValue,
     resultImgURL,
     remark,
@@ -284,12 +293,12 @@ const mapDispatchToProps = (dispatch) => {
     handlerClosePreview: () => {
       dispatch(closePreviewModal());
     },
-    handlerOpenGlossary: () => {
-      dispatch(openModal("glossary"));
+    handlerOpenGlossary: (payload) => {
+      dispatch(toggleGlossaryModal(payload));
       dispatch(getGlossaryData());
     },
-    handlerOpenRemarkModal: () => {
-      dispatch(openModal("remark"));
+    handlerOpenRemarkModal: (payload) => {
+      dispatch(toggleRemarkModal(payload));
     },
     handlerAbandonSave: () => {
       dispatch(abandonSaveAction());

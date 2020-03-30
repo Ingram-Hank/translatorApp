@@ -70,6 +70,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { isToLastChapter: true })
         case actions.UI_SET_IS_TO_NEXT_CHAPTER:
             return Object.assign({}, state, { isToNextChapter: true })
+        case actions.UI_SET_TOGGLE_REMARK_MODAL:
+            return Object.assign({}, state, { expandRemarkModal: !action.payload })
+        case actions.UI_SET_TOGGLE_GLOSSARY_MODAL:
+            return Object.assign({}, state, { expandGlossaryModal: !action.payload })
         default:
             return state
     }
@@ -232,6 +236,16 @@ export const setIsToLastChapter = () => ({
 export const setIsToNextChapter = () => ({
     type: actions.UI_SET_IS_TO_NEXT_CHAPTER
 });
+
+export const toggleRemarkModal = (payload) => ({
+    type: actions.UI_SET_TOGGLE_REMARK_MODAL,
+    payload
+})
+
+export const toggleGlossaryModal = (payload) => ({
+    type: actions.UI_SET_TOGGLE_GLOSSARY_MODAL,
+    payload
+})
 
 export const handlerZoomCanvasPlus = (value) => {
     return (dispatch, getState) => {

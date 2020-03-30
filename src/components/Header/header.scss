@@ -6,6 +6,75 @@
     position: relative;
     z-index: 11;
 }
+.remark {
+    position: absolute;
+    top: 43px;
+    min-width: 200px;
+    min-height: 50px;
+    padding: 10px 15px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: white;
+    z-index: 100;
+}
+.glossaryModal {
+    position: absolute;
+    left: -74px;
+    top: 43px;
+    min-width: 580px;
+    padding: 10px 15px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: white;
+    z-index: 100;
+    input {
+        margin-right: 15px;
+        max-width: 188px;
+    }
+    button {
+        margin-right: 15px;
+        padding: 6px 15px;
+        border: 1px solid #ccc;
+    }
+    .glossary_body {
+        margin-top: 20px;
+        .glossaryList {
+            padding: 0;
+           .glossary-item {
+               list-style: none;
+               margin-bottom: 10px;
+               .orginText {
+                float: left;
+                border-bottom: 1px dashed #ccc;
+                padding: 6px 10px;
+                width: 150px;
+                border-radius: 5px;
+               }
+               .translTo {
+                float: left;
+                padding: 6px 15px;
+               }
+               .translText {
+                float: left;
+                border-bottom: 1px dashed #ccc;
+                padding: 6px 10px;
+                width: 240px;
+                border-radius: 5px;
+               }
+               .deleteAction{
+                float: right;
+                margin-right: 33px;
+                padding: 6px;
+               }
+               &::after {
+                   content: "";
+                   display: block;
+                   clear: both;
+               }
+           }
+        }
+    }
+}
 .comments {
     width: 50px;
     text-align: right;

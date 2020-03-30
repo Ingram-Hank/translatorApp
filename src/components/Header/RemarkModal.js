@@ -8,19 +8,14 @@ class RemarkModal extends React.Component {
         }
     }
     render () {
-        const {contentText, modalId, modalOpen, closeModal} = this.props;
-        if(modalOpen && modalId === "remark") {
+        const {contentText, expandRemarkModal } = this.props;
+        if(expandRemarkModal) {
             return (
-                <div className="popup">
-                    <div className="popup-remark">
-                        <div className="popup-header">
-                            <h5>{contentText.remarkTitle}</h5>
-                            <span className="dismissPopUp" onClick={closeModal}>
-                                <span className="glyphicon glyphicon-remove"></span>
-                            </span>
-                        </div>
-                        <div className="popup-content" id="remarkContainer"></div>
+                <div className="remark" id="remark">
+                    <div className="remark-header">
+                        <h5 id="remarkHeader">{contentText.remarkTitle}</h5>
                     </div>
+                    <div className="remark-content" id="remarkContainer"></div>
                 </div>
             )
         }else {

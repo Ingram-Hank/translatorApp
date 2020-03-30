@@ -5,27 +5,33 @@ import './contrast.css';
 class Contrast extends React.Component {
     componentDidMount() {
         const { selectedImage, selectedTranslImage } = this.props;
+        console.log("selectedImage-------------", selectedImage);
+        console.log("selectedTranslImage-------------", selectedTranslImage);
         const img_origin = new Image();
-        img_origin.width = 450;
-        img_origin.height = 568;
         img_origin.src = selectedImage;
         const img_transl = new Image();
-        img_transl.width = 450;
-        img_transl.height = 568;
         img_transl.src = selectedTranslImage;
-        const originPic = document.getElementById("orginComicSrc");
-        originPic.width = img_origin.width;
-        originPic.height = img_origin.height;
-        const translPic = document.getElementById("translComicSrc");
-        translPic.width = img_transl.width;
-        translPic.height = img_transl.height;
-        const ctx_origin = originPic.getContext('2d');
-        const ctx_transl = translPic.getContext('2d');
         img_origin.onload = () => {
-            ctx_origin.drawImage(img_origin, 0, 0, img_origin.width, img_origin.height);
+            const elementWidth = window.innerWidth / 3;
+            const elementHeight = img_origin.naturalHeight * ( elementWidth / img_origin.naturalWidth);
+            img_origin.width = elementWidth;
+            img_origin.height = elementHeight;
+            const originPic = document.getElementById("orginComicSrc");
+            const ctx_origin = originPic.getContext('2d');
+            originPic.width = elementWidth;
+            originPic.height = elementHeight;
+            ctx_origin.drawImage(img_origin, 0, 0, elementWidth, elementHeight);
         }
         img_transl.onload = () => {
-            ctx_transl.drawImage(img_transl, 0, 0, img_transl.width, img_transl.height);
+            const elementWidth = window.innerWidth / 3;
+            const elementHeight = img_transl.naturalHeight * ( elementWidth / img_transl.naturalWidth);
+            img_transl.width = elementWidth;
+            img_transl.height = elementHeight;
+            const translPic = document.getElementById("translComicSrc");
+            const ctx_transl = translPic.getContext('2d');
+            translPic.width = elementWidth;
+            translPic.height = elementHeight;
+            ctx_transl.drawImage(img_transl, 0, 0, elementWidth, elementHeight);
         }
     }
     render() {

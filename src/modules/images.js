@@ -365,7 +365,7 @@ export const getTranslImages = (payload) => {
             }
         }
         services.getImageData(params).then(({ data }) => {
-            const imgData = data.data;
+            const imgData = data.data || {};
             const { 
                 chapterIds = [], 
                 comicJpgs = [], 
@@ -386,7 +386,8 @@ export const getTranslImages = (payload) => {
                 comicChapterId,
                 remark
             }));
-            const defaultTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
+            const firstJpg = comicJpgs[0] || {};
+            const defaultTranslationOrderId = firstJpg.comicTranslationOrderId;
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
             dispatch(handlerSelectItem(1, defaultTranslationOrderId));
@@ -403,7 +404,11 @@ export const getFeedBackMessage = (id) => {
         const state = getState();
         const {orderNo} = state.ui;
         services.getFeedBackMsg(id, orderNo).then(({ data }) => {
-            dispatch(receivedFeedBackMsg(data.data));
+            let payload = [];
+            if(data.data) {
+                payload = data.data
+            }
+            dispatch(receivedFeedBackMsg(payload));
         }).catch(err => console.error(err))
     }
 };
@@ -714,20 +719,6 @@ export const updateTranslText = (translText) => {
                 translText: translText
             })
         }
-        if(resultLayers.length) {
-            resultLayers.forEach((item) => {
-                if (item.index === startNumber) {
-                    item.translText = translText;
-                }
-            })
-        }else {
-            resultLayers.push({
-                index: startNumber,
-                originalText: "",
-                translText: translText
-            })
-        }
-        
         dispatch(createResultLayer(resultLayers));
     }
 }
@@ -814,7 +805,14 @@ export const saveData = () => {
 export const restoreTranslPic = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const { selectedImage } = state.images;
+        const { selectedImage, imagesCollection = [], comicTranslationOrderId} = state.images;
+        dispatch(receiveImgStatus(0));
+        imagesCollection.forEach(item => {
+            if(item.comicTranslationOrderId === comicTranslationOrderId) {
+                item.status = 0
+            }
+        });
+        dispatch(receivedImagesCollection(imagesCollection));
         dispatch(receivedSelectedTranslImage(selectedImage));
         dispatch(receivedResultImgURL(selectedImage));
     }
