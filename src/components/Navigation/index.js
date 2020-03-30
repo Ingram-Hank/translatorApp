@@ -70,7 +70,7 @@ function Navigation(props) {
                                 </div>
                                 <span className="item_position pr-1">{index + 1}</span>
                                 <a href="##">
-                                    <img src={image.thumbnail} alt={"image_" + index} />
+                                    <img src={image.thumbnail} crossOrigin="anonymous" alt={"image_" + index} />
                                 </a>
                             </li>
                         )
