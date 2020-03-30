@@ -151,6 +151,8 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                     <Button data={glossaryProps}>
                         <span className="fa fa-navicon"></span> {contentText.glossary} 
                     </Button>
+                </div>
+                <div className="btn-group">
                     <Button data={remarkProps}>
                         <span className="fa fa-book"></span> {contentText.remark} 
                     </Button>
