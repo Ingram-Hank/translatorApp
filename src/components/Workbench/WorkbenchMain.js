@@ -5,7 +5,7 @@ import TranslAreaBox from '../TranslAreaBox';
 import TranslResultBox from '../TranslResultBox';
 import Modal from '../Modal';
 
-class WorkbenchMain extends React.Component {
+class WorkbenchMain extends React.PureComponent {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
@@ -154,6 +154,12 @@ class WorkbenchMain extends React.Component {
                 }
             }
         }
+    }
+
+    componentWillUnmount() {
+        const upperCanvas = document.getElementById("upper-canvas");
+        upperCanvas.removeEventListener('mouseleave', ()=> console.log("remove mouseLeave"));
+        upperCanvas.removeEventListener('mouseenter', ()=> console.log("remove mouseEnter"));
     }
     
     ResultBox(docFrag) {

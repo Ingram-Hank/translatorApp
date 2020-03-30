@@ -1,7 +1,7 @@
 import React from 'react';
 import InpaintBox from './InpaintBox';
 
-class TranslAreaBox extends React.Component {
+class TranslAreaBox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();

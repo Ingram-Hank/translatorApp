@@ -1,7 +1,7 @@
 import React from 'react';
 import DragInpaintBox from './DragInpaintBox';
 
-class InpaintBox extends React.Component {
+class InpaintBox extends React.PureComponent {
     render() {
         const {contentText, tabToTranslate, brushEvents, brush} = this.props;
         const {brushWidth = 10} = brush;

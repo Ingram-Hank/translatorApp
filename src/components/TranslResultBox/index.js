@@ -1,7 +1,7 @@
 import React from 'react';
 import { $, getCss } from '../../utilities';
 
-class TranslResultBox extends React.Component {
+class TranslResultBox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();

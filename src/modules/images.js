@@ -826,7 +826,7 @@ export const initialTranslPage = () => {
         const { isBackToTranslPage } = state.ui;
         // const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        const orderNo = 672003295922000;
+        const orderNo = 672003300862852;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({comicTranslationOrderId}));

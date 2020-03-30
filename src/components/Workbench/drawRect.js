@@ -205,9 +205,9 @@ class drawRect {
         return position
     }
 
-    removeElement(_element){
+    removeElement(_element) {
         const _parentElement = _element.parentNode;
-        if(_parentElement){
+        if (_parentElement) {
             _parentElement.removeChild(_element);
         }
     }
@@ -289,35 +289,13 @@ class drawRect {
             this.odiv.setAttribute("id", "cropBox");
             this.odiv.setAttribute("class", "cropBox");
             this.odiv.setAttribute("ref", "cropBox");
-            this.odiv.style.height = `${this.cropH}px`;
-            this.odiv.style.width = `${this.cropW}px`;
-            this.odiv.style.left = `${this.posX}px`;
-            this.odiv.style.top = `${this.posY}px`;
-            this.odiv.innerHTML = `
-                <div id="cropBoxCancel" class="cancel" title="delete">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </div>
-                <div class="source-area-tip" id="cropBoxSourceArea">
-                    <div class="content-tip">
-                        ${this.props.contentText.cropBoxHelpText}
-                    </div>
-                    <div class="ok" title="confirm" id="cropBoxConfirm"> 
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </div>
-                </div>
-                <div class="border-top"></div>
-                <div class="border-left"></div>
-                <div class="border-bottom"></div>
-                <div class="border-right"></div>
-                <div id="zxxDragBg" class="move"></div>
-                <div id="dragLeftTop" class="drag nw-resize"></div>
-                <div id="dragLeftBot" class="drag sw-resize"></div>
-                <div id="dragRightTop" class="drag ne-resize"></div>
-                <div id="dragRightBot" class="drag se-resize"></div>
-                <div id="dragTopCenter" class="drag n-resize"></div>
-                <div id="dragBotCenter" class="drag s-resize"></div>
-                <div id="dragRightCenter" class="drag e-resize"></div>
-                <div id="dragLeftCenter" class="drag w-resize"></div>`;
+            this.odiv.style.cssText += `
+                height: ${this.cropH}px;
+                width: ${this.cropW}px;
+                left: ${this.posX}px;
+                top: ${this.posY}px;
+            `;
+            this.odiv.innerHTML = this.cropedBox();
 
             //bind drag
             this.startDrag($("zxxDragBg"), $("cropBox"), "drag");
@@ -369,7 +347,34 @@ class drawRect {
         this.reshow(this.x, this.y);
         this.op = 0;
     }
-
+    cropedBox() {
+        return (
+            `<div id="cropBoxCancel" class="cancel" title="delete">
+                <span class="glyphicon glyphicon-trash"></span>
+            </div>
+            <div class="source-area-tip" id="cropBoxSourceArea">
+                <div class="content-tip">
+                    ${this.props.contentText.cropBoxHelpText}
+                </div>
+                <div class="ok" title="confirm" id="cropBoxConfirm"> 
+                    <span class="glyphicon glyphicon-ok"></span>
+                </div>
+            </div>
+            <div class="border-top"></div>
+            <div class="border-left"></div>
+            <div class="border-bottom"></div>
+            <div class="border-right"></div>
+            <div id="zxxDragBg" class="move"></div>
+            <div id="dragLeftTop" class="drag nw-resize"></div>
+            <div id="dragLeftBot" class="drag sw-resize"></div>
+            <div id="dragRightTop" class="drag ne-resize"></div>
+            <div id="dragRightBot" class="drag se-resize"></div>
+            <div id="dragTopCenter" class="drag n-resize"></div>
+            <div id="dragBotCenter" class="drag s-resize"></div>
+            <div id="dragRightCenter" class="drag e-resize"></div>
+            <div id="dragLeftCenter" class="drag w-resize"></div>`
+        )
+    }
     cropImage(img, cropPosX, cropPosY, width, height) {
         const newCanvas = document.createElement('canvas');
         const cropImgWidth = width * this.scaleX;
