@@ -18,9 +18,6 @@ class TranslResultBox extends React.PureComponent {
     };
 
     componentDidMount() {
-        $("cropBoxCancel").addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        })
         this.startDrag($("translMove"), $("translResultBox-container"), "drag");
         //bind pull
         this.startDrag($("dragLeftTop"), $("translResultBox-container"), "nw");
@@ -55,6 +52,7 @@ class TranslResultBox extends React.PureComponent {
             　　$('translResultBox-container').dataset.angle = getDragAngle(event);
         　　 }
         });
+        
         const getDragAngle = (event)=> {
             const element = $('translResultBox-container');
             const startAngle = parseFloat(element.dataset.angle) || 0;
@@ -79,7 +77,6 @@ class TranslResultBox extends React.PureComponent {
 
         point.addEventListener("mousedown", (event) => {
             event.stopPropagation();
-            
             this.params.kind = kind;
             this.params.flag = true;
             if ($("translBoxCancel")) $("translBoxCancel").style.display = "none";
@@ -143,6 +140,8 @@ class TranslResultBox extends React.PureComponent {
                     if (getCss(target, "top") !== "auto") this.params.top = getCss(target, "top");
                     this.params.width = getCss(target, "width");
                     this.params.height = getCss(target, "height");
+                    point.removeEventListener("mousedown", null);
+                    document.removeEventListener("mousemove", null);
                 })
             })
         })
@@ -152,7 +151,7 @@ class TranslResultBox extends React.PureComponent {
         e.target.style.cursor = "text";
         e.target.style.outline = "none";
     }
-
+    
     render() {
         const {
             data = {},

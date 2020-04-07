@@ -1,8 +1,10 @@
 import React from 'react';
 import drawRect from './drawRect';
+import ResultBox from './ResultBox';
 import TranslpopUp from '../TranslpopUp';
 import TranslAreaBox from '../TranslAreaBox';
 import TranslResultBox from '../TranslResultBox';
+import CropedBox from '../CropedBox';
 import Modal from '../Modal';
 
 class WorkbenchMain extends React.PureComponent {
@@ -25,68 +27,68 @@ class WorkbenchMain extends React.PureComponent {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         let imgSrc = this.state.selectedImage;
-        if(this.props.status && this.state.selectedTranslImage) {
+        if (this.props.status && this.state.selectedTranslImage) {
             imgSrc = this.state.selectedTranslImage;
         }
         img.src = imgSrc;
         img.onload = () => {
             const currentElementWidth = this.state.elementWidth * this.props.scale;
-            const elementHeight = img.naturalHeight * (this.state.elementWidth/img.naturalWidth);
+            const elementHeight = img.naturalHeight * (this.state.elementWidth / img.naturalWidth);
             const currentElementHeight = elementHeight * this.props.scale;
             img.width = currentElementWidth;
             img.height = currentElementHeight;
-            if(!this.props.imgHeight){
+            if (!this.props.imgHeight) {
                 this.props.receivedImgSize(currentElementWidth, currentElementHeight);
             }
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
             const marquee = this.props.marquee;
-            if(marquee==="rectangular" || !marquee) {
+            if (marquee === "rectangular" || !marquee) {
                 this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.state.elementWidth, elementHeight, this.props);
             }
-            upperCanvas.addEventListener("mouseleave", ()=> {
+            upperCanvas.addEventListener("mouseleave", () => {
                 upperCanvas.addEventListener('mousedown', null);
                 upperCanvas.addEventListener('mousemove', null);
                 upperCanvas.addEventListener('mouseup', null);
             });
-            upperCanvas.addEventListener("mouseenter", ()=> {
-                if(this._drawCanvas) {
+            upperCanvas.addEventListener("mouseenter", () => {
+                if (this._drawCanvas) {
                     upperCanvas.addEventListener('mousedown', (e) => this._drawCanvas.mousedown(e));
                     upperCanvas.addEventListener('mousemove', (e) => this._drawCanvas.mousemove(e));
                     upperCanvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
                 }
             });
-            const {displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox = {}} = this.props;
+            const { displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox = {} } = this.props;
             let left, top, width, height, cropedImg;
-            if(createdTranslBox[startNumber]) {
+            if (createdTranslBox[startNumber]) {
                 left = createdTranslBox[startNumber].left;
                 top = createdTranslBox[startNumber].top;
                 width = createdTranslBox[startNumber].width;
                 height = createdTranslBox[startNumber].height;
                 cropedImg = createdTranslBox[startNumber].cropedImg;
             }
-            if(displayTranslBox && Object.keys(maskTextImgs).length) {
+            if (displayTranslBox && Object.keys(maskTextImgs).length) {
                 const currentMaskImg = maskTextImgs[startNumber] || [];
                 const img = new Image();
-                if(currentMaskImg.length) {
-                    left = currentMaskImg[currentMaskImg.length-1].left;
-                    top = currentMaskImg[currentMaskImg.length-1].top;
-                    width = currentMaskImg[currentMaskImg.length-1].width;
-                    height = currentMaskImg[currentMaskImg.length-1].height;
-                    cropedImg = currentMaskImg[currentMaskImg.length-1].cropedImg;
+                if (currentMaskImg.length) {
+                    left = currentMaskImg[currentMaskImg.length - 1].left;
+                    top = currentMaskImg[currentMaskImg.length - 1].top;
+                    width = currentMaskImg[currentMaskImg.length - 1].width;
+                    height = currentMaskImg[currentMaskImg.length - 1].height;
+                    cropedImg = currentMaskImg[currentMaskImg.length - 1].cropedImg;
                 }
                 img.src = cropedImg;
-                img.onload = ()=> {
+                img.onload = () => {
                     ctx_upper.drawImage(img, left, top, width, height);
                 }
             }
-            if(this.props.clearPreMask){
+            if (prevProps.clearPreMask !== this.props.clearPreMask && this.props.clearPreMask) {
                 ctx_upper.clearRect(left, top, width, height);
                 delete createdTranslBox[startNumber];
             }
 
-            if(this.props.clearPreTranslResult) {
+            if (prevProps.clearPreTranslResult !== this.props.clearPreTranslResult && this.props.clearPreTranslResult) {
                 ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight)
             }
         }
@@ -100,8 +102,8 @@ class WorkbenchMain extends React.PureComponent {
         const rightTranslateAreaWidth = 215;
         const processPadding = 40;
         const minProcessWidth = 870;
-        let currentScreenProcessWidth = window.innerWidth - leftNavigationWidth - rightTranslateAreaWidth - processPadding*2;
-        if(currentScreenProcessWidth < minProcessWidth) {
+        let currentScreenProcessWidth = window.innerWidth - leftNavigationWidth - rightTranslateAreaWidth - processPadding * 2;
+        if (currentScreenProcessWidth < minProcessWidth) {
             currentScreenProcessWidth = minProcessWidth
         }
         this.setState({
@@ -117,107 +119,20 @@ class WorkbenchMain extends React.PureComponent {
             hasCropBox,
             displayResultBox,
             displayTranslBox,
-            selectedImg,
-            translatedText,
-            clearPreTranslResult
-         } = this.props;
+            selectedImg
+        } = this.props;
         if (prevProps.selectedImage !== selectedImage || prevProps.selectedTranslImage !== selectedTranslImage) {
             this.setState({
                 selectedImage: selectedImage,
                 selectedTranslImage: selectedTranslImage
             })
         }
-        if(((!hasCropBox && displayResultBox) || !displayTranslBox ) && this._drawCanvas) {
+        if (((!hasCropBox && displayResultBox) || !displayTranslBox) && this._drawCanvas) {
             this._drawCanvas.clearLayers();
-            this._drawCanvas.clearCropBox();
         }
-        if(selectedImg) {
+        if (selectedImg) {
             this.drawCanvasBackGround(prevProps);
         }
-        if(prevProps.displayResultBox !== displayResultBox && displayResultBox && translatedText) {
-            const canvasContainer = document.getElementById('canvasContainer');
-            const docFrag = document.createDocumentFragment();
-            this.ResultBox(docFrag);
-            canvasContainer.appendChild(docFrag);
-        }
-        if(clearPreTranslResult) {
-            const _resultContainers = document.getElementsByClassName("resultContainer");
-            if(_resultContainers.length) {
-                try {
-                    for(let i = 0; i<_resultContainers.length; i++) {
-                        if(_resultContainers[i] !== null){
-                            _resultContainers[i].parentNode.removeChild(_resultContainers[i])
-                        }
-                    }
-                }catch (error){
-                    console.error(error)
-                }
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        const upperCanvas = document.getElementById("upper-canvas");
-        upperCanvas.removeEventListener('mouseleave', ()=> console.log("remove mouseLeave"));
-        upperCanvas.removeEventListener('mouseenter', ()=> console.log("remove mouseEnter"));
-    }
-    
-    ResultBox(docFrag) {
-        const {
-            startNumber, 
-            resultBoxStyleParams, 
-            translatedText, 
-            font,
-            wholeFontSize,
-            wholeFontColor,
-            wholeFontTextAlign,
-            wholeFontLineHeight,
-            globalHasFontItalic,
-            globalHasFontWeight,
-            globalFontDirection,
-            globalFontTextCase
-        } = this.props;
-        const {
-            font_family = "CCWildWords",
-            font_size = wholeFontSize || 40,
-            font_color = wholeFontColor || "black",
-            lineHeight = wholeFontLineHeight || 1.5,
-            hasFontItalic = globalHasFontItalic,
-            hasFontWeight = globalHasFontWeight,
-            text_align = wholeFontTextAlign || "center",
-            text_case = globalFontTextCase || "uppercase",
-            font_direction = globalFontDirection || "horizontal",
-            outline_color,
-            shadow_color,
-            outline_size,
-            shadow_size
-        } = font;
-        const currentResultBoxStyleParams = resultBoxStyleParams[startNumber] || {};
-        const {left, top, width, height, transform} = currentResultBoxStyleParams;
-        const resultContainer = document.createElement('div');
-        resultContainer.setAttribute("id", `${startNumber}_resultContainer`);
-        resultContainer.setAttribute("class", "resultContainer");
-        docFrag.appendChild(resultContainer);
-        resultContainer.style.cssText = `
-            left: ${left}px;
-            top: ${top}px;
-            width: ${width}px;
-            height: ${height}px;
-            padding: 5px;
-            transform: ${transform};
-            text-transform: ${text_case};
-            font-family: ${font_family};
-            font-size: ${font_size}px;
-            color: ${font_color};
-            font-style: ${hasFontItalic && "italic"};
-            font-weight: ${hasFontWeight && "bold"};
-            line-height: ${lineHeight};
-            writing-mode: ${font_direction === "horizontal" ? "horizontal-tb" : "vertical-lr"};
-            text-align: ${text_align};
-            -webkit-text-stroke: ${outline_size}px ${outline_color};
-            text-shadow: ${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color};
-        `;
-        resultContainer.innerHTML = translatedText;
     }
 
     render() {
@@ -263,7 +178,18 @@ class WorkbenchMain extends React.PureComponent {
             globalHasFontItalic,
             globalHasFontWeight,
             globalFontDirection,
-            globalFontTextCase
+            globalFontTextCase,
+            handlerCancelCrop,
+            handlerConfirmCrop,
+            hasCropedMarquee,
+            cropedBoxParams,
+            createStartNumber,
+            setCropImg,
+            resultLayers,
+            clearPreTranslResult,
+            fonts,
+            wholeFonFamily,
+            defaultFontFamily
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -346,6 +272,32 @@ class WorkbenchMain extends React.PureComponent {
             globalFontDirection,
             globalFontTextCase
         };
+        const cropedBoxProps = {
+            contentText,
+            createdTranslBox,
+            handlerCancelCrop,
+            handlerConfirmCrop,
+            cropedBoxParams,
+            createStartNumber,
+            setCropImg
+        };
+        const resultBoxProps = {
+            resultLayers,
+            resultBoxStyleParams,
+            translatedText,
+            wholeFontSize,
+            wholeFontColor,
+            wholeFontTextAlign,
+            wholeFontLineHeight,
+            globalHasFontItalic,
+            globalHasFontWeight,
+            globalFontDirection,
+            globalFontTextCase,
+            clearPreTranslResult,
+            fonts,
+            wholeFonFamily,
+            defaultFontFamily
+        };
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">
                 <div className="workbench-work-wrap">
@@ -354,18 +306,20 @@ class WorkbenchMain extends React.PureComponent {
                             {contentText.prompt}
                         </div>
                         <div className="canvas-container" id="canvasContainer" style={canvasContainerStyle}>
-                            {selectedImg && 
+                            {selectedImg &&
                                 <React.Fragment>
                                     <canvas {...lowercanvasProps}>{contentText.canvasPrompt}</canvas>
                                     <canvas {...uppercanvasProps}>{contentText.canvasPrompt}</canvas>
+                                    {hasCropedMarquee && <CropedBox {...cropedBoxProps} />}
                                 </React.Fragment>
                             }
-                            {hasCropBox && <TranslAreaBox {...translAreaBoxProps}/>}
+                            {hasCropBox && <TranslAreaBox {...translAreaBoxProps} />}
                             {displayTranslBox && <TranslResultBox {...translResultBoxProps} />}
+                            <ResultBox {...resultBoxProps}/>
                         </div>
                     </div>
                 </div>
-                {displayTranslPopUp && <TranslpopUp {...translpopUpProps}/>}
+                {displayTranslPopUp && <TranslpopUp {...translpopUpProps} />}
                 {modalOpen && modalId === "cancel" &&
                     <Modal>
                         <div className="popup-header">

@@ -887,4 +887,5 @@
   position: absolute; }
 
 .resultContainer {
-  position: absolute; }
+  position: absolute;
+  padding: 5px; }

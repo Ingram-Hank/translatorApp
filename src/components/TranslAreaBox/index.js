@@ -60,6 +60,7 @@ class TranslAreaBox extends React.PureComponent {
                 }
             }
         }
+        
     }
     componentDidUpdate() {
         this.doodling()
@@ -67,6 +68,7 @@ class TranslAreaBox extends React.PureComponent {
     componentDidMount() {
         this.doodling()
     }
+    
     render() {
         const {
             contentText,

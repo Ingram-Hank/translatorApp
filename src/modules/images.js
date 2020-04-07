@@ -14,10 +14,13 @@ import {
     setClearPreTranslResult,
     setIsToLastChapter,
     setIsToNextChapter,
-    receivedOrderNo
+    receivedOrderNo,
+    deleteCropedMarquee
 } from './ui';
 import services from '../services';
 import {getURLParamsString, mapToObject} from '../utilities';
+
+let time = null;
 
 const imagesReducer = (state = {}, action) => {
     switch (action.type) {
@@ -81,12 +84,20 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { createdTranslBox: {} })
         case actions.IMAGES_CLEAR_MASK_TEXT_IMGS:
             return Object.assign({}, state, { maskTextImgs: {} })
+        case actions.IMAGES_CLEAR_RESULT_LAYERS:
+            return Object.assign({}, state, { resultLayers: [] })
+        case actions.IMAGES_CLEAR_RESULT_BOX_STYLE_PARAMS:
+            return Object.assign({}, state, { resultBoxStyleParams: {} })
         case actions.IMAGES_CREATE_RESULT_BOX:
             return Object.assign({}, state, { displayResultBox: action.payload })
         case actions.IMGAGES_RECEIVED_SELECTED_TRANSLIMAGE:
             return Object.assign({}, state, { selectedTranslImage: action.payload })
         case actions.IMGAGES_RECEIVED_RESULT_IMGURL:
             return Object.assign({}, state, { resultImgURL: action.payload })
+        case actions.IMGAGES_CLEAR_RESULT_IMGURL:
+            return Object.assign({}, state, { resultImgURL: "" })
+        case actions.IMGAGES_RECEIVED_CREATED_CROPED_BOX_PARAMS:
+            return Object.assign({}, state, { cropedBoxParams: action.payload })
         case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
             return Object.assign({}, state, { feedMsg: action.payload })
         case actions.IMAGES_DISABLED_SWITCH_CHAPTER:
@@ -102,10 +113,7 @@ const imagesReducer = (state = {}, action) => {
                 hasCropBox: false,
                 displayTranslBox: false,
                 displayTranslPopUp: false,
-                createdTranslBox: {},
-                resultLayers: [],
-                displayResultBox: {},
-                resultBoxStyleParams: {}
+                displayResultBox: {}
             })
         default:
             return state
@@ -175,6 +183,14 @@ export const clearMaskTextImgs = () => ({
     type: actions.IMAGES_CLEAR_MASK_TEXT_IMGS
 });
 
+export const clearResultLayers = () => ({
+    type: actions.IMAGES_CLEAR_RESULT_LAYERS
+});
+
+export const clearResulBoxStyleParams = () => ({
+    type: actions.IMAGES_CLEAR_RESULT_BOX_STYLE_PARAMS
+});
+
 export const displayTranslBox = () => ({
     type: actions.IMAGES_DISPLAY_TRANSLBOX
 });
@@ -236,6 +252,15 @@ export const receivedResultImgURL = (payload) => ({
     payload
 });
 
+export const clearResultImgURL = () => ({
+    type: actions.IMGAGES_CLEAR_RESULT_IMGURL
+});
+
+export const receivedCreateCropedBoxedParams = (payload) => ({
+    type: actions.IMGAGES_RECEIVED_CREATED_CROPED_BOX_PARAMS,
+    payload
+});
+
 export const disabledSwitchChapter = () => ({
     type: actions.IMAGES_DISABLED_SWITCH_CHAPTER
 });
@@ -254,10 +279,17 @@ export const enableSwitchChapter = () => ({
 
 export const setResultImgURL = () => {
     return (dispatch, getState) => {
+        const state = getState();
+        const {imgWidth, imgHeight} = state.images;
         dispatch(uiloadingStart());
         const canvasContainer = document.getElementById('canvasContainer');
         setTimeout(()=> {
-            html2canvas(canvasContainer, {useCORS: true}).then((canvas)=> {
+            html2canvas(canvasContainer, {
+                backgroundColor: null,
+                width: imgWidth,
+                height: imgHeight,
+                useCORS: true
+            }).then((canvas)=> {
                 const imgURL = canvas.toDataURL("image/jpeg");
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(uiloadingComplete());
@@ -288,21 +320,24 @@ export const abandonSaveAction = () => {
         dispatch(setStartNumber(0));
         dispatch(setClearCropox());
         dispatch(setClearPreTranslResult());
+        dispatch(deleteCropedMarquee());
     }
 };
 
 export const handlerSelectItem = (selectedImg, translationOrderId) => {
     return (dispatch, getState) => {
         const state = getState();
-        const { resultLayers = [] } = state.images;
-        if (resultLayers.length) {
+        const { displayResultBox = {} } = state.images;
+        if (Object.keys(displayResultBox).length) {
             dispatch(openModal("promteSave"));
             dispatch(receivedCurrentSelectedItem(selectedImg));
             dispatch(receivedCurrenttranslationOrderId(translationOrderId));
         } else {
             dispatch(handlerSelectImage(selectedImg));
             dispatch(selecteCanvas(translationOrderId));
+            dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
+            dispatch(deleteCropedMarquee());
         }
     }
 };
@@ -415,7 +450,7 @@ export const selecteCanvas = (id) => {
         services.getLargeImageData(id).then(({ data }) => {
             const { imgSrc, feedbackMsg, status, imgTgt } = data.data;
             dispatch(receiveSelectedImg({
-                selectedImage: imgSrc || imgTgt,
+                selectedImage: imgSrc,
                 selectedTranslImage: imgTgt,
                 feedbackMsg,
                 status
@@ -432,6 +467,8 @@ export const setClearCropox = () => {
     return (dispatch, getState) => {
         dispatch(clearCreatedTranslBox());
         dispatch(clearMaskTextImgs());
+        dispatch(clearResultLayers());
+        dispatch(clearResulBoxStyleParams());
         dispatch(clearPreCropArea());
     }
 };
@@ -490,15 +527,17 @@ export const undoBrush = () => {
 export const handlerToLastChapter = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const { resultLayers = [] } = state.images;
-        if (resultLayers.length) {
+        const { displayResultBox = {} } = state.images;
+        if (Object.keys(displayResultBox).length) {
             dispatch(openModal("promteSave"));
             dispatch(setIsToLastChapter());
         } else {
             dispatch(minusChapter());
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
+            dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
+            dispatch(deleteCropedMarquee());
         }
     }
 }
@@ -506,15 +545,17 @@ export const handlerToLastChapter = () => {
 export const handlerToNextChapter = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const { resultLayers = [] } = state.images;
-        if (resultLayers.length) {
+        const { displayResultBox = {} } = state.images;
+        if (Object.keys(displayResultBox).length) {
             dispatch(openModal("promteSave"));
             dispatch(setIsToNextChapter());
         } else {
             dispatch(plusChapter());
             dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
+            dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
+            dispatch(deleteCropedMarquee());
         }
     }
 }
@@ -773,14 +814,23 @@ export const setResultBoxStyle = () => {
 export const setSaveData = () => {
     return (dispatch, getState) => {
         dispatch(uiloadingStart());
+        const state = getState();
+        const {imgWidth, imgHeight} = state.images;
         const canvasContainer = document.getElementById('canvasContainer');
-        setTimeout(()=> {
-            html2canvas(canvasContainer, {useCORS: true}).then((canvas)=> {
+        time = setTimeout(()=> {
+            html2canvas(canvasContainer, {
+                backgroundColor: null,
+                width: imgWidth,
+                height: imgHeight,
+                useCORS: true,
+                foreignObjectRendering: true
+            }).then((canvas)=> {
                 const imgURL = canvas.toDataURL("image/jpeg");
                 dispatch(receivedResultImgURL(imgURL));
-                dispatch(saveData())
+                dispatch(saveData());
             });
         }, 500);
+        
     }
 };
 
@@ -789,7 +839,6 @@ export const saveData = () => {
         const state = getState();
         const { imagesCollection = [], comicTranslationOrderId, resultImgURL } = state.images;
         services.saveImage({ imgBase64: resultImgURL, comicTranslationOrderId }).then(({ data }) => {
-            dispatch(setClearCropox());
             if (data.code) {
                 dispatch(receivedErrorMsg(data.msg));
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
@@ -803,6 +852,11 @@ export const saveData = () => {
                 });
                 dispatch(receivedImagesCollection(imagesCollection));
             }
+            clearTimeout(time);
+            dispatch(clearResultImgURL());
+            dispatch(clearCreatedTranslBox());
+            dispatch(clearMaskTextImgs());
+            dispatch(clearPreCropArea());
             dispatch(uiloadingComplete());
         }).catch(err => {
             dispatch(uiloadingComplete());
@@ -826,7 +880,7 @@ export const initialTranslPage = () => {
         const { isBackToTranslPage } = state.ui;
         // const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        const orderNo = 672003300862852;
+        const orderNo = 672004019046860;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({comicTranslationOrderId}));

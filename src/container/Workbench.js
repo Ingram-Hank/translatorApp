@@ -20,7 +20,9 @@ import {
     setGlobalFontStyle,
     setGlobalFontWeight,
     setGlobalFontDirection,
-    setGlobalFontTextCase
+    setGlobalFontTextCase,
+    createCropedMarquee,
+    deleteCropedMarquee
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -46,7 +48,8 @@ import {
     clearSelectedImage,
     hiddenResultBox,
     clearPreMaskLayer,
-    setNotClearPreMaskLayer
+    setNotClearPreMaskLayer,
+    receivedCreateCropedBoxedParams
 } from '../modules/images';
 import {
     selectFontFamily,
@@ -95,7 +98,8 @@ const mapStateToProps = (state) => {
         status,
         imgHeight,
         clearPreMask,
-        targetLang
+        targetLang,
+        cropedBoxParams
     } = images;
     const {
         zoomCanvasValue = 1,
@@ -115,7 +119,9 @@ const mapStateToProps = (state) => {
         globalHasFontItalic,
         globalHasFontWeight,
         globalFontDirection,
-        globalFontTextCase
+        globalFontTextCase,
+        hasCropedMarquee,
+        clearCropBox
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -158,6 +164,9 @@ const mapStateToProps = (state) => {
         modalId,
         marquee,
         font: currentFont,
+        fonts: font,
+        wholeFonFamily,
+        defaultFontFamily,
         brush,
         maskTextImgs,
         hasCorrect,
@@ -181,7 +190,10 @@ const mapStateToProps = (state) => {
         globalHasFontItalic,
         globalHasFontWeight,
         globalFontDirection,
-        globalFontTextCase
+        globalFontTextCase,
+        hasCropedMarquee,
+        cropedBoxParams,
+        clearCropBox
     }
 }
 
@@ -266,10 +278,13 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(displayTranslBox());
             dispatch(displayTranslPopUp());
             dispatch(hiddenResultBox(startNumber));
-            const _resultContainer = document.getElementById(`${startNumber}_resultContainer`);
-            if(_resultContainer) {
-                _resultContainer.parentNode.removeChild(_resultContainer);
-            }
+        },
+        createCropedBox: (payload) => {
+            dispatch(receivedCreateCropedBoxedParams(payload));
+            dispatch(createCropedMarquee());
+        },
+        handlerCancelCrop: () => {
+            dispatch(deleteCropedMarquee())
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {
