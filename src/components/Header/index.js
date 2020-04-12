@@ -98,7 +98,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
         remark
     };
     return (
-        <div className="header">
+        <div className="header" data-html2canvas-ignore>
             <div className="col-md-2 col-xs-2 col-lg-2">
                 <Button data={saveDataProps}>
                     <span className="glyphicon glyphicon-floppy-save"></span> {contentText.save} 

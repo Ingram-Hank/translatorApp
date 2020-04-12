@@ -151,6 +151,31 @@ const mapStateToProps = (state) => {
     if(!currentFont.font_family) {
         currentFont.font_family = wholeFonFamily || defaultFontFamily;
     }
+    if(!currentFont.font_size) {
+        currentFont.font_size = wholeFontSize || 40;
+    }
+    if(!currentFont.font_color) {
+        currentFont.font_color = wholeFontColor || "black";
+    }
+    if(!currentFont.lineHeight) {
+        currentFont.lineHeight = wholeFontLineHeight || 1.5;
+    }
+    if(!currentFont.hasFontItalic) {
+        currentFont.hasFontItalic = globalHasFontItalic;
+    }
+    if(!currentFont.hasFontWeight) {
+        currentFont.hasFontWeight = globalHasFontWeight;
+    }
+    if(!currentFont.text_align) {
+        currentFont.text_align = wholeFontTextAlign || "center";
+    }
+    if(!currentFont.text_case) {
+        currentFont.text_case = globalFontTextCase || "uppercase";
+    }
+    if(!currentFont.font_direction) {
+        currentFont.font_direction = globalFontDirection || "horizontal";
+    }
+    
     return {
         selectedImage,
         selectedTranslImage,

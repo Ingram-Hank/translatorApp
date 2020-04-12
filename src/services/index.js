@@ -28,7 +28,7 @@ export default  {
     return http.post("/comic/saveImg", data)
   },
   clearText(data){
-    return http.post("ai/szmc", data)
+    return http.post("ai/inpainting", data)
   },
   getORC(data){
     return http.post("ai/ocr", data)

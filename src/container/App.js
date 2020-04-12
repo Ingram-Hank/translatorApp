@@ -19,7 +19,9 @@ import {
   handlerSelectItem,
   abandonSaveAction,
   setResultImgURL,
-  clearResultImgURL
+  clearResultImgURL,
+  clearResultCanvas,
+  clearPreAddedImgLayer
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -284,7 +286,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     handlerClosePreview: () => {
       dispatch(closePreviewModal());
-      dispatch(clearResultImgURL())
+      dispatch(clearResultImgURL());
+      dispatch(clearResultCanvas());
+      dispatch(clearPreAddedImgLayer());
     },
     handlerOpenGlossary: () => {
       dispatch(openModal("glossary"));

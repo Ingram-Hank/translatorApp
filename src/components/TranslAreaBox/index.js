@@ -99,7 +99,7 @@ class TranslAreaBox extends React.PureComponent {
                 brushEvents
             };
             return (
-                <div className='translAreaBox' style={translAreaBoxStyle}>
+                <div className='translAreaBox' style={translAreaBoxStyle} data-html2canvas-ignore>
                     {!displayTranslBox &&
                         <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                             <span className="glyphicon glyphicon-trash"></span>

@@ -160,7 +160,7 @@ class CropedBox extends React.PureComponent {
             height: height + "px"
         }
         return (
-            <div className="cropBox" id="cropBox" style={cropBoxStyle}>
+            <div className="cropBox" id="cropBox" style={cropBoxStyle} data-html2canvas-ignore>
                 <div id="cropBoxCancel" className="cancel" title="delete" onClick={handlerCancelCrop}>
                     <span className="glyphicon glyphicon-trash"></span>
                 </div>

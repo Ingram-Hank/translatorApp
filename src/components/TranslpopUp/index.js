@@ -90,7 +90,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
     const textCaseClassName_lowercase = classNames("btn btn-default", {"active": text_case === 'lowercase'});
     const textCaseClassName_capitalize = classNames("btn btn-default", {"active": text_case === 'capitalize'});
     return (
-        <div className="translContainer" id="translContainer">
+        <div className="translContainer" id="translContainer" data-html2canvas-ignore>
             <div className='translate-box'>
                 <div {...dragProps}>
                     <i className='dots-horizontal'>▪▪▪</i>

@@ -30,40 +30,29 @@ const buildDataGroup = (params) => {
         font_direction: globalFontDirection || "horizontal"
     };
     const layersToObject = mapToObject(resultLayers, 'index');
-    if(Object.keys(resultBoxStyleParams).length) {
-        Object.keys(resultBoxStyleParams).forEach((key)=> {
-            const {left, top, width, height, transform} = resultBoxStyleParams[key];
+    if (Object.keys(resultBoxStyleParams).length) {
+        Object.keys(resultBoxStyleParams).forEach((key) => {
+            const { left, top, width, height, transform } = resultBoxStyleParams[key];
             const currentLayer = layersToObject[key] || {};
             const currentFont = fonts[key] || {};
-            const font = Object.assign({}, currentFont, defaultFontSetting);
-            console.log("data------------>", data);
-            if(data.length) {
-                data.forEach((item)=> {
-                    if(item.key === key) {
-                        item = {
-                            key,
-                            left,
-                            top,
-                            width,
-                            height,
-                            transform,
-                            translatedText: currentLayer.translText || "",
-                            font: fonts[key]
-                        }
-                    }else {
-                        data.push({
-                            key,
-                            left,
-                            top,
-                            width,
-                            height,
-                            transform,
-                            translatedText: currentLayer.translText || "",
-                            font
-                        });
+            const font = currentFont || Object.assign({}, defaultFontSetting, currentFont);
+            if (data.length) {
+                const obj = mapToObject(data, 'key');
+                const addLayer = {
+                    [key]: {
+                        key,
+                        left,
+                        top,
+                        width,
+                        height,
+                        transform,
+                        translatedText: currentLayer.translText || "",
+                        font
                     }
-                })
-            }else {
+                };
+                const newObj = Object.assign({}, obj, addLayer);
+                data = Object.values(newObj);
+            } else {
                 data.push({
                     key,
                     left,
@@ -75,7 +64,6 @@ const buildDataGroup = (params) => {
                     font
                 });
             }
-            
         })
     }
     return data;
@@ -83,11 +71,18 @@ const buildDataGroup = (params) => {
 
 function ResultBox(props) {
     const data = buildDataGroup(props);
-    console.log("data---================---->", data);
     return (
         <React.Fragment>
-            {data.length ? data.map((item, index)=> {
-                const {left, top, width, height, transform, translatedText, font = {}} = item;
+            {data.length ? data.map((item, index) => {
+                const {
+                    left,
+                    top,
+                    width,
+                    height,
+                    transform,
+                    translatedText,
+                    font = {}
+                } = item;
                 const {
                     font_family,
                     font_size,
@@ -129,7 +124,7 @@ function ResultBox(props) {
                 return (
                     <div {...resultBoxProps} key={index}>{translatedText}</div>
                 )
-            }): null}
+            }) : null}
         </React.Fragment>
     )
 }

@@ -150,8 +150,12 @@ class TranslResultBox extends React.PureComponent {
     handlerTextEdit(e) {
         e.target.style.cursor = "text";
         e.target.style.outline = "none";
+        console.log("e.target-------------->", e.target);
     }
-    
+    handlerTextChange (e) {
+        console.log("e.target=================", e.target)
+        console.log("e.target=================", e.target.innerHTML)
+    }
     render() {
         const {
             data = {},
@@ -197,6 +201,7 @@ class TranslResultBox extends React.PureComponent {
             suppressContentEditableWarning: "true",
             contentEditable: "true",
             onClick: (e) => this.handlerTextEdit(e),
+            onChange: (e) => this.handlerTextChange(e),
             style: {
                 fontFamily: font_family,
                 fontSize: `${font_size}px`,
@@ -212,7 +217,7 @@ class TranslResultBox extends React.PureComponent {
             }
         };
         return (
-            <div className="translResultBox-container" id="translResultBox-container" style={translResultBoxContainerStyle}>
+            <div className="translResultBox-container" id="translResultBox-container" style={translResultBoxContainerStyle} data-html2canvas-ignore>
                 <div {...moveBoxProps}>{translatedText}</div>
                 <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                     <span className="glyphicon glyphicon-trash"></span>

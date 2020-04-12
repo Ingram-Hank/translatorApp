@@ -329,6 +329,7 @@
     width: 100%;
     height: 100%;
     padding: 5px;
+    overflow-wrap: normal;
     cursor: move;
 }
 
@@ -1055,10 +1056,16 @@
 .translResultBox {
     &-container {
         position: absolute;
+        word-wrap: break-word;
+        word-break: keep-all;
     }
 }
 
 .resultContainer {
     position: absolute;
     padding: 5px;
+}
+
+.maskImgLayer {
+    position: absolute;
 }

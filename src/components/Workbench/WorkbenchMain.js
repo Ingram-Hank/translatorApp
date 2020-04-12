@@ -22,6 +22,7 @@ class WorkbenchMain extends React.PureComponent {
 
     drawCanvasBackGround(prevProps) {
         const canvas = this.canvas.current;
+        const ctx = canvas.getContext('2d');
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
         const img = new Image();
@@ -89,7 +90,8 @@ class WorkbenchMain extends React.PureComponent {
             }
 
             if (prevProps.clearPreTranslResult !== this.props.clearPreTranslResult && this.props.clearPreTranslResult) {
-                ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight)
+                ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight);
+                ctx.clearRect(0, 0, currentElementWidth, currentElementHeight);
             }
         }
         document.oncontextmenu = (e) => {
@@ -302,14 +304,14 @@ class WorkbenchMain extends React.PureComponent {
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">
                 <div className="workbench-work-wrap">
                     <div className="inner">
-                        <div className="trans-guide-prompt">
+                        <div className="trans-guide-prompt" data-html2canvas-ignore>
                             {contentText.prompt}
                         </div>
                         <div className="canvas-container" id="canvasContainer" style={canvasContainerStyle}>
                             {selectedImg &&
                                 <React.Fragment>
-                                    <canvas {...lowercanvasProps}>{contentText.canvasPrompt}</canvas>
-                                    <canvas {...uppercanvasProps}>{contentText.canvasPrompt}</canvas>
+                                    <canvas {...lowercanvasProps} data-html2canvas-ignore>{contentText.canvasPrompt}</canvas>
+                                    <canvas {...uppercanvasProps} data-html2canvas-ignore>{contentText.canvasPrompt}</canvas>
                                     {hasCropedMarquee && <CropedBox {...cropedBoxProps} />}
                                 </React.Fragment>
                             }
