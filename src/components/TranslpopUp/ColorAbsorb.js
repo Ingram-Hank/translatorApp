@@ -46,6 +46,10 @@ class ColorAbsorb extends React.Component {
         });
         
     }
+    componentWillMount() {
+        const canvas = this.canvas.current;
+        canvas.removeEventListener("mousedown", null);
+    }
     componentDidMount() {
         const img = new Image();
         img.width = this.props.createdTranslBox.width;

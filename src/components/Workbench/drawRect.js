@@ -1,4 +1,4 @@
-import { $, getCss } from '../../utilities';
+import { $ } from '../../utilities';
 class drawRect {
     constructor(canvas, scale, img, elementWidth, elementHeight, componentProps) {
         this.canvas = canvas;
@@ -30,16 +30,7 @@ class drawRect {
     odiv;
     layers = [];
     currentR;
-    params = {
-        left: 0,
-        top: 0,
-        width: 0,
-        height: 0,
-        currentX: 0,
-        currentY: 0,
-        flag: false,
-        kind: "drag"
-    };
+    
 
     resizeLeft(rect) {
         this.canvas.style.cursor = "w-resize";
@@ -205,23 +196,10 @@ class drawRect {
         return position
     }
 
-    removeElement(_element){
-        const _parentElement = _element.parentNode;
-        if(_parentElement){
-            _parentElement.removeChild(_element);
-        }
-    }
-
     clearLayers() {
         this.layers.pop();
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         this.reshow();
-    }
-
-    clearCropBox() {
-        if (this.odiv) {
-            this.removeElement(this.odiv)
-        }
     }
 
     mousedown(e) {
@@ -236,7 +214,6 @@ class drawRect {
         }
         if (this.op < 3) {
             this.clearLayers();
-            this.clearCropBox();
         }
         this.ctx.strokeRect(this.x, this.y, 0, 0);
         this.ctx.strokeStyle = 'red';
@@ -268,7 +245,12 @@ class drawRect {
             this.posY = this.y;
             this.cropH = this.starty - this.y;
         }
-
+        if (this.cropW < 50) {
+            this.cropW = 60;
+        }
+        if (this.cropH < 50) {
+            this.cropH = 60;
+        }
         if (this.op === 1) {
             this.layers.push(this.fixPosition({
                 x1: this.startx,
@@ -278,88 +260,14 @@ class drawRect {
                 strokeStyle: 'transparent',
                 type: this.type
             }))
-            if (this.cropW < 50) {
-                this.cropW = 60;
+            const payload = {
+               img: this.img,
+               left: this.posX,
+               top: this.posY,
+               width: this.cropW,
+               height: this.cropH
             }
-            if (this.cropH < 50) {
-                this.cropH = 60;
-            }
-            this.odiv = document.createElement("div");
-            this.canvasParentElement.appendChild(this.odiv);
-            this.odiv.setAttribute("id", "cropBox");
-            this.odiv.setAttribute("class", "cropBox");
-            this.odiv.setAttribute("ref", "cropBox");
-            this.odiv.style.height = `${this.cropH}px`;
-            this.odiv.style.width = `${this.cropW}px`;
-            this.odiv.style.left = `${this.posX}px`;
-            this.odiv.style.top = `${this.posY}px`;
-            this.odiv.innerHTML = `
-                <div id="cropBoxCancel" class="cancel" title="delete">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </div>
-                <div class="source-area-tip" id="cropBoxSourceArea">
-                    <div class="content-tip">
-                        ${this.props.contentText.cropBoxHelpText}
-                    </div>
-                    <div class="ok" title="confirm" id="cropBoxConfirm"> 
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </div>
-                </div>
-                <div class="border-top"></div>
-                <div class="border-left"></div>
-                <div class="border-bottom"></div>
-                <div class="border-right"></div>
-                <div id="zxxDragBg" class="move"></div>
-                <div id="dragLeftTop" class="drag nw-resize"></div>
-                <div id="dragLeftBot" class="drag sw-resize"></div>
-                <div id="dragRightTop" class="drag ne-resize"></div>
-                <div id="dragRightBot" class="drag se-resize"></div>
-                <div id="dragTopCenter" class="drag n-resize"></div>
-                <div id="dragBotCenter" class="drag s-resize"></div>
-                <div id="dragRightCenter" class="drag e-resize"></div>
-                <div id="dragLeftCenter" class="drag w-resize"></div>`;
-
-            //bind drag
-            this.startDrag($("zxxDragBg"), $("cropBox"), "drag");
-            //bind pull
-            this.startDrag($("dragLeftTop"), $("cropBox"), "nw");
-            this.startDrag($("dragLeftBot"), $("cropBox"), "sw");
-            this.startDrag($("dragRightTop"), $("cropBox"), "ne");
-            this.startDrag($("dragRightBot"), $("cropBox"), "se");
-            this.startDrag($("dragTopCenter"), $("cropBox"), "n");
-            this.startDrag($("dragBotCenter"), $("cropBox"), "s");
-            this.startDrag($("dragRightCenter"), $("cropBox"), "e");
-            this.startDrag($("dragLeftCenter"), $("cropBox"), "w");
-            $("cropBoxCancel").addEventListener("click", () => {
-                this.clearLayers();
-                this.clearCropBox();
-            })
-            $("cropBoxConfirm").addEventListener("click", () => {
-                if (this.cropW < 50 && this.cropH < 50) {
-                    this.cropW = 60;
-                    this.cropH = 60;
-                }
-                const cropedImg = this.cropImage(
-                    this.img,
-                    this.posX / this.scaleX,
-                    this.posY / this.scaleY,
-                    parseInt(this.cropW) / this.scaleX,
-                    parseInt(this.cropH) / this.scaleY
-                );
-                const setCropImgParams = {
-                    left: this.posX,
-                    top: this.posY,
-                    width: this.cropW,
-                    height: this.cropH,
-                    cropedImg
-                };
-                this.clearLayers();
-                this.clearCropBox();
-                const createdTranslBox = this.props.createdTranslBox || {};
-                const createdTranslBoxNumber = Object.keys(createdTranslBox).length || 0;
-                this.props.createStartNumber(createdTranslBoxNumber + 1)
-                this.props.setCropImg(setCropImgParams);
-            })
+            this.props.createCropedBox(payload);
         } else if (this.op >= 3) {
             this.fixPosition(this.currentR)
         }
@@ -369,116 +277,7 @@ class drawRect {
         this.reshow(this.x, this.y);
         this.op = 0;
     }
-
-    cropImage(img, cropPosX, cropPosY, width, height) {
-        const newCanvas = document.createElement('canvas');
-        const cropImgWidth = width * this.scaleX;
-        const cropImgHeight = height * this.scaleY;
-        newCanvas.width = cropImgWidth;
-        newCanvas.height = cropImgHeight;
-        const newCtx = newCanvas.getContext('2d');
-        newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, cropImgWidth, cropImgHeight);
-        // canvas transform to img
-        const newImage = new Image();
-        newImage.src = newCanvas.toDataURL("image/jpeg");
-        return newImage
-    }
-
-    startDrag(point, target, kind) {
-        this.params.width = getCss(target, "width");
-        this.params.height = getCss(target, "height");
-        if (getCss(target, "left") !== "auto") {
-            this.params.left = getCss(target, "left");
-        }
-        if (getCss(target, "top") !== "auto") {
-            this.params.top = getCss(target, "top");
-        }
-        point.addEventListener("mousedown", (event) => {
-            this.params.kind = kind;
-            this.params.flag = true;
-            if ($("cropBoxCancel")) $("cropBoxCancel").style.display = "none";
-            if ($("cropBoxSourceArea")) $("cropBoxSourceArea").style.display = "none";
-            if (!event) {
-                event = window.event;
-            }
-            const e = event;
-            if (document.setCapture) e.target.setCapture();
-            if (window.captureEvents) window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
-            this.params.currentX = e.clientX;  //mouse down x coordinates
-            this.params.currentY = e.clientY;  //mouse down y coordinates
-            document.addEventListener("mousemove", (event) => {
-                let e = event ? event : window.event;
-                if (this.params.flag) {
-                    const nowX = e.clientX; // mouse move x coordinates
-                    const nowY = e.clientY;   // mouse down y coordinates
-                    const disX = nowX - this.params.currentX;  // mouse move x distance
-                    const disY = nowY - this.params.currentY;  // mouse move y distance
-                    if (this.params.kind === "n") {
-                        //pull top, height increace or minus
-                        target.style.top = parseInt(this.params.top) + disY + "px";
-                        target.style.height = parseInt(this.params.height) - disY + "px";
-                    } else if (this.params.kind === "w") { //pull left
-                        target.style.left = parseInt(this.params.left) + disX + "px";
-                        target.style.width = parseInt(this.params.width) - disX + "px";
-                    } else if (this.params.kind === "e") { //pull right
-                        target.style.width = parseInt(this.params.width) + disX + "px";
-                    } else if (this.params.kind === "s") { //pull bottom
-                        target.style.height = parseInt(this.params.height) + disY + "px";
-                    } else if (this.params.kind === "nw") { //pull left top
-                        target.style.left = parseInt(this.params.left) + disX + "px";
-                        target.style.width = parseInt(this.params.width) - disX + "px";
-                        target.style.top = parseInt(this.params.top) + disY + "px";
-                        target.style.height = parseInt(this.params.height) - disY + "px";
-                    } else if (this.params.kind === "ne") { //pull right top
-                        target.style.top = parseInt(this.params.top) + disY + "px";
-                        target.style.height = parseInt(this.params.height) - disY + "px";
-                        target.style.width = parseInt(this.params.width) + disX + "px";
-                    } else if (this.params.kind === "sw") { //pull left bottom
-                        target.style.left = parseInt(this.params.left) + disX + "px";
-                        target.style.width = parseInt(this.params.width) - disX + "px";
-                        target.style.height = parseInt(this.params.height) + disY + "px";
-                    } else if (this.params.kind === "se") { //pull left bottom
-                        target.style.width = parseInt(this.params.width) + disX + "px";
-                        target.style.height = parseInt(this.params.height) + disY + "px";
-                    } else { //move
-                        target.style.left = parseInt(this.params.left) + disX + "px";
-                        target.style.top = parseInt(this.params.top) + disY + "px";
-                    }
-                }
-
-                document.addEventListener("mouseup", (e) => {
-                    this.params.flag = false;
-                    if ($("cropBoxCancel")) $("cropBoxCancel").style.display = "block";
-                    if ($("cropBoxSourceArea")) $("cropBoxSourceArea").style.display = "block";
-                    if (document.releaseCapture) e.target.releaseCapture();
-                    if (window.releaseEvents) window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP);
-                    if (getCss(target, "left") !== "auto") this.params.left = getCss(target, "left");
-                    if (getCss(target, "top") !== "auto") this.params.top = getCss(target, "top");
-                    this.params.width = getCss(target, "width");
-                    this.params.height = getCss(target, "height");
-
-                    // assignment for the created odiv
-                    this.posX = parseInt(target.style.left);
-                    this.posY = parseInt(target.style.top);
-                    this.cropW = parseInt(target.style.width);
-                    this.cropH = parseInt(target.style.height);
-                    if (this.posX < 0) {
-                        this.posX = 0;
-                    }
-                    if (this.posY < 0) {
-                        this.posY = 0;
-                    }
-                    if ((this.posX + this.cropW) > this.elementWidth) {
-                        this.cropW = this.elementWidth - this.posX;
-                    }
-                    if ((this.posY + this.cropH) > this.elementHeight) {
-                        this.cropH = this.elementHeight - this.posY;
-                    }
-                })
-            })
-        })
-    }
-
+    
 }
 
 

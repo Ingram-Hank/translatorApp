@@ -1,7 +1,7 @@
 import React from 'react';
 import { $, getCss } from '../../utilities';
 
-class TranslResultBox extends React.Component {
+class TranslResultBox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
@@ -18,9 +18,6 @@ class TranslResultBox extends React.Component {
     };
 
     componentDidMount() {
-        $("cropBoxCancel").addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        })
         this.startDrag($("translMove"), $("translResultBox-container"), "drag");
         //bind pull
         this.startDrag($("dragLeftTop"), $("translResultBox-container"), "nw");
@@ -55,6 +52,7 @@ class TranslResultBox extends React.Component {
             　　$('translResultBox-container').dataset.angle = getDragAngle(event);
         　　 }
         });
+        
         const getDragAngle = (event)=> {
             const element = $('translResultBox-container');
             const startAngle = parseFloat(element.dataset.angle) || 0;
@@ -79,7 +77,6 @@ class TranslResultBox extends React.Component {
 
         point.addEventListener("mousedown", (event) => {
             event.stopPropagation();
-            
             this.params.kind = kind;
             this.params.flag = true;
             if ($("translBoxCancel")) $("translBoxCancel").style.display = "none";
@@ -143,6 +140,8 @@ class TranslResultBox extends React.Component {
                     if (getCss(target, "top") !== "auto") this.params.top = getCss(target, "top");
                     this.params.width = getCss(target, "width");
                     this.params.height = getCss(target, "height");
+                    point.removeEventListener("mousedown", null);
+                    document.removeEventListener("mousemove", null);
                 })
             })
         })
@@ -151,8 +150,12 @@ class TranslResultBox extends React.Component {
     handlerTextEdit(e) {
         e.target.style.cursor = "text";
         e.target.style.outline = "none";
+        console.log("e.target-------------->", e.target);
     }
-
+    handlerTextChange (e) {
+        console.log("e.target=================", e.target)
+        console.log("e.target=================", e.target.innerHTML)
+    }
     render() {
         const {
             data = {},
@@ -198,6 +201,7 @@ class TranslResultBox extends React.Component {
             suppressContentEditableWarning: "true",
             contentEditable: "true",
             onClick: (e) => this.handlerTextEdit(e),
+            onChange: (e) => this.handlerTextChange(e),
             style: {
                 fontFamily: font_family,
                 fontSize: `${font_size}px`,
@@ -213,7 +217,7 @@ class TranslResultBox extends React.Component {
             }
         };
         return (
-            <div className="translResultBox-container" id="translResultBox-container" style={translResultBoxContainerStyle}>
+            <div className="translResultBox-container" id="translResultBox-container" style={translResultBoxContainerStyle} data-html2canvas-ignore>
                 <div {...moveBoxProps}>{translatedText}</div>
                 <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                     <span className="glyphicon glyphicon-trash"></span>

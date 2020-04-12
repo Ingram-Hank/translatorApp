@@ -18,7 +18,10 @@ import {
   restoreTranslPic,
   handlerSelectItem,
   abandonSaveAction,
-  setResultImgURL
+  setResultImgURL,
+  clearResultImgURL,
+  clearResultCanvas,
+  clearPreAddedImgLayer
 } from '../modules/images';
 import {
   hanlerMarquee,
@@ -283,6 +286,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     handlerClosePreview: () => {
       dispatch(closePreviewModal());
+      dispatch(clearResultImgURL());
+      dispatch(clearResultCanvas());
+      dispatch(clearPreAddedImgLayer());
     },
     handlerOpenGlossary: () => {
       dispatch(openModal("glossary"));

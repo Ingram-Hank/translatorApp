@@ -4,7 +4,7 @@ import './modal.css';
 function Modal ({children, open = true}) {
     if(open) {
         return (
-            <div className="popup">
+            <div className="popup" data-html2canvas-ignore>
                 <div className="popup-body">
                     {children}
                 </div>

@@ -51,9 +51,9 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
         className: 'box-title text-center',
         id: 'box-title',
         onMouseLeave: (e)=> {
-            e.target.removeEventListener("mousedown", ()=> console.log("remove mousedown"));
-            e.target.removeEventListener("mousemove", ()=> console.log("remove mousemove"));
-            e.target.removeEventListener("mouseup", ()=> console.log("remove mouseup"));
+            e.target.removeEventListener("mousedown", null);
+            document.removeEventListener("mousemove", null);
+            document.removeEventListener("mouseup", null);
         },
         onMouseEnter: (e)=> {
             const translContainer = document.getElementById("translContainer");
@@ -90,7 +90,7 @@ function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, 
     const textCaseClassName_lowercase = classNames("btn btn-default", {"active": text_case === 'lowercase'});
     const textCaseClassName_capitalize = classNames("btn btn-default", {"active": text_case === 'capitalize'});
     return (
-        <div className="translContainer" id="translContainer">
+        <div className="translContainer" id="translContainer" data-html2canvas-ignore>
             <div className='translate-box'>
                 <div {...dragProps}>
                     <i className='dots-horizontal'>▪▪▪</i>

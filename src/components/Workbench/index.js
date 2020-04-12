@@ -64,7 +64,16 @@ function Workbench(props) {
         globalHasFontItalic,
         globalHasFontWeight,
         globalFontDirection,
-        globalFontTextCase
+        globalFontTextCase,
+        handlerCancelCrop,
+        handlerConfirmCrop,
+        createCropedBox,
+        hasCropedMarquee,
+        cropedBoxParams,
+        clearCropBox,
+        fonts,
+        wholeFonFamily,
+        defaultFontFamily
     } = props;
     
     const canvasZoomProps = {
@@ -99,6 +108,7 @@ function Workbench(props) {
         hasCorrect,
         originORCText,
         translatedText,
+        resultLayers,
         hanlerChangeORCText,
         handlerChangeTranslatedText,
         handerTranslText,
@@ -126,7 +136,16 @@ function Workbench(props) {
         globalHasFontItalic,
         globalHasFontWeight,
         globalFontDirection,
-        globalFontTextCase
+        globalFontTextCase,
+        handlerCancelCrop,
+        handlerConfirmCrop,
+        createCropedBox,
+        hasCropedMarquee,
+        cropedBoxParams,
+        clearCropBox,
+        fonts,
+        wholeFonFamily,
+        defaultFontFamily
     };
 
     const rightMenuProps = {

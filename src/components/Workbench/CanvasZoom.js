@@ -12,7 +12,7 @@ function CanvasZoom ({zoomCanvasBech, zoomCanvasPlus, zoomCanvasMinus, value}) {
         onChange: (e)=> {zoomCanvasBech(e)}
     };
     return (
-        <div className="canvas-zoom text-center">
+        <div className="canvas-zoom text-center" data-html2canvas-ignore>
             <span className="zoom-num">{value}</span>
             <span className="zoom-btn zoom-plus" onClick={()=> zoomCanvasPlus(value)}>+</span>
             <input {...zoomScrollProps}/>

@@ -1,7 +1,7 @@
 import React from 'react';
 import InpaintBox from './InpaintBox';
 
-class TranslAreaBox extends React.Component {
+class TranslAreaBox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.canvas = React.createRef();
@@ -60,6 +60,7 @@ class TranslAreaBox extends React.Component {
                 }
             }
         }
+        
     }
     componentDidUpdate() {
         this.doodling()
@@ -67,6 +68,7 @@ class TranslAreaBox extends React.Component {
     componentDidMount() {
         this.doodling()
     }
+    
     render() {
         const {
             contentText,
@@ -97,7 +99,7 @@ class TranslAreaBox extends React.Component {
                 brushEvents
             };
             return (
-                <div className='translAreaBox' style={translAreaBoxStyle}>
+                <div className='translAreaBox' style={translAreaBoxStyle} data-html2canvas-ignore>
                     {!displayTranslBox &&
                         <div id="cropBoxCancel" className="cancel" title={contentText.delete} onClick={()=> openModal('cancel')}>
                             <span className="glyphicon glyphicon-trash"></span>

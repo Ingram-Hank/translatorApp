@@ -2,7 +2,7 @@ import React from 'react';
 
 function RightMenu({ contentText, resultLayers, handlerSelectReProcess, targetLang}) {
     return (
-        <div className="trans-result-right-menu bg-color-white  col-sm-2 col-xs-12">
+        <div className="trans-result-right-menu bg-color-white  col-sm-2 col-xs-12" data-html2canvas-ignore>
             <div className="result-header">
                 <div className="result-inner">
                     <div className="result-title">

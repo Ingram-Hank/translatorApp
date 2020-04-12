@@ -70,6 +70,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { isToLastChapter: true })
         case actions.UI_SET_IS_TO_NEXT_CHAPTER:
             return Object.assign({}, state, { isToNextChapter: true })
+        case actions.UI_SET_CREATE_CROPED_MARQUEE:
+            return Object.assign({}, state, { hasCropedMarquee: true })
+        case actions.UI_SET_DELETE_CROPED_MARQUEE:
+            return Object.assign({}, state, { hasCropedMarquee: false })
         default:
             return state
     }
@@ -231,6 +235,14 @@ export const setIsToLastChapter = () => ({
 
 export const setIsToNextChapter = () => ({
     type: actions.UI_SET_IS_TO_NEXT_CHAPTER
+});
+
+export const createCropedMarquee = () => ({
+    type: actions.UI_SET_CREATE_CROPED_MARQUEE
+});
+
+export const deleteCropedMarquee = () => ({
+    type: actions.UI_SET_DELETE_CROPED_MARQUEE
 });
 
 export const handlerZoomCanvasPlus = (value) => {
