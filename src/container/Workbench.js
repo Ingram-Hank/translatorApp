@@ -99,7 +99,8 @@ const mapStateToProps = (state) => {
         imgHeight,
         clearPreMask,
         targetLang,
-        cropedBoxParams
+        cropedBoxParams,
+        maskColorSettings
     } = images;
     const {
         zoomCanvasValue = 1,
@@ -121,7 +122,8 @@ const mapStateToProps = (state) => {
         globalFontDirection,
         globalFontTextCase,
         hasCropedMarquee,
-        clearCropBox
+        clearCropBox,
+        isTextEdit
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -218,7 +220,9 @@ const mapStateToProps = (state) => {
         globalFontTextCase,
         hasCropedMarquee,
         cropedBoxParams,
-        clearCropBox
+        clearCropBox,
+        isTextEdit,
+        maskColorSettings
     }
 }
 
@@ -287,6 +291,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(getTranslText(data));
         },
         handlerCompleteTranslate: () => {
+            const translatedText = document.getElementById('translMove').innerText;
+            dispatch(updateTranslText(translatedText))
             dispatch(completeTranslate());
         },
         handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {

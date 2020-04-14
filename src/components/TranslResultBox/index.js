@@ -18,7 +18,10 @@ class TranslResultBox extends React.PureComponent {
     };
 
     componentDidMount() {
-        this.startDrag($("translMove"), $("translResultBox-container"), "drag");
+        if($("translMove")) {
+            this.startDrag($("translMove"), $("translResultBox-container"), "drag");
+        }
+        
         //bind pull
         this.startDrag($("dragLeftTop"), $("translResultBox-container"), "nw");
         this.startDrag($("dragLeftBot"), $("translResultBox-container"), "sw");
@@ -150,12 +153,8 @@ class TranslResultBox extends React.PureComponent {
     handlerTextEdit(e) {
         e.target.style.cursor = "text";
         e.target.style.outline = "none";
-        console.log("e.target-------------->", e.target);
     }
-    handlerTextChange (e) {
-        console.log("e.target=================", e.target)
-        console.log("e.target=================", e.target.innerHTML)
-    }
+
     render() {
         const {
             data = {},
@@ -198,10 +197,9 @@ class TranslResultBox extends React.PureComponent {
         const moveBoxProps = {
             id: "translMove",
             className: "move",
+            onClick: (e) => this.handlerTextEdit(e),
             suppressContentEditableWarning: "true",
             contentEditable: "true",
-            onClick: (e) => this.handlerTextEdit(e),
-            onChange: (e) => this.handlerTextChange(e),
             style: {
                 fontFamily: font_family,
                 fontSize: `${font_size}px`,
