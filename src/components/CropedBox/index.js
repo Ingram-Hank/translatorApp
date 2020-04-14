@@ -146,7 +146,7 @@ class CropedBox extends React.PureComponent {
         newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, cropImgWidth, cropImgHeight);
         // canvas transform to img
         const newImage = new Image();
-        newImage.src = newCanvas.toDataURL("image/jpeg");
+        newImage.src = newCanvas.toDataURL("image/jpeg", 0.8);
         return newImage
     }
 

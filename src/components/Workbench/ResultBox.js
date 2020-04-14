@@ -75,6 +75,7 @@ function ResultBox(props) {
         <React.Fragment>
             {data.length ? data.map((item, index) => {
                 const {
+                    key,
                     left,
                     top,
                     width,
@@ -99,7 +100,7 @@ function ResultBox(props) {
                     shadow_size
                 } = font;
                 const resultBoxProps = {
-                    id: `${index}_resultContainer`,
+                    id: `${key}_resultContainer`,
                     className: "resultContainer",
                     style: {
                         display: props.clearPreTranslResult ? "none" : "block",

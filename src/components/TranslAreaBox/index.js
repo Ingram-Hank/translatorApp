@@ -11,7 +11,15 @@ class TranslAreaBox extends React.PureComponent {
     }
 
     doodling() {
-        const { currentMaskTextImgs = [], createMaskLayer, startNumber, data, scale, brush } = this.props;
+        const { 
+            currentMaskTextImgs = [],
+            maskColorSettings = {},
+            createMaskLayer,
+            startNumber,
+            data,
+            scale,
+            brush
+         } = this.props;
         const canvas = document.getElementById(`maskCanvas_${startNumber}`);
         const context = canvas.getContext("2d");
         const { brushWidth = 10 } = brush;
@@ -42,17 +50,25 @@ class TranslAreaBox extends React.PureComponent {
                 context.restore();
 
                 newCtx.save();
+                if(maskColorSettings.hasOwnProperty("backgroundColor")) {
+                    newCtx.rect(0, 0, newCanvas.width, newCanvas.height);
+                    newCtx.fillStyle= maskColorSettings.backgroundColor;
+                    newCtx.fill();
+                }
                 newCtx.beginPath();
                 newCtx.arc(x, y, brush_Width, 0, 2 * Math.PI);
                 newCtx.closePath();
-                newCtx.fillStyle = 'red';
+                newCtx.fillStyle = maskColorSettings.frontColor || 'red';
                 newCtx.fill();
 
                 canvas.onmouseup = () => {
                     this.setState({ flag: false });
                     canvas.onmousemove = null;
                     newCtx.globalCompositeOperation = 'destination-in';
-                    newCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    img.onload = () => {
+                        newCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    }
+                    
                     // canvas transform to img
                     const newImage = new Image();
                     newImage.src = newCanvas.toDataURL("image/png");

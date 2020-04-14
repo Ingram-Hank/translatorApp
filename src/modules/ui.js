@@ -245,6 +245,7 @@ export const deleteCropedMarquee = () => ({
     type: actions.UI_SET_DELETE_CROPED_MARQUEE
 });
 
+
 export const handlerZoomCanvasPlus = (value) => {
     return (dispatch, getState) => {
         let payload = (Number(value) + 0.1).toFixed(1);

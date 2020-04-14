@@ -52,6 +52,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { cropedImage: action.payload })
         case actions.IMAGES_RECEIVED_MASK_IMG:
             return Object.assign({}, state, { maskTextImgs: action.payload })
+        case actions.IMAGES_RECEIVED_MASK_COLOR_SETTINGS:
+            return Object.assign({}, state, { maskColorSettings: action.payload })
         case actions.IMAGES_RECEIVED_RESULT_BOX_STYLE:
             return Object.assign({}, state, { resultBoxStyleParams: action.payload })
         case actions.IMAGES_RECEIVED_IMG_STATUS:
@@ -148,6 +150,11 @@ export const createTranslAreaBox = (payload) => ({
 
 export const receivedMaskImg = (payload) => ({
     type: actions.IMAGES_RECEIVED_MASK_IMG,
+    payload
+});
+
+export const receivedMaskColorSettings = (payload) => ({
+    type: actions.IMAGES_RECEIVED_MASK_COLOR_SETTINGS,
     payload
 });
 
@@ -352,7 +359,6 @@ export const setResultImgURL = () => {
         dispatch(uiloadingStart());
         dispatch(generateCanvasImg());
         const canvasContainer = document.getElementById('canvasContainer');
-        console.log("canvasContainer==============", canvasContainer)
         setTimeout(()=> {
             html2canvas(canvasContainer, {
                 width: imgWidth,
@@ -361,8 +367,7 @@ export const setResultImgURL = () => {
                 useCORS: true,
                 logging: true
             }).then((canvas) => {
-                const imgURL = canvas.toDataURL("image/jpeg");
-                console.log("imgURL=============>", imgURL);
+                const imgURL = canvas.toDataURL("image/jpeg", 0.8);
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(receiveResultCanvas(canvas));
                 dispatch(uiloadingComplete());
@@ -662,7 +667,7 @@ export const createTranslArea = () => {
         const comicSrc = cropedImg.src;
         if (switchAutoClear) {
             dispatch(uiloadingStart());
-            services.clearText({ comicSrc }).then(({ data }) => {
+            services.clearText({ comicSrc, width, height }).then(({ data }) => {
                 const clearedTextData = data.data;
                 const layerParams = {
                     index: startNumber,
@@ -677,6 +682,17 @@ export const createTranslArea = () => {
                 const combinedLayer = Object.assign({}, maskTextImgs, { [startNumber]: newMaskArrary });
                 dispatch(receivedMaskImg(combinedLayer));
                 if (switchAutoOCR) dispatch(getORCText());
+                if (clearedTextData.hasOwnProperty('frontColor') || clearedTextData.hasOwnProperty('backgroundColor')) {
+                    const maskColorSettings = {};
+                    if(clearedTextData.hasOwnProperty('frontColor')) {
+                        maskColorSettings['frontColor'] = clearedTextData.frontColor
+                    }
+                    if(clearedTextData.hasOwnProperty('backgroundColor')) {
+                        maskColorSettings['backgroundColor'] = clearedTextData.backgroundColor
+                    }
+                    
+                    dispatch(receivedMaskColorSettings(maskColorSettings));
+                }
                 dispatch(uiloadingComplete());
             }).catch(error => {
                 dispatch(uiloadingComplete());
@@ -899,11 +915,10 @@ export const setSaveData = () => {
             html2canvas(canvasContainer, {
                 width: imgWidth,
                 height: imgHeight,
-                taintTest: true,
                 useCORS: true,
                 logging: true
             }).then((canvas) => {
-                const imgURL = canvas.toDataURL("image/jpeg");
+                const imgURL = canvas.toDataURL("image/jpeg", 0.8);
                 dispatch(receiveResultCanvas(canvas));
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(saveData());
@@ -961,9 +976,9 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        const orderNo = getURLParamsString('o');
+        // const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        // const orderNo = 672004019046860;
+        const orderNo = 672004019046860;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({ comicTranslationOrderId }));
@@ -976,7 +991,8 @@ export const initialTranslPage = () => {
 export const hiddenResultBox = (startNumber) => {
     return (dispatch, getState) => {
         const state = getState();
-        const { displayResultBox = {} } = state.images;
+        const { displayResultBox = {}, resultBoxStyleParams } = state.images;
+        delete resultBoxStyleParams[startNumber];
         displayResultBox[startNumber].display = false;
         dispatch(createResultBox(displayResultBox));
     }

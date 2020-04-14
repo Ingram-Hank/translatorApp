@@ -73,7 +73,8 @@ function Workbench(props) {
         clearCropBox,
         fonts,
         wholeFonFamily,
-        defaultFontFamily
+        defaultFontFamily,
+        maskColorSettings
     } = props;
     
     const canvasZoomProps = {
@@ -145,7 +146,8 @@ function Workbench(props) {
         clearCropBox,
         fonts,
         wholeFonFamily,
-        defaultFontFamily
+        defaultFontFamily,
+        maskColorSettings
     };
 
     const rightMenuProps = {

@@ -1,8 +1,5 @@
 .originPicContainer, .feedbackMessageContainer, .translPicContainer {
-    display: flex;
-    flex: auto;
-    justify-content: space-between;
-    flex-direction: column;
+    float: left;
     h5 {
         color: white;
         text-indent: 15px;
@@ -13,10 +10,10 @@
 }
 
 .feedbackMessageContainer {
-    width: 400px;
+    width: calc(100vw/3);
     &-body {
         background-color: white;
-        height: calc(100vh - 57px);
+        height: calc(100vh);
         padding: 10px 0;
         .noContent {
             margin-top: 20px;
