@@ -30,119 +30,12 @@ class drawRect {
     odiv;
     layers = [];
     currentR;
-    
-
-    resizeLeft(rect) {
-        this.canvas.style.cursor = "w-resize";
-        if (this.flag && this.op === 0) { this.op = 3; }
-        if (this.flag && this.op === 3) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x1 = this.x;
-            this.currentR.width = this.currentR.x2 - this.currentR.x1;
-        }
-    }
-
-    resizeTop(rect) {
-        this.canvas.style.cursor = "s-resize";
-        if (this.flag && this.op === 0) { this.op = 4; }
-        if (this.flag && this.op === 4) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.y1 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-        }
-    }
-
-    resizeWidth(rect) {
-        this.canvas.style.cursor = "w-resize";
-        if (this.flag && this.op === 0) { this.op = 5; }
-        if (this.flag && this.op === 5) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x2 = this.x
-            this.currentR.width = this.currentR.x2 - this.currentR.x1
-        }
-    }
-
-    resizeHeight(rect) {
-        this.canvas.style.cursor = "s-resize";
-        if (this.flag && this.op === 0) { this.op = 6; }
-        if (this.flag && this.op === 6) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.y2 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-        }
-    }
-
-    resizeLT(rect) {
-        this.canvas.style.cursor = "se-resize";
-        if (this.flag && this.op === 0) { this.op = 7; }
-        if (this.flag && this.op === 7) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x1 = this.x
-            this.currentR.y1 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-            this.currentR.width = this.currentR.x2 - this.currentR.x1
-        }
-    }
-
-    resizeWH(rect) {
-        this.canvas.style.cursor = "se-resize";
-        if (this.flag && this.op === 0) { this.op = 8; }
-        if (this.flag && this.op === 8) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x2 = this.x
-            this.currentR.y2 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-            this.currentR.width = this.currentR.x2 - this.currentR.x1
-        }
-    }
-
-    resizeLH(rect) {
-        this.canvas.style.cursor = "ne-resize";
-        if (this.flag && this.op === 0) { this.op = 9; }
-        if (this.flag && this.op === 9) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x1 = this.x
-            this.currentR.y2 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-            this.currentR.width = this.currentR.x2 - this.currentR.x1
-        }
-    }
-
-    resizeWT(rect) {
-        this.canvas.style.cursor = "ne-resize";
-        if (this.flag && this.op === 0) { this.op = 10; }
-        if (this.flag && this.op === 10) {
-            if (!this.currentR) { this.currentR = rect }
-            this.currentR.x2 = this.x
-            this.currentR.y1 = this.y
-            this.currentR.height = this.currentR.y2 - this.currentR.y1
-            this.currentR.width = this.currentR.x2 - this.currentR.x1
-        }
-    }
 
     reshow(x, y) {
         let allNotIn = 1;
         this.layers.forEach(item => {
-            this.ctx.beginPath();
             this.ctx.rect(item.x1, item.y1, item.width, item.height);
             this.ctx.strokeStyle = item.strokeStyle
-            if (x >= (item.x1 - 25 / this.scale) && x <= (item.x1 + 25 / this.scale) && y <= (item.y2 - 25 / this.scale) && y >= (item.y1 + 25 / this.scale)) {
-                this.resizeLeft(item);
-            } else if (x >= (item.x2 - 25 / this.scale) && x <= (item.x2 + 25 / this.scale) && y <= (item.y2 - 25 / this.scale) && y >= (item.y1 + 25 / this.scale)) {
-                this.resizeWidth(item);
-            } else if (y >= (item.y1 - 25 / this.scale) && y <= (item.y1 + 25 / this.scale) && x <= (item.x2 - 25 / this.scale) && x >= (item.x1 + 25 / this.scale)) {
-                this.resizeTop(item);
-            } else if (y >= (item.y2 - 25 / this.scale) && y <= (item.y2 + 25 / this.scale) && x <= (item.x2 - 25 / this.scale) && x >= (item.x1 + 25 / this.scale)) {
-                this.resizeHeight(item);
-            } else if (x >= (item.x1 - 25 / this.scale) && x <= (item.x1 + 25 / this.scale) && y <= (item.y1 + 25 / this.scale) && y >= (item.y1 - 25 / this.scale)) {
-                this.resizeLT(item);
-            } else if (x >= (item.x2 - 25 / this.scale) && x <= (item.x2 + 25 / this.scale) && y <= (item.y2 + 25 / this.scale) && y >= (item.y2 - 25 / this.scale)) {
-                this.resizeWH(item);
-            } else if (x >= (item.x1 - 25 / this.scale) && x <= (item.x1 + 25 / this.scale) && y <= (item.y2 + 25 / this.scale) && y >= (item.y2 - 25 / this.scale)) {
-                this.resizeLH(item);
-            } else if (x >= (item.x2 - 25 / this.scale) && x <= (item.x2 + 25 / this.scale) && y <= (item.y1 + 25 / this.scale) && y >= (item.y1 - 25 / this.scale)) {
-                this.resizeWT(item);
-            }
             if (this.ctx.isPointInPath(x * this.scale, y * this.scale)) {
                 this.render(item);
                 allNotIn = 0;
@@ -223,7 +116,7 @@ class drawRect {
     mousemove(e) {
         this.x = e.pageX - this.navigateWidth - this.canvasParentElement.offsetLeft + $("workbenchMain").scrollLeft;
         this.y = e.pageY - this.headerHeight - this.canvasParentElement.offsetTop + $("workbenchMain").scrollTop;
-        if (this.props.hasCropBox || this.props.displayTranslBox) return false
+        if (this.props.hasCropBox || this.props.displayTranslBox) return false;
         this.ctx.setLineDash([10]);
         this.ctx.clearRect(0, 0, this.elementWidth, this.elementHeight);
         if (this.flag && this.op === 1) {
@@ -233,6 +126,7 @@ class drawRect {
     }
 
     mouseup() {
+        if (this.props.hasCropBox || this.props.displayTranslBox) return false;
         this.posX = this.startx;
         this.posY = this.starty;
         this.cropW = this.x - this.startx;
@@ -262,14 +156,12 @@ class drawRect {
             }))
             const payload = {
                img: this.img,
-               left: this.posX,
-               top: this.posY,
-               width: this.cropW,
-               height: this.cropH
+               left: this.posX - 20,
+               top: this.posY - 20,
+               width: this.cropW + 40,
+               height: this.cropH + 40
             }
             this.props.createCropedBox(payload);
-        } else if (this.op >= 3) {
-            this.fixPosition(this.currentR)
         }
         this.clearLayers();
         this.currentR = null;

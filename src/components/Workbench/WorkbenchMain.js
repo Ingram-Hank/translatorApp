@@ -13,8 +13,7 @@ class WorkbenchMain extends React.PureComponent {
         this.canvas = React.createRef();
         this._drawCanvas = null;
         this.state = {
-            selectedImage: props.selectedImage,
-            selectedTranslImage: props.selectedTranslImage,
+            status: 0,
             elementWidth: 870,
             scale: props.scale
         };
@@ -22,45 +21,46 @@ class WorkbenchMain extends React.PureComponent {
 
     drawCanvasBackGround(prevProps) {
         const canvas = this.canvas.current;
-        const ctx = canvas.getContext('2d');
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
+        const {
+            selectedTranslImage, 
+            selectedImage, 
+            scale,
+            status,
+            imgHeight,
+            receivedImgSize,
+            displayTranslBox, 
+            startNumber, 
+            maskTextImgs = {}, 
+            createdTranslBox = {},
+            marquee,
+            clearPreMask,
+            clearPreTranslResult
+        } = this.props;
+        const { elementWidth } = this.state;
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        let imgSrc = this.state.selectedImage;
-        if (this.props.status && this.state.selectedTranslImage) {
-            imgSrc = this.state.selectedTranslImage;
+        img.setAttribute('crossOrigin','anonymous');
+        let imgSrc = selectedImage + "?t=.33333333";
+        if(status && selectedTranslImage) {
+            imgSrc = selectedTranslImage + "?t=.33333333";
         }
         img.src = imgSrc;
         img.onload = () => {
-            const currentElementWidth = this.state.elementWidth * this.props.scale;
-            const elementHeight = img.naturalHeight * (this.state.elementWidth / img.naturalWidth);
-            const currentElementHeight = elementHeight * this.props.scale;
+            const currentElementWidth = elementWidth * scale;
+            const elementHeight = img.naturalHeight * (elementWidth / img.naturalWidth);
+            const currentElementHeight = elementHeight * scale;
             img.width = currentElementWidth;
             img.height = currentElementHeight;
-            if (!this.props.imgHeight) {
-                this.props.receivedImgSize(currentElementWidth, currentElementHeight);
+            if (!imgHeight) {
+                receivedImgSize(currentElementWidth, currentElementHeight);
             }
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
-            const marquee = this.props.marquee;
             if (marquee === "rectangular" || !marquee) {
-                this._drawCanvas = new drawRect(canvas, this.props.scale, img, this.state.elementWidth, elementHeight, this.props);
+                this._drawCanvas = new drawRect(canvas, scale, img, elementWidth, elementHeight, this.props);
             }
-            upperCanvas.addEventListener("mouseleave", () => {
-                upperCanvas.addEventListener('mousedown', null);
-                upperCanvas.addEventListener('mousemove', null);
-                upperCanvas.addEventListener('mouseup', null);
-            });
-            upperCanvas.addEventListener("mouseenter", () => {
-                if (this._drawCanvas) {
-                    upperCanvas.addEventListener('mousedown', (e) => this._drawCanvas.mousedown(e));
-                    upperCanvas.addEventListener('mousemove', (e) => this._drawCanvas.mousemove(e));
-                    upperCanvas.addEventListener('mouseup', (e) => this._drawCanvas.mouseup(e));
-                }
-            });
-            const { displayTranslBox, startNumber, maskTextImgs = {}, createdTranslBox = {} } = this.props;
             let left, top, width, height, cropedImg;
             if (createdTranslBox[startNumber]) {
                 left = createdTranslBox[startNumber].left;
@@ -81,17 +81,16 @@ class WorkbenchMain extends React.PureComponent {
                 }
                 img.src = cropedImg;
                 img.onload = () => {
-                    ctx_upper.drawImage(img, left, top, width, height);
+                    ctx_upper.drawImage(img, 20, 20, width, height, left, top, width, height);
                 }
             }
-            if (prevProps.clearPreMask !== this.props.clearPreMask && this.props.clearPreMask) {
+            if (prevProps.clearPreMask !== clearPreMask && clearPreMask) {
                 ctx_upper.clearRect(left, top, width, height);
                 delete createdTranslBox[startNumber];
             }
 
-            if (prevProps.clearPreTranslResult !== this.props.clearPreTranslResult && this.props.clearPreTranslResult) {
+            if (prevProps.clearPreTranslResult !== clearPreTranslResult && clearPreTranslResult) {
                 ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight);
-                ctx.clearRect(0, 0, currentElementWidth, currentElementHeight);
             }
         }
         document.oncontextmenu = (e) => {
@@ -116,20 +115,17 @@ class WorkbenchMain extends React.PureComponent {
 
     componentDidUpdate(prevProps) {
         const {
-            selectedImage,
-            selectedTranslImage,
-            hasCropBox,
-            displayResultBox,
-            displayTranslBox,
-            selectedImg
+            hasCropedMarquee,
+            selectedImg,
+            status
         } = this.props;
-        if (prevProps.selectedImage !== selectedImage || prevProps.selectedTranslImage !== selectedTranslImage) {
+        if(prevProps.status !== status) {
             this.setState({
-                selectedImage: selectedImage,
-                selectedTranslImage: selectedTranslImage
+                ...this.state,
+                status
             })
         }
-        if (((!hasCropBox && displayResultBox) || !displayTranslBox) && this._drawCanvas) {
+        if (!hasCropedMarquee && this._drawCanvas) {
             this._drawCanvas.clearLayers();
         }
         if (selectedImg) {
@@ -214,6 +210,9 @@ class WorkbenchMain extends React.PureComponent {
             className: "upper-canvas",
             width: currentElementWidth,
             height: imgHeight,
+            onMouseDown: this._drawCanvas ? (e) => this._drawCanvas.mousedown(e) : null,
+            onMouseMove: this._drawCanvas ? (e) => this._drawCanvas.mousemove(e) : null,
+            onMouseUp: this._drawCanvas ? (e) => this._drawCanvas.mouseup(e) : null,
             style: {
                 cursor: (hasCropBox || displayTranslBox) ? "default" : "crosshair"
             }
