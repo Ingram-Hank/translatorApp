@@ -30,7 +30,7 @@ class TranslAreaBox extends React.PureComponent {
             img.src = currentMaskTextImgs[currentMaskTextImgs.length-1].cropedImg;
         }
         img.onload = () => {
-            context.drawImage(img, 0, 0, canvas.width, canvas.height)
+            context.drawImage(img, 20, 20, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
         };
         canvas.onmousedown = (e) => {
             this.setState({ flag: true });
@@ -66,7 +66,7 @@ class TranslAreaBox extends React.PureComponent {
                     canvas.onmousemove = null;
                     newCtx.globalCompositeOperation = 'destination-in';
                     img.onload = () => {
-                        newCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        newCtx.drawImage(img, 20, 20, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
                     }
                     
                     // canvas transform to img

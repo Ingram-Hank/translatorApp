@@ -48,10 +48,10 @@ class CropedBox extends React.PureComponent {
                 parseInt(this.cropH) / this.scaleY
             );
             const setCropImgParams = {
-                left: this.posX,
-                top: this.posY,
-                width: this.cropW,
-                height: this.cropH,
+                left: this.posX + 20,
+                top: this.posY + 20,
+                width: this.cropW - 40,
+                height: this.cropH - 40,
                 cropedImg
             };
             this.props.handlerCancelCrop();
@@ -154,10 +154,10 @@ class CropedBox extends React.PureComponent {
         const {contentText, handlerCancelCrop, cropedBoxParams} = this.props;
         const {left, top, width, height} = cropedBoxParams;
         const cropBoxStyle = {
-            left: left + "px",
-            top: top + "px",
-            width: width + "px",
-            height: height + "px"
+            left: left + 20 + "px",
+            top: top + 20 + "px",
+            width: width - 40 + "px",
+            height: height -40 + "px"
         }
         return (
             <div className="cropBox" id="cropBox" style={cropBoxStyle} data-html2canvas-ignore>

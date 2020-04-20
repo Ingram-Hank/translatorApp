@@ -16,7 +16,8 @@ import {
     setIsToNextChapter,
     receivedOrderNo,
     deleteCropedMarquee,
-    getFontsettings
+    getFontsettings,
+    setStopClearPreResultContainer
 } from './ui';
 import services from '../services';
 import {
@@ -41,12 +42,12 @@ const imagesReducer = (state = {}, action) => {
                 remark
             })
         case actions.RECEIVED_SELECTED_IMG:
-            const { selectedImage, selectedTranslImage, feedbackMsg, status } = action.payload;
+            const { imgSrc, feedbackMsg, status, imgTgt } = action.payload;
             return Object.assign({}, state, {
-                selectedImage: selectedImage,
-                selectedTranslImage: selectedTranslImage,
+                selectedImage: imgSrc,
                 currentTip: feedbackMsg,
-                status: status
+                selectedTranslImage: imgTgt,
+                status
             })
         case actions.RECEIVED_CROPED_IMG:
             return Object.assign({}, state, { cropedImage: action.payload })
@@ -331,24 +332,25 @@ export const generateCanvasImg = () => {
         backgroundImg.width = imgWidth;
         backgroundImg.height = imgHeight;
         backgroundImg.crossOrigin = 'anonymous';
-        backgroundImg.src = status ? selectedTranslImage : selectedImage;
+        backgroundImg.src = status && selectedTranslImage ? selectedTranslImage : selectedImage;
         backgroundImg.onload = () => {
             backgroundLayer.appendChild(backgroundImg);
             canvasContainer.insertBefore(backgroundLayer, canvasContainer.childNodes[0]);
-        };
-        if(Object.keys(maskTextImgs).length) {
-            const maskImgFrag = document.createElement('div');
-            maskImgFrag.style.position = 'absolute';
-            maskImgFrag.setAttribute("class", "addedImg");
-            const maskImg = new Image();
-            maskImg.width = imgWidth;
-            maskImg.height = imgHeight;
-            maskImg.src = uppercanvasImgURL;
-            maskImg.onload=()=> {
-                maskImgFrag.appendChild(maskImg);
-                insertAfter(maskImgFrag, backgroundLayer);
+            if(Object.keys(maskTextImgs).length) {
+                const maskImgFrag = document.createElement('div');
+                maskImgFrag.style.position = 'absolute';
+                maskImgFrag.setAttribute("class", "addedImg");
+                const maskImg = new Image();
+                maskImg.width = imgWidth;
+                maskImg.height = imgHeight;
+                maskImg.src = uppercanvasImgURL;
+                maskImg.onload=()=> {
+                    maskImgFrag.appendChild(maskImg);
+                    insertAfter(maskImgFrag, backgroundLayer);
+                }
             }
-        }
+        };
+        
     }
 };
 
@@ -375,7 +377,7 @@ export const setResultImgURL = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 1000)
+        }, 2000)
     }
 };
 
@@ -414,11 +416,11 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
             dispatch(receivedCurrentSelectedItem(selectedImg));
             dispatch(receivedCurrenttranslationOrderId(translationOrderId));
         } else {
-            dispatch(handlerSelectImage(selectedImg));
-            dispatch(selecteCanvas(translationOrderId));
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
+            dispatch(handlerSelectImage(selectedImg));
+            dispatch(selecteCanvas(translationOrderId));
         }
     }
 };
@@ -529,13 +531,8 @@ export const selecteCanvas = (id) => {
         dispatch(uiloadingStart());
         dispatch(receivedTranslationOrderId(id));
         services.getLargeImageData(id).then(({ data }) => {
-            const { imgSrc, feedbackMsg, status, imgTgt } = data.data;
-            dispatch(receiveSelectedImg({
-                selectedImage: imgSrc,
-                selectedTranslImage: imgTgt,
-                feedbackMsg,
-                status
-            }));
+            dispatch(receiveSelectedImg(data.data));
+            dispatch(setStopClearPreResultContainer());
             dispatch(uiloadingComplete());
         }).catch(err => {
             dispatch(uiloadingComplete());
@@ -716,10 +713,10 @@ export const getORCText = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { startNumber, switchAutoTranslate = true } = state.ui;
-        const { resultLayers = [] } = state.images;
+        const { resultLayers = [], targetLang} = state.images;
         const imgBase64 = state.images.cropedImage.src;
         dispatch(uiloadingStart());
-        services.getORC({ imgBase64 }).then(({ data }) => {
+        services.getORC({ imgBase64, targetLang }).then(({ data }) => {
             const originTextArray = data.data;
             if (originTextArray.length) {
                 const originText = originTextArray.map((item) => {
@@ -926,7 +923,7 @@ export const setSaveData = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 500);
+        }, 2000);
 
     }
 };
@@ -976,9 +973,9 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
-        // const orderNo = getURLParamsString('o');
+        const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        const orderNo = 672004019046860;
+        // const orderNo = 672004139222268;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({ comicTranslationOrderId }));

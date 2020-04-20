@@ -12,7 +12,7 @@ export default  {
     }
   },
   getLargeImageData(comicTranslationId){
-    return http.get("/comic/getJpg/" + comicTranslationId)
+    return http.get("/comic/getJpg/" + comicTranslationId + "?t=" + new Date())
   },
   saveTranslation(payload) {
     return http.post("/comic/saveTranslation/", payload)

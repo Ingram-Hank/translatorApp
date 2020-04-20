@@ -10,7 +10,6 @@ import {
     closeModal,
     setStartNumber,
     getFontsettings,
-    setStopClearPreResultContainer,
     handlerSelectImage,
     setGlobalFontFamily,
     setWholeFontSize,
@@ -252,7 +251,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(createOriginMask(data));
             dispatch(createTranslArea());
             dispatch(displayTranslAreaBox());
-            dispatch(setStopClearPreResultContainer());
             dispatch(setNotClearPreMaskLayer())
         },
         createNewCropArea: (displayTranslBox) => {
