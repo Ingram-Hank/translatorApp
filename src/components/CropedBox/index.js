@@ -4,14 +4,10 @@ import { $, getCss } from '../../utilities';
 class CropedBox extends React.PureComponent {
     constructor(props) {
         super(props);
-        const {img, left, top, width, height} = props.cropedBoxParams;
+        const { img } = props.cropedBoxParams;
         this.scaleX = img.width / img.naturalWidth;
         this.scaleY = img.height / img.naturalHeight;
         this.img = img;
-        this.posX = left;
-        this.posY = top;
-        this.cropW = width;
-        this.cropH = height;
         this.params = {
             left: 0,
             top: 0,
@@ -24,9 +20,7 @@ class CropedBox extends React.PureComponent {
         };
     }
 
-
     componentDidMount() {
-        
         //bind drag
         this.startDrag($("zxxDragBg"), $("cropBox"), "drag");
         //bind pull
@@ -38,28 +32,6 @@ class CropedBox extends React.PureComponent {
         this.startDrag($("dragBotCenter"), $("cropBox"), "s");
         this.startDrag($("dragRightCenter"), $("cropBox"), "e");
         this.startDrag($("dragLeftCenter"), $("cropBox"), "w");
-
-        $("cropBoxConfirm").addEventListener("click", () => {
-            const cropedImg = this.cropImage(
-                this.img,
-                this.posX / this.scaleX,
-                this.posY / this.scaleY,
-                parseInt(this.cropW) / this.scaleX,
-                parseInt(this.cropH) / this.scaleY
-            );
-            const setCropImgParams = {
-                left: this.posX + 20,
-                top: this.posY + 20,
-                width: this.cropW - 40,
-                height: this.cropH - 40,
-                cropedImg
-            };
-            this.props.handlerCancelCrop();
-            const createdTranslBox = this.props.createdTranslBox || {};
-            const createdTranslBoxNumber = Object.keys(createdTranslBox).length || 0;
-            this.props.createStartNumber(createdTranslBoxNumber + 1)
-            this.props.setCropImg(setCropImgParams);
-        })
     }
     
     startDrag(point, target, kind) {
@@ -158,7 +130,33 @@ class CropedBox extends React.PureComponent {
             top: top + 20 + "px",
             width: width - 40 + "px",
             height: height -40 + "px"
-        }
+        };
+        const comfirmProps = {
+            className: "ok",
+            title: "confirm",
+            id: "cropBoxConfirm",
+            onClick: () => {
+                const cropedImg = this.cropImage(
+                    this.img,
+                    left / this.scaleX,
+                    top / this.scaleY,
+                    parseInt(width) / this.scaleX,
+                    parseInt(height) / this.scaleY
+                );
+                const setCropImgParams = {
+                    left: left + 20,
+                    top: top + 20,
+                    width: width - 40,
+                    height: height - 40,
+                    cropedImg
+                };
+                handlerCancelCrop();
+                const createdTranslBox = this.props.createdTranslBox || {};
+                const createdTranslBoxNumber = Object.keys(createdTranslBox).length || 0;
+                this.props.createStartNumber(createdTranslBoxNumber + 1)
+                this.props.setCropImg(setCropImgParams);
+            }
+        };
         return (
             <div className="cropBox" id="cropBox" style={cropBoxStyle} data-html2canvas-ignore>
                 <div id="cropBoxCancel" className="cancel" title="delete" onClick={handlerCancelCrop}>
@@ -168,7 +166,7 @@ class CropedBox extends React.PureComponent {
                     <div className="content-tip">
                         {contentText.cropBoxHelpText}
                     </div>
-                    <div className="ok" title="confirm" id="cropBoxConfirm"> 
+                    <div {...comfirmProps}> 
                         <span className="glyphicon glyphicon-ok"></span>
                     </div>
                 </div>
