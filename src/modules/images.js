@@ -107,6 +107,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { resultImgURL: "" })
         case actions.IMGAGES_RECEIVED_CREATED_CROPED_BOX_PARAMS:
             return Object.assign({}, state, { cropedBoxParams: action.payload })
+        case actions.IMGAGES_CLEAR_CREATED_CROPED_BOX_PARAMS:
+            return Object.assign({}, state, { cropedBoxParams: {} })
         case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
             return Object.assign({}, state, { feedMsg: action.payload })
         case actions.IMAGES_DISABLED_SWITCH_CHAPTER:
@@ -278,6 +280,10 @@ export const clearResultImgURL = () => ({
 export const receivedCreateCropedBoxedParams = (payload) => ({
     type: actions.IMGAGES_RECEIVED_CREATED_CROPED_BOX_PARAMS,
     payload
+});
+
+export const clearCropedBoxedParams = () => ({
+    type: actions.IMGAGES_CLEAR_CREATED_CROPED_BOX_PARAMS
 });
 
 export const disabledSwitchChapter = () => ({
@@ -975,7 +981,7 @@ export const initialTranslPage = () => {
         const { isBackToTranslPage } = state.ui;
         const orderNo = getURLParamsString('o');
         const comicTranslationOrderId = getURLParamsString('t');
-        // const orderNo = 672004139222268;
+        // const orderNo = 672004167809077;
         dispatch(receivedOrderNo(orderNo));
         if (!isBackToTranslPage) {
             dispatch(getTranslImages({ comicTranslationOrderId }));

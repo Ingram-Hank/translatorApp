@@ -62,13 +62,6 @@ class WorkbenchMain extends React.PureComponent {
                 this._drawCanvas = new drawRect(canvas, scale, img, elementWidth, elementHeight, this.props);
             }
             let left, top, width, height, cropedImg;
-            if (createdTranslBox[startNumber]) {
-                left = createdTranslBox[startNumber].left;
-                top = createdTranslBox[startNumber].top;
-                width = createdTranslBox[startNumber].width;
-                height = createdTranslBox[startNumber].height;
-                cropedImg = createdTranslBox[startNumber].cropedImg;
-            }
             if (displayTranslBox && Object.keys(maskTextImgs).length) {
                 const currentMaskImg = maskTextImgs[startNumber] || [];
                 const img = new Image();
@@ -83,6 +76,12 @@ class WorkbenchMain extends React.PureComponent {
                 img.onload = () => {
                     ctx_upper.drawImage(img, 20, 20, width, height, left, top, width, height);
                 }
+            }else if(createdTranslBox[startNumber]) {
+                left = createdTranslBox[startNumber].left;
+                top = createdTranslBox[startNumber].top;
+                width = createdTranslBox[startNumber].width;
+                height = createdTranslBox[startNumber].height;
+                cropedImg = createdTranslBox[startNumber].cropedImg;
             }
             if (prevProps.clearPreMask !== clearPreMask && clearPreMask) {
                 ctx_upper.clearRect(left, top, width, height);

@@ -48,7 +48,8 @@ import {
     hiddenResultBox,
     clearPreMaskLayer,
     setNotClearPreMaskLayer,
-    receivedCreateCropedBoxedParams
+    receivedCreateCropedBoxedParams,
+    clearCropedBoxedParams
 } from '../modules/images';
 import {
     selectFontFamily,
@@ -313,7 +314,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(createCropedMarquee());
         },
         handlerCancelCrop: () => {
-            dispatch(deleteCropedMarquee())
+            dispatch(deleteCropedMarquee());
+            dispatch(clearCropedBoxedParams());
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {
