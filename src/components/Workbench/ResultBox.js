@@ -99,6 +99,24 @@ function ResultBox(props) {
                     outline_size,
                     shadow_size
                 } = font;
+                let textShadow = '';
+                if(outline_size && !shadow_size) {
+                    textShadow = `
+                        ${outline_color} ${outline_size}px 0 0,
+                        ${outline_color} 0 ${outline_size}px 0,
+                        ${outline_color} -${outline_size}px 0 0,
+                        ${outline_color} 0 -${outline_size}px 0
+                    `
+                }else if(!outline_size && shadow_size){
+                    textShadow = `${shadow_size}px ${shadow_size}px ${shadow_color}`
+                }else if(outline_size && shadow_size) {
+                    textShadow = `
+                        ${shadow_color} ${shadow_size}px ${shadow_size}px 0,
+                        ${shadow_color} ${shadow_size}px ${shadow_size}px 0,
+                        ${outline_color} -${outline_size}px 0 0,
+                        ${outline_color} 0 -${outline_size}px 0
+                    `
+                }
                 const resultBoxProps = {
                     id: `${key}_resultContainer`,
                     className: "resultContainer",
@@ -118,8 +136,7 @@ function ResultBox(props) {
                         lineHeight: lineHeight,
                         writingMode: font_direction === "horizontal" ? "horizontal-tb" : "vertical-lr",
                         textAlign: text_align,
-                        WebkitTextStroke: `${outline_size}px ${outline_color}`,
-                        textShadow: `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`
+                        textShadow
                     }
                 };
                 return (

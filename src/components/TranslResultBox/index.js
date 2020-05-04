@@ -161,15 +161,7 @@ class TranslResultBox extends React.PureComponent {
             translatedText,
             font = {},
             contentText,
-            openModal,
-            wholeFontSize,
-            wholeFontColor,
-            wholeFontTextAlign,
-            wholeFontLineHeight,
-            globalHasFontItalic, 
-            globalHasFontWeight,
-            globalFontDirection,
-            globalFontTextCase
+            openModal
         } = this.props;
         const { left, top, width, height, transform} = data;
         const translResultBoxContainerStyle = {
@@ -181,19 +173,37 @@ class TranslResultBox extends React.PureComponent {
         };
         const {
             font_family = "CCWildWords",
-            font_size = wholeFontSize || 40,
-            font_color = wholeFontColor || "black",
-            hasFontItalic = globalHasFontItalic,
-            hasFontWeight = globalHasFontWeight,
-            lineHeight = wholeFontLineHeight || 1.5,
-            text_align = wholeFontTextAlign || "center",
-            text_case = globalFontTextCase || "uppercase",
-            font_direction = globalFontDirection || "horizontal",
+            font_size = 40,
+            font_color = "black",
+            hasFontItalic,
+            hasFontWeight,
+            lineHeight = 1.5,
+            text_align = "center",
+            text_case = "uppercase",
+            font_direction = "horizontal",
             outline_color,
             shadow_color,
             outline_size,
             shadow_size
         } = font;
+        let textShadow = '';
+        if(outline_size && !shadow_size) {
+            textShadow = `
+                ${outline_color} ${outline_size}px 0 0,
+                ${outline_color} 0 ${outline_size}px 0,
+                ${outline_color} -${outline_size}px 0 0,
+                ${outline_color} 0 -${outline_size}px 0
+            `
+        }else if(!outline_size && shadow_size){
+            textShadow = `${shadow_size}px ${shadow_size}px ${shadow_color}`
+        }else if(outline_size && shadow_size) {
+            textShadow = `
+                ${shadow_color} ${shadow_size}px ${shadow_size}px 0,
+                ${shadow_color} ${shadow_size}px ${shadow_size}px 0,
+                ${outline_color} -${outline_size}px 0 0,
+                ${outline_color} 0 -${outline_size}px 0
+            `
+        }
         const moveBoxProps = {
             id: "translMove",
             className: "move",
@@ -210,8 +220,7 @@ class TranslResultBox extends React.PureComponent {
                 textAlign: text_align,
                 textTransform: text_case,
                 writingMode: font_direction === 'horizontal' ? "horizontal-tb" : "vertical-lr",
-                WebkitTextStroke: `${outline_size}px ${outline_color}`,
-                textShadow: `${shadow_size}px ${shadow_size}px ${shadow_size}px ${shadow_color}`
+                textShadow
             }
         };
         return (

@@ -187,7 +187,9 @@ class WorkbenchMain extends React.PureComponent {
             fonts,
             wholeFonFamily,
             defaultFontFamily,
-            maskColorSettings
+            maskColorSettings,
+            updatedMaskBackground,
+            updateBackground
         } = this.props;
         const { elementWidth } = this.state;
         const currentElementWidth = elementWidth * scale;
@@ -253,6 +255,8 @@ class WorkbenchMain extends React.PureComponent {
             displayTranslBox,
             startNumber,
             maskColorSettings,
+            updatedMaskBackground,
+            updateBackground,
             scale: 1
         };
 

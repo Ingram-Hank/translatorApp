@@ -21,7 +21,8 @@ import {
     setGlobalFontDirection,
     setGlobalFontTextCase,
     createCropedMarquee,
-    deleteCropedMarquee
+    deleteCropedMarquee,
+    updateMaskBackgroundComplete
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -123,7 +124,8 @@ const mapStateToProps = (state) => {
         globalFontTextCase,
         hasCropedMarquee,
         clearCropBox,
-        isTextEdit
+        isTextEdit,
+        updateBackground
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -222,7 +224,8 @@ const mapStateToProps = (state) => {
         cropedBoxParams,
         clearCropBox,
         isTextEdit,
-        maskColorSettings
+        maskColorSettings,
+        updateBackground
     }
 }
 
@@ -316,6 +319,9 @@ const mapDispatchToProps = (dispatch) => {
         handlerCancelCrop: () => {
             dispatch(deleteCropedMarquee());
             dispatch(clearCropedBoxedParams());
+        },
+        updatedMaskBackground: ()=> {
+            dispatch(updateMaskBackgroundComplete())
         },
         fontSettings: {
             handlerSelectFontFamily: payload => {

@@ -4,26 +4,21 @@ import InpaintBox from './InpaintBox';
 class TranslAreaBox extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.canvas = React.createRef();
         this.state = {
-            flag: false
+            flag: false,
+            updateFlag: false
         }
     }
 
-    doodling() {
-        const { 
+    drawBackground() {
+        const {
+            updatedMaskBackground,
             currentMaskTextImgs = [],
-            maskColorSettings = {},
-            createMaskLayer,
             startNumber,
-            data,
-            scale,
-            brush
-         } = this.props;
+            data
+        } = this.props;
         const canvas = document.getElementById(`maskCanvas_${startNumber}`);
         const context = canvas.getContext("2d");
-        const { brushWidth = 10 } = brush;
-        const brush_Width = brushWidth * scale;
         let img = data.cropedImg;
         if (currentMaskTextImgs.length) {
             img = new Image();
@@ -32,11 +27,27 @@ class TranslAreaBox extends React.PureComponent {
         img.onload = () => {
             context.drawImage(img, 20, 20, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
         };
+        updatedMaskBackground();
+        this.setState({ ...this.state, updateFlag: false })
+    }
+
+    doodling() {
+        const {
+            maskColorSettings = {},
+            createMaskLayer,
+            startNumber,
+            scale,
+            brush
+         } = this.props;
+        const canvas = document.getElementById(`maskCanvas_${startNumber}`);
+        const context = canvas.getContext("2d");
+        const { brushWidth = 10 } = brush;
+        const brush_Width = brushWidth * scale;
         canvas.onmousedown = (e) => {
-            this.setState({ flag: true });
+            this.setState({ ...this.state, flag: true });
             const newCanvas = document.createElement('canvas');
-            newCanvas.width = canvas.width;
-            newCanvas.height = canvas.height;
+            newCanvas.width = canvas.width + 40;
+            newCanvas.height = canvas.height + 40;
             const newCtx = newCanvas.getContext('2d');
             canvas.onmousemove = (e) => {
                 const x = e.offsetX;
@@ -50,36 +61,34 @@ class TranslAreaBox extends React.PureComponent {
                 context.restore();
 
                 newCtx.save();
+                newCtx.beginPath();
+                newCtx.arc(x + 20, y + 20, brush_Width, 0, 2 * Math.PI);
+                newCtx.closePath();
                 if(maskColorSettings.hasOwnProperty("backgroundColor")) {
                     newCtx.rect(0, 0, newCanvas.width, newCanvas.height);
                     newCtx.fillStyle= maskColorSettings.backgroundColor;
                     newCtx.fill();
+                }else {
+                    newCtx.fillStyle = maskColorSettings.frontColor || 'red';
+                    newCtx.fill();
                 }
-                newCtx.beginPath();
-                newCtx.arc(x, y, brush_Width, 0, 2 * Math.PI);
-                newCtx.closePath();
-                newCtx.fillStyle = maskColorSettings.frontColor || 'red';
-                newCtx.fill();
-
                 canvas.onmouseup = () => {
-                    this.setState({ flag: false });
                     canvas.onmousemove = null;
-                    newCtx.globalCompositeOperation = 'destination-in';
-                    img.onload = () => {
-                        newCtx.drawImage(img, 20, 20, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-                    }
-                    
-                    // canvas transform to img
                     const newImage = new Image();
                     newImage.src = newCanvas.toDataURL("image/png");
                     createMaskLayer(newImage);
+                    this.setState({ ...this.state, flag: false });
                 }
             }
         }
         
     }
-    componentDidUpdate() {
-        this.doodling()
+    componentDidUpdate(prevProps) {
+        this.drawBackground();
+        this.doodling();
+        if(prevProps.updateBackground !== this.props.updateBackground) {
+            this.setState({ ...this.state, updateFlag: true })
+        }
     }
     componentDidMount() {
         this.doodling()

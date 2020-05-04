@@ -17,7 +17,9 @@ import {
     receivedOrderNo,
     deleteCropedMarquee,
     getFontsettings,
-    setStopClearPreResultContainer
+    setStopClearPreResultContainer,
+    updateMaskBackgroundStart,
+    handlerClearUiFont
 } from './ui';
 import services from '../services';
 import {
@@ -383,7 +385,7 @@ export const setResultImgURL = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 2000)
+        }, 3000)
     }
 };
 
@@ -425,6 +427,7 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
+            dispatch(handlerClearUiFont());
             dispatch(handlerSelectImage(selectedImg));
             dispatch(selecteCanvas(translationOrderId));
         }
@@ -581,6 +584,7 @@ export const setClearText = (payload) => {
             };
             maskTextImgs[startNumber].push(layerParams);
             dispatch(receivedMaskImg(maskTextImgs));
+            dispatch(updateMaskBackgroundStart())
             dispatch(uiloadingComplete());
         }).catch(error => {
             console.error(error);
@@ -929,7 +933,7 @@ export const setSaveData = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 2000);
+        }, 3000);
 
     }
 };

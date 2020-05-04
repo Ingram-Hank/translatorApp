@@ -9,23 +9,21 @@ import ColorAbsorb from './ColorAbsorb.js';
 
 function TranslpopUp({ contentText, cropedImage, createdTranslBox, startNumber, correctTransl, 
     hasCorrect = false, originORCText, translatedText, hanlerChangeORCText, handlerChangeTranslatedText,
-    handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText, wholeFontSize, 
-    wholeFontColor, wholeFontTextAlign, wholeFontLineHeight, globalHasFontItalic, globalHasFontWeight, 
-    globalFontDirection, globalFontTextCase }) {
+    handerTranslText, handlerCompleteTranslate, fontSettings, font, tabToClearText }) {
     const {
         font_family = "CCWildWords",
-        font_size = wholeFontSize || 40,
-        font_color = wholeFontColor || "black",
-        hasFontItalic = globalHasFontItalic,
-        hasFontWeight = globalHasFontWeight,
-        text_align = wholeFontTextAlign || "center",
-        text_case = globalFontTextCase || "uppercase",
-        font_direction = globalFontDirection || "horizontal",
+        font_size = 40,
+        font_color = "black",
+        hasFontItalic,
+        hasFontWeight,
+        text_align = "center",
+        text_case = "uppercase",
+        font_direction = "horizontal",
         outline_color,
         shadow_color,
         outline_size = 0,
         shadow_size = 0,
-        lineHeight = wholeFontLineHeight || 1.5,
+        lineHeight = 1.5,
         popUp
     } = font;
     
