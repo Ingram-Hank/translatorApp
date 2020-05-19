@@ -17,7 +17,11 @@ import {
     receivedOrderNo,
     deleteCropedMarquee,
     getFontsettings,
-    setStopClearPreResultContainer
+    setStopClearPreResultContainer,
+    updateMaskBackgroundStart,
+    handlerClearUiFont,
+    updateSelectedTranslImage,
+    clearSelectedTranslImage
 } from './ui';
 import services from '../services';
 import {
@@ -65,6 +69,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { createdTranslBox: action.payload })
         case actions.IMAGES_CREATE_RESULT_LAYER:
             return Object.assign({}, state, { resultLayers: action.payload })
+        case actions.IMAGES_RECEIVED_TRANSLATEDHTML:
+            return Object.assign({}, state, { resultHtmlLayers: action.payload })
         case actions.IMAGES_RECEIVED_TRANSLATION_ORDERID:
             return Object.assign({}, state, { comicTranslationOrderId: action.payload })
         case actions.IMAGES_RECEIVED_IMG_HEIGHT:
@@ -93,6 +99,8 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { maskTextImgs: {} })
         case actions.IMAGES_CLEAR_RESULT_LAYERS:
             return Object.assign({}, state, { resultLayers: [] })
+        case actions.IMAGES_CLEAR_RESULT_HTML_LAYERS:
+            return Object.assign({}, state, { resultHtmlLayers: [] })
         case actions.IMAGES_CLEAR_RESULT_BOX_STYLE_PARAMS:
             return Object.assign({}, state, { resultBoxStyleParams: {} })
         case actions.IMAGES_CREATE_RESULT_BOX:
@@ -203,6 +211,10 @@ export const clearResultLayers = () => ({
     type: actions.IMAGES_CLEAR_RESULT_LAYERS
 });
 
+export const clearResultHtmlLayers = () => ({
+    type: actions.IMAGES_CLEAR_RESULT_HTML_LAYERS
+});
+
 export const clearResulBoxStyleParams = () => ({
     type: actions.IMAGES_CLEAR_RESULT_BOX_STYLE_PARAMS
 });
@@ -245,6 +257,11 @@ export const clearSelectedImage = () => ({
 
 export const createResultLayer = (payload) => ({
     type: actions.IMAGES_CREATE_RESULT_LAYER,
+    payload
+});
+
+export const receivedTranslatedHtml = (payload) => ({
+    type: actions.IMAGES_RECEIVED_TRANSLATEDHTML,
     payload
 });
 
@@ -323,7 +340,15 @@ export const clearPreAddedImgLayer = () => {
         }
     }
 }
-
+export const clearPreResultContainer = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const { clearPreTranslResult } = state.ui;
+        if(clearPreTranslResult) {
+            dispatch(setStopClearPreResultContainer());
+        }
+    }
+};
 export const generateCanvasImg = () => {
     return (dispatch, getState) => {
         const state = getState();
@@ -332,6 +357,9 @@ export const generateCanvasImg = () => {
         const uppercanvas = document.getElementById('upper-canvas');
         const uppercanvasImgURL = uppercanvas.toDataURL("image/png");
         const backgroundLayer = document.createElement('div');
+        window.pageYOffset = 0;
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
         backgroundLayer.style.position = 'absolute';
         backgroundLayer.setAttribute("class", "addedImg");
         const backgroundImg = new Image();
@@ -366,8 +394,18 @@ export const setResultImgURL = () => {
         const { imgWidth, imgHeight} = state.images;
         dispatch(uiloadingStart());
         dispatch(generateCanvasImg());
-        const canvasContainer = document.getElementById('canvasContainer');
         setTimeout(()=> {
+            const canvasContainer = document.getElementById('canvasContainer').cloneNode(true);
+            canvasContainer.style = {
+                backgroundColor: "white",
+                position: "absolute",
+                top: "30px",
+                zIndex: -1,
+                width: imgWidth,
+                height: imgHeight
+            }
+            
+            document.getElementById('inner-wrap').appendChild(canvasContainer);
             html2canvas(canvasContainer, {
                 width: imgWidth,
                 height: imgHeight,
@@ -375,6 +413,7 @@ export const setResultImgURL = () => {
                 useCORS: true,
                 logging: true
             }).then((canvas) => {
+                canvasContainer.parentNode.removeChild(canvasContainer);
                 const imgURL = canvas.toDataURL("image/jpeg", 0.8);
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(receiveResultCanvas(canvas));
@@ -383,7 +422,7 @@ export const setResultImgURL = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 2000)
+        }, 3000)
     }
 };
 
@@ -398,18 +437,19 @@ export const abandonSaveAction = () => {
         }
         if (isToLastChapter) {
             dispatch(minusChapter());
-            dispatch(handlerSelectImage(null));
+            dispatch(handlerSelectImage(1));
             dispatch(clearSelectedImage());
         }
         if (isToNextChapter) {
             dispatch(plusChapter());
-            dispatch(handlerSelectImage(null));
+            dispatch(handlerSelectImage(1));
             dispatch(clearSelectedImage());
         }
         dispatch(setStartNumber(0));
         dispatch(setClearCropox());
         dispatch(setClearPreTranslResult());
         dispatch(deleteCropedMarquee());
+        dispatch(updateSelectedTranslImage());
     }
 };
 
@@ -425,8 +465,10 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
+            dispatch(handlerClearUiFont());
             dispatch(handlerSelectImage(selectedImg));
             dispatch(selecteCanvas(translationOrderId));
+            dispatch(updateSelectedTranslImage());
         }
     }
 };
@@ -498,7 +540,8 @@ export const getTranslImages = (payload) => {
                 comicChapterId,
                 targetLang = '',
                 comicListId,
-                remark = ''
+                remark = '',
+                translatingJpgId
             } = imgData;
             dispatch(receivedImages({
                 images: comicJpgs,
@@ -508,12 +551,18 @@ export const getTranslImages = (payload) => {
                 targetLang,
                 comicListId,
                 comicChapterId,
-                remark
+                remark,
+                translatingJpgId
             }));
-            const defaultTranslationOrderId = comicJpgs[0].comicTranslationOrderId;
             dispatch(initialChapter());
             dispatch(isNotBackToTransl());
-            dispatch(handlerSelectItem(1, defaultTranslationOrderId));
+            let selectedImg = 1;
+            comicJpgs.forEach((item, index) => {
+                if(item.comicTranslationOrderId === translatingJpgId) {
+                    selectedImg = index + 1;
+                }
+            })
+            if(selectedImg) dispatch(handlerSelectItem(selectedImg, translatingJpgId));
         }).catch(err => {
             dispatch(uiloadingComplete());
             console.error(err);
@@ -538,7 +587,7 @@ export const selecteCanvas = (id) => {
         dispatch(receivedTranslationOrderId(id));
         services.getLargeImageData(id).then(({ data }) => {
             dispatch(receiveSelectedImg(data.data));
-            dispatch(setStopClearPreResultContainer());
+            dispatch(clearPreResultContainer());
             dispatch(uiloadingComplete());
         }).catch(err => {
             dispatch(uiloadingComplete());
@@ -552,6 +601,7 @@ export const setClearCropox = () => {
         dispatch(clearCreatedTranslBox());
         dispatch(clearMaskTextImgs());
         dispatch(clearResultLayers());
+        dispatch(clearResultHtmlLayers());
         dispatch(clearResulBoxStyleParams());
         dispatch(clearPreCropArea());
     }
@@ -560,11 +610,11 @@ export const setClearText = (payload) => {
     return (dispatch, getState) => {
         const state = getState();
         const { startNumber = 0 } = state.ui;
-        const { maskTextImgs = {}, createdTranslBox } = state.images;
+        let { maskTextImgs = {}, createdTranslBox } = state.images;
         const { left, top, width, height, cropedImg } = createdTranslBox[startNumber];
         let comicSrc = cropedImg.src;
-        if (Object.keys(maskTextImgs).length) {
-            const currentMaskTextImgs = maskTextImgs[startNumber] || [];
+        const currentMaskTextImgs = maskTextImgs[startNumber] || [];
+        if (currentMaskTextImgs.length) {
             comicSrc = currentMaskTextImgs[currentMaskTextImgs.length - 1].cropedImg
         }
         const comicMask = payload.src;
@@ -579,8 +629,13 @@ export const setClearText = (payload) => {
                 width,
                 height
             };
-            maskTextImgs[startNumber].push(layerParams);
+            if(currentMaskTextImgs.length) {
+                maskTextImgs[startNumber].push(layerParams)
+            }else {
+                maskTextImgs[startNumber] = [layerParams]
+            }
             dispatch(receivedMaskImg(maskTextImgs));
+            dispatch(updateMaskBackgroundStart())
             dispatch(uiloadingComplete());
         }).catch(error => {
             console.error(error);
@@ -616,12 +671,13 @@ export const handlerToLastChapter = () => {
             dispatch(openModal("promteSave"));
             dispatch(setIsToLastChapter());
         } else {
+            dispatch(handlerSelectImage(1));
             dispatch(minusChapter());
-            dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
+            dispatch(updateSelectedTranslImage());
         }
     }
 }
@@ -634,12 +690,13 @@ export const handlerToNextChapter = () => {
             dispatch(openModal("promteSave"));
             dispatch(setIsToNextChapter());
         } else {
+            dispatch(handlerSelectImage(1));
             dispatch(plusChapter());
-            dispatch(handlerSelectImage(null));
             dispatch(clearSelectedImage());
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
+            dispatch(updateSelectedTranslImage());
         }
     }
 }
@@ -831,6 +888,41 @@ export const updateOriginalText = (originalText) => {
     }
 }
 
+export const updatedTranslatedHtml = (translatedHtml) => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const {startNumber} = state.ui;
+        const {resultHtmlLayers = []} = state.images;
+        const resultHtmlLayersToObject = mapToObject(resultHtmlLayers, 'index');
+        const currenHtmltLayer = resultHtmlLayersToObject[startNumber] || {};
+        if (Object.keys(currenHtmltLayer).length) {
+            resultHtmlLayers.forEach((item) => {
+                if (item.index === startNumber) {
+                    item.translatedHtml = translatedHtml
+                }
+            })
+        } else {
+            resultHtmlLayers.push({
+                index: startNumber,
+                translatedHtml: translatedHtml
+            })
+        }
+        if(resultHtmlLayers.length) {
+            resultHtmlLayers.forEach( item => {
+                if(item.index === startNumber) {
+                    item.translatedHtml = translatedHtml
+                }
+            })
+        }else {
+            resultHtmlLayers.push({
+                index: startNumber,
+                translatedHtml: translatedHtml
+            })
+        }
+        dispatch(receivedTranslatedHtml(resultHtmlLayers));
+    }
+}
+
 export const updateTranslText = (translText) => {
     return (dispatch, getState) => {
         const state = getState();
@@ -913,15 +1005,27 @@ export const setSaveData = () => {
         const { imgWidth, imgHeight } = state.images;
         dispatch(uiloadingStart());
         dispatch(generateCanvasImg());
-        const canvasContainer = document.getElementById('canvasContainer');
         setTimeout(() => {
+            const canvasContainer = document.getElementById('canvasContainer').cloneNode(true);
+            canvasContainer.style = {
+                backgroundColor: "white",
+                position: "absolute",
+                top: "30px",
+                zIndex: -1,
+                width: imgWidth,
+                height: imgHeight
+            }
+            
+            document.getElementById('inner-wrap').appendChild(canvasContainer);
+            
             html2canvas(canvasContainer, {
                 width: imgWidth,
                 height: imgHeight,
                 useCORS: true,
                 logging: true
             }).then((canvas) => {
-                const imgURL = canvas.toDataURL("image/jpeg", 0.8);
+                canvasContainer.parentNode.removeChild(canvasContainer);
+                const imgURL = canvas.toDataURL("image/jpeg");
                 dispatch(receiveResultCanvas(canvas));
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(saveData());
@@ -929,7 +1033,7 @@ export const setSaveData = () => {
                 dispatch(uiloadingComplete());
                 console.error(err);
             });
-        }, 2000);
+        }, 3000);
 
     }
 };
@@ -944,21 +1048,34 @@ export const saveData = () => {
                 setTimeout(() => dispatch(receivedErrorMsg('')), 1500);
             }
             if (data.data.status) {
+                const translateImgURL = data.data.imgTgt;
+                const date = new Date();
                 dispatch(receiveImgStatus(data.data.status));
+                dispatch(receivedSelectedTranslImage(translateImgURL+`?t=${date.valueOf()}`));
+                dispatch(updateSelectedTranslImage());
                 imagesCollection.forEach(item => {
                     if (item.comicTranslationOrderId === comicTranslationOrderId) {
                         item.status = data.data.status
                     }
                 });
                 dispatch(receivedImagesCollection(imagesCollection));
+                setTimeout(()=> {
+                    dispatch(clearSelectedTranslImage());
+                    dispatch(setClearCropox());
+                    dispatch(setClearPreTranslResult());
+                    dispatch(handlerClearUiFont());
+                    dispatch(deleteCropedMarquee());
+                }, 100);
             }
-            dispatch(clearResultImgURL());
-            dispatch(clearResultCanvas());
-            dispatch(clearPreAddedImgLayer());
-            dispatch(clearCreatedTranslBox());
-            dispatch(clearMaskTextImgs());
-            dispatch(clearPreCropArea());
-            dispatch(uiloadingComplete());
+            
+        }).then(()=>{
+            setTimeout(()=> {
+                dispatch(clearResultImgURL());
+                dispatch(clearResultCanvas());
+                dispatch(clearPreAddedImgLayer());
+                dispatch(uiloadingComplete());
+            }, 1000);
+           
         }).catch(err => {
             dispatch(uiloadingComplete());
             console.error(err);
@@ -970,6 +1087,7 @@ export const restoreTranslPic = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { selectedImage } = state.images;
+        dispatch(updateSelectedTranslImage());
         dispatch(receivedSelectedTranslImage(selectedImage));
         dispatch(receivedResultImgURL(selectedImage));
     }
@@ -979,11 +1097,13 @@ export const initialTranslPage = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { isBackToTranslPage } = state.ui;
+        const { comicTranslationOrderId = getURLParamsString('t'), comicChapterId } = state.images;
         const orderNo = getURLParamsString('o');
-        const comicTranslationOrderId = getURLParamsString('t');
         // const orderNo = 672004167809077;
         dispatch(receivedOrderNo(orderNo));
-        if (!isBackToTranslPage) {
+        if (isBackToTranslPage) {
+            dispatch(getTranslImages({ chapterId: comicChapterId }));
+        }else {
             dispatch(getTranslImages({ comicTranslationOrderId }));
         }
         dispatch(getFeedBackMessage());

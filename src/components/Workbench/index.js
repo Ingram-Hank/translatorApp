@@ -1,5 +1,4 @@
 import React from 'react';
-import CanvasZoom from './CanvasZoom';
 import RightMenu from './RightMenu';
 import WorkbenchMain from './WorkbenchMain';
 import './index.css';
@@ -7,9 +6,6 @@ import './index.css';
 function Workbench(props) {
     const {
         contentText,
-        zoomCanvasBech,
-        zoomCanvasPlus,
-        zoomCanvasMinus,
         zoomCanvasValue,
         selectedImage,
         selectedTranslImage,
@@ -40,6 +36,7 @@ function Workbench(props) {
         handerTranslText,
         handlerCompleteTranslate,
         resultLayers,
+        resultHtmlLayers,
         displayTranslPopUp,
         displayTranslBox,
         displayResultBox,
@@ -51,6 +48,7 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         receivedImgSize,
         handlerSelectFeedBackMsg,
@@ -74,15 +72,12 @@ function Workbench(props) {
         fonts,
         wholeFonFamily,
         defaultFontFamily,
-        maskColorSettings
+        maskColorSettings,
+        updatedMaskBackground,
+        updateBackground,
+        updateCropedBox,
+        isUpdateTranslImage
     } = props;
-    
-    const canvasZoomProps = {
-        zoomCanvasBech,
-        zoomCanvasPlus,
-        zoomCanvasMinus,
-        value: zoomCanvasValue
-    };
     const workbenchMainProps = {
         contentText,
         selectedImage,
@@ -110,6 +105,7 @@ function Workbench(props) {
         originORCText,
         translatedText,
         resultLayers,
+        resultHtmlLayers,
         hanlerChangeORCText,
         handlerChangeTranslatedText,
         handerTranslText,
@@ -126,6 +122,7 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         receivedImgSize,
         handlerSelectFeedBackMsg,
@@ -147,7 +144,11 @@ function Workbench(props) {
         fonts,
         wholeFonFamily,
         defaultFontFamily,
-        maskColorSettings
+        maskColorSettings,
+        updatedMaskBackground,
+        updateBackground,
+        updateCropedBox,
+        isUpdateTranslImage
     };
 
     const rightMenuProps = {
@@ -159,7 +160,6 @@ function Workbench(props) {
     return (
         <div className="workbench">
             <div className="workbench-container">
-                <CanvasZoom {...canvasZoomProps}/>
                 <WorkbenchMain {...workbenchMainProps}/>
                 <RightMenu {...rightMenuProps}/>
             </div>

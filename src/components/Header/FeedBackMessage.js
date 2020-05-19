@@ -7,7 +7,7 @@ const FeedBackMessage = ({contentText, feedMsg=[], handlerSelectFeedBackMsg})=> 
             <div className="feedMsg-header">
                 <h5>{contentText.feedMsgTitle}</h5>
             </div>
-            {feedMsg.length > 0 ? feedMsg.map((item, index)=> {
+            {feedMsg && feedMsg.length > 0 ? feedMsg.map((item, index)=> {
                 const {comicTranslationOrderId, tag, content, orderNo, createTime} = item;
                 return (
                     <div className="feedMsg-item" key={index}> 

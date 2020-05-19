@@ -165,7 +165,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
                 <div className="btn-group">
                     <div className="comments dropdown-toggle" data-toggle="dropdown">
                         <span className="fa fa-bell-o"></span>
-                        {feedMsg.length > 0 && <span className="badge">{feedMsg.length}</span>}
+                        {feedMsg && feedMsg.length > 0 && <span className="badge">{feedMsg.length}</span>}
                     </div>
                     <FeedBackMessage {...feedBackMessageProps}/>
                 </div>

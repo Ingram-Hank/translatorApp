@@ -35,7 +35,7 @@ import {
   closeModal,
   openModal
 } from '../modules/ui';
-import { 
+import {
   getGlossaryData,
   receivedOriginText,
   receivedTranslText,
@@ -96,7 +96,7 @@ function App(props) {
     glossaryData,
     handlerOriginTextChange,
     handlerTranslTextChange,
-    handlerAddGlossary, 
+    handlerAddGlossary,
     handlerQueryGlossary,
     handlerdeleteGlossary
   } = props;
@@ -135,7 +135,7 @@ function App(props) {
     glossaryData,
     handlerOriginTextChange,
     handlerTranslTextChange,
-    handlerAddGlossary, 
+    handlerAddGlossary,
     handlerQueryGlossary,
     handlerdeleteGlossary,
     scale: zoomCanvasValue
@@ -171,7 +171,7 @@ const mapStateToProps = (state) => {
   const language = state.languageMoudels.language || "Chinese";
   const contentText = strings.screen[language];
   const images = state.images.imagesCollection;
-  const {glossaryData} = state.glossary;
+  const { glossaryData } = state.glossary;
   const {
     selectedImage,
     selectedTranslImage,
@@ -203,7 +203,6 @@ const mapStateToProps = (state) => {
     notificationMsg,
     zoomCanvasValue = 1
   } = state.ui;
-  
 
   return {
     language,
@@ -303,12 +302,12 @@ const mapDispatchToProps = (dispatch) => {
     handlerSaveData: () => {
       dispatch(setSaveData());
     },
-    getCropedImgURL: ()=> {
+    getCropedImgURL: () => {
       dispatch(setResultImgURL());
     },
     handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo) => {
-      dispatch(getTranslImages({ comicTranslationOrderId, orderNo}));
-      dispatch(handlerSelectImage(null));
+      dispatch(getTranslImages({ comicTranslationOrderId, orderNo }));
+      dispatch(handlerSelectImage(1));
       dispatch(clearSelectedImage());
       dispatch(setClearPreTranslResult());
     },

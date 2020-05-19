@@ -38,6 +38,8 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { startNumber: action.payload })
         case actions.UI_HANDLER_SET_FONT:
             return Object.assign({}, state, { font: action.payload })
+        case actions.UI_HANDLER_CLEAR_SET_FONT:
+            return Object.assign({}, state, { font: {} })
         case actions.UI_RECEIVED_CURRENT_SELECTED_ITEM:
             return Object.assign({}, state, { currentSelectedItem: action.payload })
         case actions.UI_RECEIVED_CURRENT_TRANSLATION_ORDERID:
@@ -62,6 +64,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { clearPreTranslResult: true })
         case actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT:
             return Object.assign({}, state, { clearPreTranslResult: false })
+        case actions.UI_UPDATE_MASK_BACKGROUND_START:
+            return Object.assign({}, state, { updateBackground: true })
+        case actions.UI_UPDATE_MASK_BACKGROUND_COMPLETE:
+            return Object.assign({}, state, { updateBackground: false })
         case actions.UI_SET_IS_BACKTO_TRANSLATE_PAGE:
             return Object.assign({}, state, { isBackToTranslPage: true })
         case actions.UI_SET_IS_NOT_BACKTO_TRANSLATE_PAGE:
@@ -70,6 +76,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { isToLastChapter: true })
         case actions.UI_SET_IS_TO_NEXT_CHAPTER:
             return Object.assign({}, state, { isToNextChapter: true })
+        case actions.UI_UPDATE_SELECTED_TRANSL_IMAGE:
+            return Object.assign({}, state, { isUpdateTranslImage: true })
+        case actions.UI_CLEAR_SELECTED_TRANSL_IMAGE:
+            return Object.assign({}, state, { isUpdateTranslImage: false })
         case actions.UI_SET_CREATE_CROPED_MARQUEE:
             return Object.assign({}, state, { hasCropedMarquee: true })
         case actions.UI_SET_DELETE_CROPED_MARQUEE:
@@ -178,6 +188,10 @@ export const handlersetFont = (payload) => ({
     payload
 });
 
+export const handlerClearUiFont = () => ({
+    type: actions.UI_HANDLER_CLEAR_SET_FONT
+});
+
 export const openModal = (payload) => ({
     type: actions.UI_OPEN_MODAL,
     payload
@@ -221,6 +235,14 @@ export const setStopClearPreResultContainer = ()=> ({
     type: actions.UI_SET_STOP_CLEAR_PRETRANSL_RESULT
 });
 
+export const updateMaskBackgroundStart = ()=> ({
+    type: actions.UI_UPDATE_MASK_BACKGROUND_START
+});
+
+export const updateMaskBackgroundComplete = ()=> ({
+    type: actions.UI_UPDATE_MASK_BACKGROUND_COMPLETE
+});
+
 export const backToTransl = ()=> ({
     type: actions.UI_SET_IS_BACKTO_TRANSLATE_PAGE
 });
@@ -243,6 +265,14 @@ export const createCropedMarquee = () => ({
 
 export const deleteCropedMarquee = () => ({
     type: actions.UI_SET_DELETE_CROPED_MARQUEE
+});
+
+export const updateSelectedTranslImage = () => ({
+    type: actions.UI_UPDATE_SELECTED_TRANSL_IMAGE
+});
+
+export const clearSelectedTranslImage = () => ({
+    type: actions.UI_CLEAR_SELECTED_TRANSL_IMAGE
 });
 
 

@@ -12,7 +12,7 @@ function Toggle ({contentText, defaultText, id, switchOn, onToggle}){
                         {defaultText}
                     </label>
                     <label className="btn btn-secondary btn-sm toggle-off">
-                        {contentText.close}
+                        {id === 'autoClear' ? contentText.handlerClear : contentText.close}
                     </label>
                     <span className="toggle-handle btn btn-light btn-sm"></span>
                 </div>
