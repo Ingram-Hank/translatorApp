@@ -3,7 +3,7 @@ import { mapToObject } from "../../utilities";
 
 const buildDataGroup = (params) => {
     const {
-        resultLayers,
+        resultHtmlLayers,
         resultBoxStyleParams,
         fonts,
         wholeFontSize,
@@ -29,7 +29,7 @@ const buildDataGroup = (params) => {
         text_case: globalFontTextCase || "uppercase",
         font_direction: globalFontDirection || "horizontal"
     };
-    const layersToObject = mapToObject(resultLayers, 'index');
+    const layersToObject = mapToObject(resultHtmlLayers, 'index');
     if (Object.keys(resultBoxStyleParams).length) {
         Object.keys(resultBoxStyleParams).forEach((key) => {
             const { left, top, width, height, transform } = resultBoxStyleParams[key];
@@ -46,7 +46,7 @@ const buildDataGroup = (params) => {
                         width,
                         height,
                         transform,
-                        translatedText: currentLayer.translText || "",
+                        translatedText: currentLayer.translatedHtml || "",
                         font
                     }
                 };
@@ -60,7 +60,7 @@ const buildDataGroup = (params) => {
                     width,
                     height,
                     transform,
-                    translatedText: currentLayer.translText || "",
+                    translatedText: currentLayer.translatedHtml || "",
                     font
                 });
             }
@@ -121,7 +121,6 @@ function ResultBox(props) {
                     id: `${key}_resultContainer`,
                     className: "resultContainer",
                     style: {
-                        display: props.clearPreTranslResult ? "none" : "block",
                         left: `${left}px`,
                         top: `${top}px`,
                         width: `${width}px`,
@@ -140,7 +139,7 @@ function ResultBox(props) {
                     }
                 };
                 return (
-                    <div {...resultBoxProps} key={index}>{translatedText}</div>
+                    <div {...resultBoxProps} key={index} dangerouslySetInnerHTML={{__html: translatedText}}></div>
                 )
             }) : null}
         </React.Fragment>

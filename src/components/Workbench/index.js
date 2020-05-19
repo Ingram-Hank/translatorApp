@@ -36,6 +36,7 @@ function Workbench(props) {
         handerTranslText,
         handlerCompleteTranslate,
         resultLayers,
+        resultHtmlLayers,
         displayTranslPopUp,
         displayTranslBox,
         displayResultBox,
@@ -47,6 +48,7 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         receivedImgSize,
         handlerSelectFeedBackMsg,
@@ -72,7 +74,9 @@ function Workbench(props) {
         defaultFontFamily,
         maskColorSettings,
         updatedMaskBackground,
-        updateBackground
+        updateBackground,
+        updateCropedBox,
+        isUpdateTranslImage
     } = props;
     const workbenchMainProps = {
         contentText,
@@ -101,6 +105,7 @@ function Workbench(props) {
         originORCText,
         translatedText,
         resultLayers,
+        resultHtmlLayers,
         hanlerChangeORCText,
         handlerChangeTranslatedText,
         handerTranslText,
@@ -117,6 +122,7 @@ function Workbench(props) {
         clearPreTranslResult,
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         receivedImgSize,
         handlerSelectFeedBackMsg,
@@ -140,7 +146,9 @@ function Workbench(props) {
         defaultFontFamily,
         maskColorSettings,
         updatedMaskBackground,
-        updateBackground
+        updateBackground,
+        updateCropedBox,
+        isUpdateTranslImage
     };
 
     const rightMenuProps = {

@@ -6,6 +6,7 @@
     "language": "选择语言",
     "marquee": "选择选框",
     "close": "关闭",
+    "handlerClear": "手动清除",
     "languageCollection": [
         {
             "key": "English",

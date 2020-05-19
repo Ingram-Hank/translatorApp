@@ -139,12 +139,6 @@ class drawRect {
             this.posY = this.y;
             this.cropH = this.starty - this.y;
         }
-        if (this.cropW < 50) {
-            this.cropW = 60;
-        }
-        if (this.cropH < 50) {
-            this.cropH = 60;
-        }
         if (this.op === 1) {
             this.layers.push(this.fixPosition({
                 x1: this.startx,

@@ -62,12 +62,13 @@ const mapDispatchToProps = (dispatch)=> {
     return {
         handlerbacktoTranslPage: ()=> {
             window.history.back();
-            dispatch(handlerSelectImage(null));
-            dispatch(clearSelectedImage());
+            dispatch(backToTransl());
+            // dispatch(handlerSelectImage(null));
+            // dispatch(clearSelectedImage());
         },
         handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
             dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
-            dispatch(handlerSelectImage(null));
+            dispatch(handlerSelectImage(1));
             dispatch(clearSelectedImage());
             dispatch(backToTransl());
         }

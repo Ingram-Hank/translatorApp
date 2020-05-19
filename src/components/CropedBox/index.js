@@ -18,6 +18,7 @@ class CropedBox extends React.PureComponent {
             flag: false,
             kind: "drag"
         };
+        this.state = {flag: false}
     }
 
     componentDidMount() {
@@ -32,7 +33,21 @@ class CropedBox extends React.PureComponent {
         this.startDrag($("dragBotCenter"), $("cropBox"), "s");
         this.startDrag($("dragRightCenter"), $("cropBox"), "e");
         this.startDrag($("dragLeftCenter"), $("cropBox"), "w");
+        
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.flag !== this.state.flag && !this.state.flag) {
+             this.props.updateCropedBox({
+                img: this.img,
+                left: parseInt($("cropBox").style.left) - 20,
+                top: parseInt($("cropBox").style.top) - 20,
+                width: parseInt($("cropBox").style.width) + 40,
+                height: parseInt($("cropBox").style.height) + 40,
+            })
+        }
+    }
+
     
     startDrag(point, target, kind) {
         this.params.width = getCss(target, "width");
@@ -46,6 +61,7 @@ class CropedBox extends React.PureComponent {
         point.addEventListener("mousedown", (event) => {
             this.params.kind = kind;
             this.params.flag = true;
+            this.setState({flag: true})
             if ($("cropBoxCancel")) $("cropBoxCancel").style.display = "none";
             if ($("cropBoxSourceArea")) $("cropBoxSourceArea").style.display = "none";
             if (!event) {
@@ -96,6 +112,7 @@ class CropedBox extends React.PureComponent {
 
                 document.addEventListener("mouseup", (e) => {
                     this.params.flag = false;
+                    this.setState({flag: false});
                     if ($("cropBoxCancel")) $("cropBoxCancel").style.display = "block";
                     if ($("cropBoxSourceArea")) $("cropBoxSourceArea").style.display = "block";
                     if (getCss(target, "left") !== "auto") this.params.left = getCss(target, "left");
@@ -118,8 +135,12 @@ class CropedBox extends React.PureComponent {
         newCtx.drawImage(img, cropPosX, cropPosY, width, height, 0, 0, cropImgWidth, cropImgHeight);
         // canvas transform to img
         const newImage = new Image();
-        newImage.src = newCanvas.toDataURL("image/jpeg", 0.8);
+        newImage.src = newCanvas.toDataURL("image/jpeg");
         return newImage
+    }
+
+    componentWillUnmount() {
+        this.setState({flag: false})
     }
 
     render () {

@@ -6,6 +6,7 @@
     "language": "Select language",
     "marquee": "Select marquee",
     "close": "Close",
+    "handlerClear": "Manual-clear",
     "languageCollection": [
         {
             "key": "English",

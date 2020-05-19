@@ -76,6 +76,10 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { isToLastChapter: true })
         case actions.UI_SET_IS_TO_NEXT_CHAPTER:
             return Object.assign({}, state, { isToNextChapter: true })
+        case actions.UI_UPDATE_SELECTED_TRANSL_IMAGE:
+            return Object.assign({}, state, { isUpdateTranslImage: true })
+        case actions.UI_CLEAR_SELECTED_TRANSL_IMAGE:
+            return Object.assign({}, state, { isUpdateTranslImage: false })
         case actions.UI_SET_CREATE_CROPED_MARQUEE:
             return Object.assign({}, state, { hasCropedMarquee: true })
         case actions.UI_SET_DELETE_CROPED_MARQUEE:
@@ -261,6 +265,14 @@ export const createCropedMarquee = () => ({
 
 export const deleteCropedMarquee = () => ({
     type: actions.UI_SET_DELETE_CROPED_MARQUEE
+});
+
+export const updateSelectedTranslImage = () => ({
+    type: actions.UI_UPDATE_SELECTED_TRANSL_IMAGE
+});
+
+export const clearSelectedTranslImage = () => ({
+    type: actions.UI_CLEAR_SELECTED_TRANSL_IMAGE
 });
 
 

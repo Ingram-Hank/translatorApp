@@ -22,7 +22,8 @@ import {
     setGlobalFontTextCase,
     createCropedMarquee,
     deleteCropedMarquee,
-    updateMaskBackgroundComplete
+    updateMaskBackgroundComplete,
+    clearSelectedTranslImage
 } from '../modules/ui';
 import {
     receivedCropedImg,
@@ -40,6 +41,7 @@ import {
     undoBrush,
     updateOriginalText,
     updateTranslText,
+    updatedTranslatedHtml,
     submitCorrectedText,
     getTranslText,
     completeTranslate,
@@ -50,7 +52,8 @@ import {
     clearPreMaskLayer,
     setNotClearPreMaskLayer,
     receivedCreateCropedBoxedParams,
-    clearCropedBoxedParams
+    clearCropedBoxedParams,
+    clearPreResultContainer
 } from '../modules/images';
 import {
     selectFontFamily,
@@ -93,10 +96,12 @@ const mapStateToProps = (state) => {
         hasCropBox,
         maskTextImgs,
         resultLayers = [],
+        resultHtmlLayers = [],
         displayResultBox = {},
         resultBoxStyleParams = {},
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         clearPreMask,
         targetLang,
@@ -125,7 +130,8 @@ const mapStateToProps = (state) => {
         hasCropedMarquee,
         clearCropBox,
         isTextEdit,
-        updateBackground
+        updateBackground,
+        isUpdateTranslImage
     } = ui;
     const resultLayersToObject = mapToObject(resultLayers, 'index');
     const currentLayer = resultLayersToObject[startNumber] || {};
@@ -203,12 +209,14 @@ const mapStateToProps = (state) => {
         originORCText,
         translatedText,
         resultLayers,
+        resultHtmlLayers,
         displayResultBox: currentDisplayResult.display,
         resultBoxStyleParams,
         selectedImg,
         clearPreTranslResult,
         currentTip,
         status,
+        imgWidth,
         imgHeight,
         clearPreMask,
         targetLang: targetLanguage,
@@ -225,7 +233,8 @@ const mapStateToProps = (state) => {
         clearCropBox,
         isTextEdit,
         maskColorSettings,
-        updateBackground
+        updateBackground,
+        isUpdateTranslImage
     }
 }
 
@@ -294,12 +303,14 @@ const mapDispatchToProps = (dispatch) => {
         },
         handlerCompleteTranslate: () => {
             const translatedText = document.getElementById('translMove').innerText;
+            const translatedHtml = document.getElementById('translMove').innerHTML;
+            dispatch(updatedTranslatedHtml(translatedHtml));
             dispatch(updateTranslText(translatedText))
             dispatch(completeTranslate());
         },
         handlerSelectFeedBackMsg: (comicTranslationOrderId, orderNo)=> {
             dispatch(getTranslImages({comicTranslationOrderId, orderNo}));
-            dispatch(handlerSelectImage(null));
+            dispatch(handlerSelectImage(1));
             dispatch(clearSelectedImage());
             dispatch(closeModal());
         },
@@ -315,6 +326,11 @@ const mapDispatchToProps = (dispatch) => {
         createCropedBox: (payload) => {
             dispatch(receivedCreateCropedBoxedParams(payload));
             dispatch(createCropedMarquee());
+            dispatch(clearPreResultContainer());
+            dispatch(clearSelectedTranslImage());
+        },
+        updateCropedBox: (payload) => {
+            dispatch(receivedCreateCropedBoxedParams(payload));
         },
         handlerCancelCrop: () => {
             dispatch(deleteCropedMarquee());

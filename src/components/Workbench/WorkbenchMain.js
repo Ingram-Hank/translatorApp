@@ -14,15 +14,12 @@ class WorkbenchMain extends React.PureComponent {
         this._drawCanvas = null;
         this.state = {
             status: 0,
-            elementWidth: 870,
             scale: props.scale
         };
     }
 
-    drawCanvasBackGround(prevProps) {
+    drawCanvasBackGround() {
         const canvas = this.canvas.current;
-        const upperCanvas = document.getElementById("upper-canvas");
-        const ctx_upper = upperCanvas.getContext('2d');
         const {
             selectedTranslImage, 
             selectedImage, 
@@ -30,39 +27,46 @@ class WorkbenchMain extends React.PureComponent {
             status,
             imgHeight,
             receivedImgSize,
-            displayTranslBox, 
-            startNumber, 
-            maskTextImgs = {}, 
-            createdTranslBox = {},
-            marquee,
-            clearPreMask,
-            clearPreTranslResult
+            marquee
         } = this.props;
-        const { elementWidth } = this.state;
         const img = new Image();
         img.setAttribute('crossOrigin','anonymous');
-        let imgSrc = selectedImage + "?t=.33333333";
+        let imgSrc = selectedImage;
         if(status && selectedTranslImage) {
-            imgSrc = selectedTranslImage + "?t=.33333333";
+            imgSrc = selectedTranslImage;
         }
         img.src = imgSrc;
         img.onload = () => {
-            const currentElementWidth = elementWidth * scale;
-            const elementHeight = img.naturalHeight * (elementWidth / img.naturalWidth);
-            const currentElementHeight = elementHeight * scale;
+            const currentElementWidth = img.width;
+            const currentElementHeight = img.height;
             img.width = currentElementWidth;
             img.height = currentElementHeight;
-            if (!imgHeight) {
+            if (!imgHeight || currentElementHeight !== imgHeight) {
                 receivedImgSize(currentElementWidth, currentElementHeight);
             }
             canvas.style.backgroundImage = `url(${img.src})`;
             canvas.style.backgroundSize = `${currentElementWidth}px ${currentElementHeight}px`;
             canvas.style.backgroundRepeat = "no-repeat";
             if (marquee === "rectangular" || !marquee) {
-                this._drawCanvas = new drawRect(canvas, scale, img, elementWidth, elementHeight, this.props);
+                this._drawCanvas = new drawRect(canvas, scale, img, currentElementWidth, currentElementHeight, this.props);
             }
-            let left, top, width, height, cropedImg;
-            if (displayTranslBox && Object.keys(maskTextImgs).length) {
+        }
+        document.oncontextmenu = (e) => {
+            e.preventDefault();
+        }
+    }
+
+    drawMaskImgBackground (prevProps) {
+        const upperCanvas = document.getElementById("upper-canvas");
+        const ctx_upper = upperCanvas.getContext('2d');
+        const {
+            maskTextImgs,
+            startNumber,
+            createdTranslBox,
+            clearPreMask
+        } = this.props;
+        let left, top, width, height, cropedImg;
+            if (Object.keys(maskTextImgs).length) {
                 const currentMaskImg = maskTextImgs[startNumber] || [];
                 const img = new Image();
                 if (currentMaskImg.length) {
@@ -87,36 +91,21 @@ class WorkbenchMain extends React.PureComponent {
                 ctx_upper.clearRect(left, top, width, height);
                 delete createdTranslBox[startNumber];
             }
-
-            if (prevProps.clearPreTranslResult !== clearPreTranslResult && clearPreTranslResult) {
-                ctx_upper.clearRect(0, 0, currentElementWidth, currentElementHeight);
-            }
-        }
-        document.oncontextmenu = (e) => {
-            e.preventDefault();
-        }
+    }
+    clearCanvas (prevProps) {
+        const upperCanvas = document.getElementById("upper-canvas");
+        const ctx_upper = upperCanvas.getContext('2d');
+        ctx_upper.clearRect(0, 0, this.props.imgWidth, this.props.imgHeight);
     }
 
-    componentDidMount() {
-        const leftNavigationWidth = 200;
-        const rightTranslateAreaWidth = 215;
-        const processPadding = 40;
-        const minProcessWidth = 870;
-        let currentScreenProcessWidth = window.innerWidth - leftNavigationWidth - rightTranslateAreaWidth - processPadding * 2;
-        if (currentScreenProcessWidth < minProcessWidth) {
-            currentScreenProcessWidth = minProcessWidth
-        }
-        this.setState({
-            ...this.state,
-            elementWidth: currentScreenProcessWidth
-        })
-    }
-
-    componentDidUpdate(prevProps) {
+    componentDidUpdate (prevProps) {
         const {
+            displayTranslBox,
             hasCropedMarquee,
             selectedImg,
-            status
+            status,
+            isUpdateTranslImage,
+            clearPreTranslResult
         } = this.props;
         if(prevProps.status !== status) {
             this.setState({
@@ -127,9 +116,19 @@ class WorkbenchMain extends React.PureComponent {
         if (!hasCropedMarquee && this._drawCanvas) {
             this._drawCanvas.clearLayers();
         }
-        if (selectedImg) {
+        if (isUpdateTranslImage) {
             this.drawCanvasBackGround(prevProps);
         }
+        if(displayTranslBox) {
+            this.drawMaskImgBackground(prevProps)
+        }
+        if (prevProps.clearPreTranslResult !== clearPreTranslResult && selectedImg && clearPreTranslResult) {
+            this.clearCanvas(prevProps)
+        }
+    }
+
+    componentDidMount() {
+        console.info("build package date---------", new Date(" 2020/05/20 01:37:20"));
     }
 
     render() {
@@ -138,7 +137,6 @@ class WorkbenchMain extends React.PureComponent {
             modalId,
             openModal,
             closeModal,
-            scale,
             contentText,
             cropedImage,
             fontSettings,
@@ -167,6 +165,7 @@ class WorkbenchMain extends React.PureComponent {
             startNumber,
             setResultBoxStyle,
             selectedImg,
+            imgWidth = "870",
             imgHeight = "950",
             wholeFontSize,
             wholeFontColor,
@@ -183,18 +182,19 @@ class WorkbenchMain extends React.PureComponent {
             createStartNumber,
             setCropImg,
             resultLayers,
+            resultHtmlLayers,
             clearPreTranslResult,
             fonts,
             wholeFonFamily,
             defaultFontFamily,
             maskColorSettings,
             updatedMaskBackground,
-            updateBackground
+            updateBackground,
+            updateCropedBox
         } = this.props;
-        const { elementWidth } = this.state;
-        const currentElementWidth = elementWidth * scale;
+        
         const canvasContainerStyle = {
-            width: `${currentElementWidth}px`,
+            width: `${imgWidth}px`,
             height: `${imgHeight}px`,
             backgroundColor: !selectedImg && "gray"
         };
@@ -202,14 +202,14 @@ class WorkbenchMain extends React.PureComponent {
             id: "lower-canvas",
             className: "lower-canvas",
             ref: this.canvas,
-            width: currentElementWidth,
+            width: imgWidth,
             height: imgHeight
         };
 
         const uppercanvasProps = {
             id: "upper-canvas",
             className: "upper-canvas",
-            width: currentElementWidth,
+            width: imgWidth,
             height: imgHeight,
             onMouseDown: this._drawCanvas ? (e) => this._drawCanvas.mousedown(e) : null,
             onMouseMove: this._drawCanvas ? (e) => this._drawCanvas.mousemove(e) : null,
@@ -285,10 +285,12 @@ class WorkbenchMain extends React.PureComponent {
             handlerConfirmCrop,
             cropedBoxParams,
             createStartNumber,
+            updateCropedBox,
             setCropImg
         };
         const resultBoxProps = {
             resultLayers,
+            resultHtmlLayers,
             resultBoxStyleParams,
             translatedText,
             wholeFontSize,
@@ -307,7 +309,7 @@ class WorkbenchMain extends React.PureComponent {
         return (
             <div className="col-sm-10 col-xs-12 workbench-main" id="workbenchMain">
                 <div className="workbench-work-wrap">
-                    <div className="inner">
+                    <div className="inner" id="inner-wrap">
                         <div className="trans-guide-prompt" data-html2canvas-ignore>
                             {contentText.prompt}
                         </div>
