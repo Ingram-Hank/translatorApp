@@ -189,7 +189,8 @@
         margin: 0 -30px; }
 
 .cropBox {
-  position: absolute; }
+  position: absolute;
+  z-index: 3; }
 
 .cancel {
   position: absolute;
@@ -239,6 +240,7 @@
   font-size: 12px;
   color: #fff;
   text-align: center;
+  z-index: 9;
   cursor: pointer; }
 
 .border-top {

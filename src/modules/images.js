@@ -47,10 +47,11 @@ const imagesReducer = (state = {}, action) => {
             })
         case actions.RECEIVED_SELECTED_IMG:
             const { imgSrc, feedbackMsg, status, imgTgt } = action.payload;
+            const date = new Date();
             return Object.assign({}, state, {
-                selectedImage: imgSrc,
+                selectedImage: imgSrc + `?t=${date.valueOf()}`,
                 currentTip: feedbackMsg,
-                selectedTranslImage: imgTgt,
+                selectedTranslImage: imgTgt + `?t=${date.valueOf()}`,
                 status
             })
         case actions.RECEIVED_CROPED_IMG:
@@ -357,22 +358,27 @@ export const generateCanvasImg = () => {
         const uppercanvas = document.getElementById('upper-canvas');
         const uppercanvasImgURL = uppercanvas.toDataURL("image/png");
         const backgroundLayer = document.createElement('div');
+        const backgroundImgURL = status && selectedTranslImage ? selectedTranslImage : selectedImage;
         window.pageYOffset = 0;
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
         backgroundLayer.style.position = 'absolute';
+        backgroundLayer.style.width = imgWidth + 'px';
+        backgroundLayer.style.height = imgHeight + 'px';
         backgroundLayer.setAttribute("class", "addedImg");
         const backgroundImg = new Image();
         backgroundImg.width = imgWidth;
         backgroundImg.height = imgHeight;
         backgroundImg.crossOrigin = 'anonymous';
-        backgroundImg.src = status && selectedTranslImage ? selectedTranslImage : selectedImage;
+        backgroundImg.src = backgroundImgURL;
         backgroundImg.onload = () => {
             backgroundLayer.appendChild(backgroundImg);
             canvasContainer.insertBefore(backgroundLayer, canvasContainer.childNodes[0]);
             if(Object.keys(maskTextImgs).length) {
                 const maskImgFrag = document.createElement('div');
                 maskImgFrag.style.position = 'absolute';
+                maskImgFrag.style.width = imgWidth + 'px';
+                maskImgFrag.style.height = imgHeight + 'px';
                 maskImgFrag.setAttribute("class", "addedImg");
                 const maskImg = new Image();
                 maskImg.width = imgWidth;
@@ -384,7 +390,10 @@ export const generateCanvasImg = () => {
                 }
             }
         };
-        
+
+        backgroundImg.onerror = ()=> {
+            console.error("catch error img------------", backgroundImgURL)
+        }
     }
 };
 
@@ -409,12 +418,12 @@ export const setResultImgURL = () => {
             html2canvas(canvasContainer, {
                 width: imgWidth,
                 height: imgHeight,
-                taintTest: true,
+                taintTest: false,
                 useCORS: true,
                 logging: true
             }).then((canvas) => {
                 canvasContainer.parentNode.removeChild(canvasContainer);
-                const imgURL = canvas.toDataURL("image/jpeg", 0.8);
+                const imgURL = canvas.toDataURL("image/jpeg");
                 dispatch(receivedResultImgURL(imgURL));
                 dispatch(receiveResultCanvas(canvas));
                 dispatch(uiloadingComplete());
@@ -776,7 +785,7 @@ export const getORCText = () => {
     return (dispatch, getState) => {
         const state = getState();
         const { startNumber, switchAutoTranslate = true } = state.ui;
-        const { resultLayers = [], targetLang} = state.images;
+        const { resultLayers = [], targetLang } = state.images;
         const imgBase64 = state.images.cropedImage.src;
         dispatch(uiloadingStart());
         services.getORC({ imgBase64, targetLang }).then(({ data }) => {
@@ -1015,9 +1024,7 @@ export const setSaveData = () => {
                 width: imgWidth,
                 height: imgHeight
             }
-            
             document.getElementById('inner-wrap').appendChild(canvasContainer);
-            
             html2canvas(canvasContainer, {
                 width: imgWidth,
                 height: imgHeight,
@@ -1099,7 +1106,7 @@ export const initialTranslPage = () => {
         const { isBackToTranslPage } = state.ui;
         const { comicTranslationOrderId = getURLParamsString('t'), comicChapterId } = state.images;
         const orderNo = getURLParamsString('o');
-        // const orderNo = 672004167809077;
+        // const orderNo = 672005258540000;
         dispatch(receivedOrderNo(orderNo));
         if (isBackToTranslPage) {
             dispatch(getTranslImages({ chapterId: comicChapterId }));
