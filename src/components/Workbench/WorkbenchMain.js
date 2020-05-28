@@ -25,6 +25,7 @@ class WorkbenchMain extends React.PureComponent {
             selectedImage, 
             scale,
             status,
+            imgWidth,
             imgHeight,
             receivedImgSize,
             marquee
@@ -41,7 +42,7 @@ class WorkbenchMain extends React.PureComponent {
             const currentElementHeight = img.height;
             img.width = currentElementWidth;
             img.height = currentElementHeight;
-            if (!imgHeight || currentElementHeight !== imgHeight) {
+            if (!imgHeight || currentElementHeight !== imgHeight || currentElementWidth !== imgWidth) {
                 receivedImgSize(currentElementWidth, currentElementHeight);
             }
             canvas.style.backgroundImage = `url(${img.src})`;
@@ -128,7 +129,7 @@ class WorkbenchMain extends React.PureComponent {
     }
 
     componentDidMount() {
-        console.info("build package date---------", new Date(" 2020/05/20 01:37:20"));
+        console.info("build package date---------", new Date(" 2020/05/28 23:17:20"));
     }
 
     render() {

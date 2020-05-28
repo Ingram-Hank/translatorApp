@@ -221,6 +221,7 @@
 }
 .cropBox {
     position: absolute;
+    z-index: 3;
 }
 
 .cancel {
@@ -273,6 +274,7 @@
     font-size: 12px;
     color: #fff;
     text-align: center;
+    z-index: 9;
     cursor: pointer;
 }
 
