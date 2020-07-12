@@ -15,6 +15,7 @@ function Header ({contentText, marquee, modalOpen, modalId, switchAutoClear, swi
     handlerAbandonSave, getCropedImgURL, resultImgURL, remark, handlerOpenGlossary, glossaryData,
     handlerOriginTextChange, handlerTranslTextChange, handlerAddGlossary, handlerQueryGlossary,
     handlerOpenRemarkModal, handlerdeleteGlossary }){
+    
     const switchMouseProps = {
         defaultText: contentText.marquee,
         selectedItem: contentText.marqueeText[marquee],

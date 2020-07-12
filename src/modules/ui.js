@@ -72,14 +72,16 @@ const uiReducer = (state = {}, action) => {
             return Object.assign({}, state, { isBackToTranslPage: true })
         case actions.UI_SET_IS_NOT_BACKTO_TRANSLATE_PAGE:
             return Object.assign({}, state, { isBackToTranslPage: false })
-        case actions.UI_SET_IS_TO_LAST_CHAPTER:
-            return Object.assign({}, state, { isToLastChapter: true })
-        case actions.UI_SET_IS_TO_NEXT_CHAPTER:
-            return Object.assign({}, state, { isToNextChapter: true })
+        case actions.UI_SET_IS_TO_SELECT_CHAPTER:
+            return Object.assign({}, state, { selectedChapterId: action.payload })
         case actions.UI_UPDATE_SELECTED_TRANSL_IMAGE:
             return Object.assign({}, state, { isUpdateTranslImage: true })
         case actions.UI_CLEAR_SELECTED_TRANSL_IMAGE:
             return Object.assign({}, state, { isUpdateTranslImage: false })
+        case actions.UI_UPDATED_FEED_BACKMSG:
+            return Object.assign({}, state, { isUpdateFeedBackMsg: true })
+        case actions.UI_STOP_UPDATED_FEED_BACKMSG:
+            return Object.assign({}, state, { isUpdateFeedBackMsg: false })
         case actions.UI_SET_CREATE_CROPED_MARQUEE:
             return Object.assign({}, state, { hasCropedMarquee: true })
         case actions.UI_SET_DELETE_CROPED_MARQUEE:
@@ -251,12 +253,9 @@ export const isNotBackToTransl = ()=> ({
     type: actions.UI_SET_IS_NOT_BACKTO_TRANSLATE_PAGE
 });
 
-export const setIsToLastChapter = () => ({
-    type: actions.UI_SET_IS_TO_LAST_CHAPTER
-});
-
-export const setIsToNextChapter = () => ({
-    type: actions.UI_SET_IS_TO_NEXT_CHAPTER
+export const setIsToSelectChapter = (payload) => ({
+    type: actions.UI_SET_IS_TO_SELECT_CHAPTER,
+    payload
 });
 
 export const createCropedMarquee = () => ({
@@ -274,6 +273,15 @@ export const updateSelectedTranslImage = () => ({
 export const clearSelectedTranslImage = () => ({
     type: actions.UI_CLEAR_SELECTED_TRANSL_IMAGE
 });
+
+export const updateFeedBackMsg = () => ({
+    type: actions.UI_UPDATED_FEED_BACKMSG
+});
+
+export const stopUpdatedFeedBackMsg = () => ({
+    type: actions.UI_STOP_UPDATED_FEED_BACKMSG
+});
+
 
 
 export const handlerZoomCanvasPlus = (value) => {

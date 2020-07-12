@@ -12,30 +12,36 @@
             font-size: 14px;
         }
         .chapter {
-            margin-bottom: 0;
-            -moz-user-select:none;
-            -webkit-user-select:none;
-            user-select:none;
-            .chapterBtn {
-                cursor: pointer;
-                text-decoration: underline;
-                font-size: 12px;
-                display: inline-block;
-                width: 50px;
-                &:hover {
-                    font-size: 14px;
-                }
-                &.disabled {
-                    opacity: .4;
-                    user-select: none;
-                    pointer-events: none;
-                    cursor: not-allowed;
+            position: relative;
+           
+            button {
+                width: 85.5%;
+            }
+            .dropdown-menu {
+                width: 86%;
+                max-height: 150px;
+                overflow-y: scroll;
+                left: 12px;
+                li {
+                    color: #0d1115;
                 }
             }
-            &-current {
-                margin: 0 10px;
+            .caret-content {
+                margin-left: 6px;
+            }
+            .btn.btn-default {
+                color: #fff;
+                border-color: #50565f;
+                background: #333a45 linear-gradient(180deg,transparent,rgba(0,0,0,.4));
+                cursor: pointer;
+                &:focus, &:hover {
+                    color: #fff;
+                    border-color: #50565f;
+                    background: #333a45 linear-gradient(180deg,transparent,rgba(0,0,0,.4));
+                }
             }
         }
+       
     }
     &-body {
         overflow: auto;

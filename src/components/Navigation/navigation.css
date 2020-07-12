@@ -11,25 +11,27 @@
       margin-bottom: 10px;
       font-size: 14px; }
     .navigation-header .chapter {
-      margin-bottom: 0;
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      user-select: none; }
-      .navigation-header .chapter .chapterBtn {
-        cursor: pointer;
-        text-decoration: underline;
-        font-size: 12px;
-        display: inline-block;
-        width: 50px; }
-        .navigation-header .chapter .chapterBtn:hover {
-          font-size: 14px; }
-        .navigation-header .chapter .chapterBtn.disabled {
-          opacity: .4;
-          user-select: none;
-          pointer-events: none;
-          cursor: not-allowed; }
-      .navigation-header .chapter-current {
-        margin: 0 10px; }
+      position: relative; }
+      .navigation-header .chapter button {
+        width: 85.5%; }
+      .navigation-header .chapter .dropdown-menu {
+        width: 86%;
+        max-height: 150px;
+        overflow-y: scroll;
+        left: 12px; }
+        .navigation-header .chapter .dropdown-menu li {
+          color: #0d1115; }
+      .navigation-header .chapter .caret-content {
+        margin-left: 6px; }
+      .navigation-header .chapter .btn.btn-default {
+        color: #fff;
+        border-color: #50565f;
+        background: #333a45 linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4));
+        cursor: pointer; }
+        .navigation-header .chapter .btn.btn-default:focus, .navigation-header .chapter .btn.btn-default:hover {
+          color: #fff;
+          border-color: #50565f;
+          background: #333a45 linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4)); }
   .navigation-body {
     overflow: auto;
     height: calc(100vh - 101px); }

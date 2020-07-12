@@ -10,8 +10,7 @@ import Workbench from './Workbench';
 import { handlerLanguage } from '../modules/language';
 import {
   getTranslImages,
-  handlerToLastChapter,
-  handlerToNextChapter,
+  handlerToSelectChapter,
   setSaveData,
   clearSelectedImage,
   initialTranslPage,
@@ -33,7 +32,8 @@ import {
   closePreviewModal,
   setClearPreTranslResult,
   closeModal,
-  openModal
+  openModal,
+  stopUpdatedFeedBackMsg
 } from '../modules/ui';
 import {
   getGlossaryData,
@@ -47,124 +47,136 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 import '../scss/global.css';
 
+class App extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      feedMsgs: props.feedMsgs
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      feedMsgs: nextProps.feedMsgs
+    })
+  }
 
-function App(props) {
-  const {
-    contentText,
-    marquee,
-    modalOpen,
-    modalId,
-    switchAutoClear,
-    switchAutoOCR,
-    switchAutoTranslate,
-    language,
-    images,
-    handlerDropDownItem,
-    onToggle,
-    selectedImg,
-    loading,
-    toLastChapter,
-    toNextChapter,
-    jpgPc,
-    chapterPc,
-    chapterIds,
-    comicChapterId,
-    selectItem,
-    closeModal,
-    handlerPreview,
-    status,
-    imgWidth,
-    imgHeight,
-    selectedImage,
-    selectedTranslImage,
-    startPreview,
-    handlerClosePreview,
-    handlerSaveData,
-    getCropedImgURL,
-    handlerAbandonSave,
-    feedMsg,
-    handlerSelectFeedBackMsg,
-    handlerRestore,
-    lastChapterDisable,
-    nextChapterDisable,
-    notificationMsg,
-    zoomCanvasValue,
-    resultImgURL,
-    remark,
-    handlerOpenGlossary,
-    handlerOpenRemarkModal,
-    glossaryData,
-    handlerOriginTextChange,
-    handlerTranslTextChange,
-    handlerAddGlossary,
-    handlerQueryGlossary,
-    handlerdeleteGlossary
-  } = props;
-
-  const headerProps = {
-    contentText,
-    marquee,
-    modalOpen,
-    modalId,
-    switchAutoClear,
-    switchAutoOCR,
-    switchAutoTranslate,
-    language,
-    handlerDropDownItem,
-    onToggle,
-    closeModal,
-    status,
-    imgWidth,
-    imgHeight,
-    selectedImage,
-    selectedTranslImage,
-    handlerPreview,
-    handlerClosePreview,
-    startPreview,
-    handlerSaveData,
-    getCropedImgURL,
-    handlerAbandonSave,
-    feedMsg,
-    handlerSelectFeedBackMsg,
-    handlerRestore,
-    notificationMsg,
-    resultImgURL,
-    remark,
-    handlerOpenGlossary,
-    handlerOpenRemarkModal,
-    glossaryData,
-    handlerOriginTextChange,
-    handlerTranslTextChange,
-    handlerAddGlossary,
-    handlerQueryGlossary,
-    handlerdeleteGlossary,
-    scale: zoomCanvasValue
-  };
-  const navigationProps = {
-    contentText,
-    selectedImg,
-    toLastChapter,
-    toNextChapter,
-    jpgPc,
-    chapterPc,
-    chapterIds,
-    comicChapterId,
-    selectItem,
-    images,
-    lastChapterDisable,
-    nextChapterDisable
-  };
-
-  return (
-    <div className="main">
-      <Header {...headerProps} />
-      <Content>
-        <Navigation {...navigationProps} />
-        <Workbench {...props} />
-      </Content>
-      {loading && <LoadingSpinner />}
-    </div>
-  );
+  componentDidUpdate(prevProps) {
+    if(prevProps.isUpdateFeedBackMsg) {
+      this.props.setStopUpdateFeedBackMsg()
+    }
+  }
+  
+  render() {
+    const {
+      contentText,
+      marquee,
+      modalOpen,
+      modalId,
+      switchAutoClear,
+      switchAutoOCR,
+      switchAutoTranslate,
+      language,
+      images,
+      handlerDropDownItem,
+      onToggle,
+      selectedImg,
+      loading,
+      handlerSelectChapter,
+      jpgPc,
+      chapterPc,
+      chapterIds,
+      comicChapterId,
+      selectItem,
+      closeModal,
+      handlerPreview,
+      status,
+      imgWidth,
+      imgHeight,
+      selectedImage,
+      selectedTranslImage,
+      startPreview,
+      handlerClosePreview,
+      handlerSaveData,
+      getCropedImgURL,
+      handlerAbandonSave,
+      handlerSelectFeedBackMsg,
+      handlerRestore,
+      notificationMsg,
+      zoomCanvasValue,
+      resultImgURL,
+      remark,
+      handlerOpenGlossary,
+      handlerOpenRemarkModal,
+      glossaryData,
+      handlerOriginTextChange,
+      handlerTranslTextChange,
+      handlerAddGlossary,
+      handlerQueryGlossary,
+      handlerdeleteGlossary
+    } = this.props;
+    const feedMsg = this.state.feedMsgs;
+    const headerProps = {
+      contentText,
+      marquee,
+      modalOpen,
+      modalId,
+      switchAutoClear,
+      switchAutoOCR,
+      switchAutoTranslate,
+      language,
+      handlerDropDownItem,
+      onToggle,
+      closeModal,
+      status,
+      imgWidth,
+      imgHeight,
+      selectedImage,
+      selectedTranslImage,
+      handlerPreview,
+      handlerClosePreview,
+      startPreview,
+      handlerSaveData,
+      getCropedImgURL,
+      handlerAbandonSave,
+      feedMsg,
+      handlerSelectFeedBackMsg,
+      handlerRestore,
+      notificationMsg,
+      resultImgURL,
+      remark,
+      handlerOpenGlossary,
+      handlerOpenRemarkModal,
+      glossaryData,
+      handlerOriginTextChange,
+      handlerTranslTextChange,
+      handlerAddGlossary,
+      handlerQueryGlossary,
+      handlerdeleteGlossary,
+      scale: zoomCanvasValue
+    };
+    const navigationProps = {
+      contentText,
+      selectedImg,
+      handlerSelectChapter,
+      jpgPc,
+      chapterPc,
+      chapterIds,
+      comicChapterId,
+      selectItem,
+      images
+    };
+  
+    return (
+      <div className="main">
+        <Header {...headerProps} />
+        <Content>
+          <Navigation {...navigationProps} />
+          <Workbench {...this.props} />
+        </Content>
+        {loading && <LoadingSpinner />}
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -182,8 +194,6 @@ const mapStateToProps = (state) => {
     maskTextImgs = {},
     resultBoxStyleParams = {},
     feedMsg,
-    lastChapterDisable,
-    nextChapterDisable,
     status,
     imgWidth,
     imgHeight,
@@ -201,9 +211,10 @@ const mapStateToProps = (state) => {
     loading = false,
     startPreview,
     notificationMsg,
-    zoomCanvasValue = 1
+    zoomCanvasValue = 1,
+    isUpdateFeedBackMsg
   } = state.ui;
-
+  
   return {
     language,
     images,
@@ -228,9 +239,8 @@ const mapStateToProps = (state) => {
     resultBoxStyleParams,
     contentText,
     startPreview,
-    feedMsg,
-    lastChapterDisable,
-    nextChapterDisable,
+    feedMsgs: feedMsg,
+    isUpdateFeedBackMsg,
     notificationMsg,
     zoomCanvasValue,
     resultImgURL,
@@ -274,11 +284,8 @@ const mapDispatchToProps = (dispatch) => {
     selectItem: (selectedImg, translationOrderId) => {
       dispatch(handlerSelectItem(selectedImg, translationOrderId));
     },
-    toLastChapter: () => {
-      dispatch(handlerToLastChapter());
-    },
-    toNextChapter: () => {
-      dispatch(handlerToNextChapter());
+    handlerSelectChapter: (id) => {
+      dispatch(handlerToSelectChapter(id));
     },
     handlerPreview: () => {
       dispatch(openPreviewMoal())
@@ -328,6 +335,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     handlerdeleteGlossary: (comicListId, orderNo, comicTermId) => {
       dispatch(deleteGlossary(comicListId, orderNo, comicTermId))
+    },
+    setStopUpdateFeedBackMsg: ()=> {
+      dispatch(stopUpdatedFeedBackMsg());
     }
   }
 };
