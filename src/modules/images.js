@@ -1,5 +1,6 @@
 import * as actions from './actions';
 import html2canvas from 'html2canvas';
+import io from 'socket.io-client';
 import {
     uiloadingStart,
     uiloadingComplete,
@@ -12,8 +13,7 @@ import {
     closeModal,
     setStartNumber,
     setClearPreTranslResult,
-    setIsToLastChapter,
-    setIsToNextChapter,
+    setIsToSelectChapter,
     receivedOrderNo,
     deleteCropedMarquee,
     getFontsettings,
@@ -21,7 +21,8 @@ import {
     updateMaskBackgroundStart,
     handlerClearUiFont,
     updateSelectedTranslImage,
-    clearSelectedTranslImage
+    clearSelectedTranslImage,
+    updateFeedBackMsg
 } from './ui';
 import services from '../services';
 import {
@@ -120,14 +121,6 @@ const imagesReducer = (state = {}, action) => {
             return Object.assign({}, state, { cropedBoxParams: {} })
         case actions.IMAGES_RECEIVED_FEEDBACK_MESSAGE:
             return Object.assign({}, state, { feedMsg: action.payload })
-        case actions.IMAGES_DISABLED_SWITCH_CHAPTER:
-            return Object.assign({}, state, { lastChapterDisable: true, nextChapterDisable: true })
-        case actions.IMAGES_DISABLED_LAST_CHAPTER:
-            return Object.assign({}, state, { lastChapterDisable: true })
-        case actions.IMAGES_DISABLED_NEXT_CHAPTER:
-            return Object.assign({}, state, { nextChapterDisable: true })
-        case actions.IMAGES_ENABLE_SWITCH_CHAPTER:
-            return Object.assign({}, state, { lastChapterDisable: false, nextChapterDisable: false })
         case actions.IMAGES_CLEAR_PRE_CROP_AREA:
             return Object.assign({}, state, {
                 hasCropBox: false,
@@ -304,21 +297,6 @@ export const clearCropedBoxedParams = () => ({
     type: actions.IMGAGES_CLEAR_CREATED_CROPED_BOX_PARAMS
 });
 
-export const disabledSwitchChapter = () => ({
-    type: actions.IMAGES_DISABLED_SWITCH_CHAPTER
-});
-
-export const disabledLastChapter = () => ({
-    type: actions.IMAGES_DISABLED_LAST_CHAPTER
-});
-
-export const disabledNextChapter = () => ({
-    type: actions.IMAGES_DISABLED_NEXT_CHAPTER
-});
-
-export const enableSwitchChapter = () => ({
-    type: actions.IMAGES_ENABLE_SWITCH_CHAPTER
-});
 
 export const clearResultCanvas = () => {
     return (dispatch, getState) => {
@@ -438,19 +416,14 @@ export const setResultImgURL = () => {
 export const abandonSaveAction = () => {
     return (dispatch, getState) => {
         const state = getState();
-        const { currentSelectedItem, currentTranslationOrderId, isToLastChapter, isToNextChapter } = state.ui;
+        const { currentSelectedItem, currentTranslationOrderId, selectedChapterId } = state.ui;
         dispatch(closeModal());
         if (currentSelectedItem && currentTranslationOrderId) {
             dispatch(handlerSelectImage(currentSelectedItem));
             dispatch(selecteCanvas(currentTranslationOrderId));
         }
-        if (isToLastChapter) {
-            dispatch(minusChapter());
-            dispatch(handlerSelectImage(1));
-            dispatch(clearSelectedImage());
-        }
-        if (isToNextChapter) {
-            dispatch(plusChapter());
+        if (selectedChapterId) {
+            dispatch(getTranslImages({ chapterId: selectedChapterId }))
             dispatch(handlerSelectImage(1));
             dispatch(clearSelectedImage());
         }
@@ -471,6 +444,8 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
             dispatch(receivedCurrentSelectedItem(selectedImg));
             dispatch(receivedCurrenttranslationOrderId(translationOrderId));
         } else {
+            const workbenchMain = document.getElementById("workbenchMain");
+            workbenchMain.scrollTop = 0;
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
             dispatch(deleteCropedMarquee());
@@ -478,46 +453,6 @@ export const handlerSelectItem = (selectedImg, translationOrderId) => {
             dispatch(handlerSelectImage(selectedImg));
             dispatch(selecteCanvas(translationOrderId));
             dispatch(updateSelectedTranslImage());
-        }
-    }
-};
-
-export const initialChapter = () => {
-    return (dispatch, getState) => {
-        const state = getState();
-        const { chapterIds = [], comicChapterId } = state.images;
-        if (chapterIds.length) {
-            switch (chapterIds.length) {
-                case 0:
-                case 1:
-                    dispatch(disabledSwitchChapter())
-                    break;
-                case 2:
-                    if (chapterIds.indexOf(comicChapterId) === 0) {
-                        dispatch(disabledLastChapter())
-                    } else {
-                        dispatch(disabledNextChapter())
-                    }
-                    break;
-                case 3:
-                    if (chapterIds.indexOf(comicChapterId) === 0) {
-                        dispatch(disabledLastChapter())
-                    } else if (chapterIds.indexOf(comicChapterId) === 2) {
-                        dispatch(disabledNextChapter())
-                    } else {
-                        dispatch(enableSwitchChapter())
-                    }
-                    break;
-                default:
-                    if (chapterIds.indexOf(comicChapterId) === 0) {
-                        dispatch(disabledLastChapter())
-                    } else if (chapterIds.indexOf(comicChapterId) === chapterIds.length - 1) {
-                        dispatch(disabledNextChapter())
-                    } else {
-                        dispatch(enableSwitchChapter())
-                    }
-                    break;
-            }
         }
     }
 };
@@ -563,7 +498,6 @@ export const getTranslImages = (payload) => {
                 remark,
                 translatingJpgId
             }));
-            dispatch(initialChapter());
             dispatch(isNotBackToTransl());
             let selectedImg = 1;
             comicJpgs.forEach((item, index) => {
@@ -586,9 +520,33 @@ export const getFeedBackMessage = (id) => {
         const { orderNo } = state.ui;
         services.getFeedBackMsg(id, orderNo).then(({ data }) => {
             dispatch(receivedFeedBackMsg(data.data));
+            dispatch(initialFeedBackMessage());
         }).catch(err => console.error(err))
     }
 };
+
+export const initialFeedBackMessage = () => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const { feedMsg = [] } = state.images;
+        const { orderNo } = state.ui;
+        const socket =  io.connect('https://www.hitranslator.com/fbm?orderNo=' + orderNo);
+        socket.on('connect', ()=> {
+            console.log('Client has connected to the server!');
+        });
+
+        socket.on('receiveMsg', data => {
+            feedMsg.push(data);
+            dispatch(receivedFeedBackMsg(feedMsg));
+            dispatch(updateFeedBackMsg());
+        });
+
+        socket.on('disconnect', ()=> {
+            console.log('The client has disconnected!');
+        });
+        
+    }
+}
 
 export const selecteCanvas = (id) => {
     return (dispatch, getState) => {
@@ -672,16 +630,16 @@ export const undoBrush = () => {
     }
 };
 
-export const handlerToLastChapter = () => {
+export const handlerToSelectChapter = (id) => {
     return (dispatch, getState) => {
         const state = getState();
         const { displayResultBox = {} } = state.images;
         if (Object.keys(displayResultBox).length) {
             dispatch(openModal("promteSave"));
-            dispatch(setIsToLastChapter());
+            dispatch(setIsToSelectChapter(id));
         } else {
             dispatch(handlerSelectImage(1));
-            dispatch(minusChapter());
+            dispatch(getTranslImages({ chapterId: id }));
             dispatch(clearSelectedImage());
             dispatch(setClearCropox());
             dispatch(setClearPreTranslResult());
@@ -690,42 +648,6 @@ export const handlerToLastChapter = () => {
         }
     }
 }
-
-export const handlerToNextChapter = () => {
-    return (dispatch, getState) => {
-        const state = getState();
-        const { displayResultBox = {} } = state.images;
-        if (Object.keys(displayResultBox).length) {
-            dispatch(openModal("promteSave"));
-            dispatch(setIsToNextChapter());
-        } else {
-            dispatch(handlerSelectImage(1));
-            dispatch(plusChapter());
-            dispatch(clearSelectedImage());
-            dispatch(setClearCropox());
-            dispatch(setClearPreTranslResult());
-            dispatch(deleteCropedMarquee());
-            dispatch(updateSelectedTranslImage());
-        }
-    }
-}
-
-export const plusChapter = () => {
-    return (dispatch, getState) => {
-        const state = getState();
-        const { chapterIds = [], comicChapterId } = state.images;
-        const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) + 1];
-        dispatch(getTranslImages({ chapterId }))
-    }
-};
-export const minusChapter = () => {
-    return (dispatch, getState) => {
-        const state = getState();
-        const { chapterIds = [], comicChapterId } = state.images;
-        const chapterId = chapterIds[chapterIds.indexOf(comicChapterId) - 1];
-        dispatch(getTranslImages({ chapterId }))
-    }
-};
 
 export const createTranslArea = () => {
     return (dispatch, getState) => {
@@ -1115,6 +1037,7 @@ export const initialTranslPage = () => {
         }
         dispatch(getFeedBackMessage());
         dispatch(clearSelectedImage());
+        
     }
 }
 

@@ -93,7 +93,7 @@ class WorkbenchMain extends React.PureComponent {
                 delete createdTranslBox[startNumber];
             }
     }
-    clearCanvas (prevProps) {
+    clearCanvas () {
         const upperCanvas = document.getElementById("upper-canvas");
         const ctx_upper = upperCanvas.getContext('2d');
         ctx_upper.clearRect(0, 0, this.props.imgWidth, this.props.imgHeight);
@@ -124,12 +124,12 @@ class WorkbenchMain extends React.PureComponent {
             this.drawMaskImgBackground(prevProps)
         }
         if (prevProps.clearPreTranslResult !== clearPreTranslResult && selectedImg && clearPreTranslResult) {
-            this.clearCanvas(prevProps)
+            this.clearCanvas()
         }
     }
 
     componentDidMount() {
-        console.info("build package date---------", new Date(" 2020/05/28 23:17:20"));
+        console.info("build package date---------", new Date(" 2020/07/12 23:45:20"));
     }
 
     render() {
@@ -212,9 +212,9 @@ class WorkbenchMain extends React.PureComponent {
             className: "upper-canvas",
             width: imgWidth,
             height: imgHeight,
-            onMouseDown: this._drawCanvas ? (e) => this._drawCanvas.mousedown(e) : null,
-            onMouseMove: this._drawCanvas ? (e) => this._drawCanvas.mousemove(e) : null,
-            onMouseUp: this._drawCanvas ? (e) => this._drawCanvas.mouseup(e) : null,
+            onMouseDown: hasCropBox || displayTranslBox ? null : (e) => this._drawCanvas && this._drawCanvas.mousedown(e),
+            onMouseMove: hasCropBox || displayTranslBox ? null : (e) => this._drawCanvas && this._drawCanvas.mousemove(e),
+            onMouseUp: hasCropBox || displayTranslBox ? null : (e) => this._drawCanvas && this._drawCanvas.mouseup(e),
             style: {
                 cursor: (hasCropBox || displayTranslBox) ? "default" : "crosshair"
             }
